@@ -1,0 +1,26 @@
+FROM node:20-slim
+
+# Install Chromium and dependencies for Puppeteer
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    chromium \
+    fonts-freefont-ttf \
+    fonts-noto-color-emoji \
+    && rm -rf /var/lib/apt/lists/*
+
+ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
+ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium
+
+WORKDIR /app
+
+# Install app dependencies and build
+COPY package.json package-lock.json ./
+RUN npm ci
+COPY . .
+RUN npm run build
+
+# Install PDF generation dependencies
+RUN npm install --no-save puppeteer-core@24 pdf-lib@1.17 serve@14
+
+COPY scripts/generate-pdf.mjs ./scripts/generate-pdf.mjs
+
+CMD ["node", "scripts/generate-pdf.mjs"]
