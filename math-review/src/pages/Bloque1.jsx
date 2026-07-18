@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import TopicCard from '../components/TopicCard'
 import InteractiveBox from '../components/InteractiveBox'
 import MathTex from '../components/MathTex'
@@ -8,20 +7,12 @@ import CommonMistakes from '../components/CommonMistakes'
 import BlockProgress from '../components/BlockProgress'
 import ExpressSummary from '../components/ExpressSummary'
 import GlossaryTerm from '../components/GlossaryTerm'
+import AproximacionExplorer from '../widgets/AproximacionExplorer'
+import PotenciaCalculadora from '../widgets/PotenciaCalculadora'
+import NotacionConversor from '../widgets/NotacionConversor'
+import RaizCalculadora from '../widgets/RaizCalculadora'
 
 function AproximacionSection() {
-  const [numero, setNumero] = useState('3.14159265')
-  const num = parseFloat(numero) || 0
-
-  const truncar = (n, dec) => {
-    const factor = Math.pow(10, dec)
-    return (n >= 0 ? 1 : -1) * (Math.floor(Math.abs(n) * factor) / factor)
-  }
-  const redondear = (n, dec) => {
-    const factor = Math.pow(10, dec)
-    return Math.round(n * factor) / factor
-  }
-
   const quizQuestions = [
     {
       question: "Spotify dice que tu canción favorita tiene 2,450,890 reproducciones. Si la aproximas a 2 decimales usando millones, ¿qué valor es correcto?",
@@ -84,42 +75,7 @@ function AproximacionSection() {
       </div>
 
       <InteractiveBox title="Prueba la aproximación">
-        <label className="block text-sm font-medium mb-2">Escribe un número decimal:</label>
-        <input
-          type="text"
-          value={numero}
-          onChange={(e) => setNumero(e.target.value)}
-          className="border border-gray-300 rounded-lg px-3 py-2 w-full max-w-xs text-lg font-mono focus:ring-2 focus:ring-amber-400 outline-none"
-        />
-        {!isNaN(num) && num !== 0 && (
-          <div className="mt-4 overflow-x-auto">
-            <table className="w-full text-sm border-collapse">
-              <thead>
-                <tr className="bg-amber-100">
-                  <th className="px-3 py-2 text-left">Decimales</th>
-                  <th className="px-3 py-2 text-left">Truncado</th>
-                  <th className="px-3 py-2 text-left">Redondeado</th>
-                  <th className="px-3 py-2 text-left">Error (truncar)</th>
-                </tr>
-              </thead>
-              <tbody>
-                {[0, 1, 2, 3, 4].map(d => {
-                  const t = truncar(num, d)
-                  const r = redondear(num, d)
-                  const err = Math.abs(num - t)
-                  return (
-                    <tr key={d} className="border-t border-amber-100">
-                      <td className="px-3 py-2 font-mono">{d}</td>
-                      <td className="px-3 py-2 font-mono">{t.toFixed(d)}</td>
-                      <td className="px-3 py-2 font-mono">{r.toFixed(d)}</td>
-                      <td className="px-3 py-2 font-mono text-red-600">{err.toFixed(d + 2)}</td>
-                    </tr>
-                  )
-                })}
-              </tbody>
-            </table>
-          </div>
-        )}
+        <AproximacionExplorer />
       </InteractiveBox>
 
       <MiniQuiz questions={quizQuestions} />
@@ -128,11 +84,6 @@ function AproximacionSection() {
 }
 
 function PotenciacionSection() {
-  const [base, setBase] = useState(2)
-  const [exp, setExp] = useState(3)
-
-  const resultado = Math.pow(base, exp)
-
   const quizQuestions = [
     {
       question: "En Free Fire, tu arma hace 50 de daño base. Con un potenciador de nivel 3 (×2³), ¿cuánto daño haces ahora?",
@@ -194,36 +145,7 @@ function PotenciacionSection() {
       </div>
 
       <InteractiveBox title="Calculadora de potencias: prueba con daño de armas">
-        <div className="flex items-center gap-4 flex-wrap">
-          <div>
-            <label className="block text-xs font-medium mb-1">Daño base</label>
-            <input
-              type="number"
-              value={base}
-              onChange={(e) => setBase(Number(e.target.value))}
-              className="border rounded-lg px-3 py-2 w-24 font-mono text-center focus:ring-2 focus:ring-amber-400 outline-none"
-            />
-          </div>
-          <div>
-            <label className="block text-xs font-medium mb-1">Nivel de potencia</label>
-            <input
-              type="number"
-              value={exp}
-              onChange={(e) => setExp(Number(e.target.value))}
-              className="border rounded-lg px-3 py-2 w-24 font-mono text-center focus:ring-2 focus:ring-amber-400 outline-none"
-              min={-10}
-              max={20}
-            />
-          </div>
-          <div className="text-2xl font-bold text-amber-700">=</div>
-          <div className="text-2xl font-mono font-bold text-amber-900">
-            {isFinite(resultado) ? (Number.isInteger(resultado) ? resultado : resultado.toFixed(6)) : '∞'}
-          </div>
-        </div>
-        <p className="mt-3 text-sm text-gray-600">
-          <MathTex expr={`${base}^{${exp}} = ${isFinite(resultado) ? (Number.isInteger(resultado) ? resultado : resultado.toFixed(6)) : '\\infty'}`} />
-          {exp < 0 && <span className="ml-2">(Exponente negativo = fracción: <MathTex expr={`\\frac{1}{${base}^{${-exp}}}`} />)</span>}
-        </p>
+        <PotenciaCalculadora />
       </InteractiveBox>
 
       <MiniQuiz questions={quizQuestions} />
@@ -232,18 +154,6 @@ function PotenciacionSection() {
 }
 
 function NotacionCientificaSection() {
-  const [decimal, setDecimal] = useState('139000000')
-
-  const convertir = (str) => {
-    const n = parseFloat(str)
-    if (isNaN(n) || n === 0) return { mantisa: 0, exponente: 0 }
-    const exponente = Math.floor(Math.log10(Math.abs(n)))
-    const mantisa = n / Math.pow(10, exponente)
-    return { mantisa: parseFloat(mantisa.toFixed(6)), exponente }
-  }
-
-  const { mantisa, exponente } = convertir(decimal)
-
   const quizQuestions = [
     {
       question: "Bad Bunny tiene 45,000,000 de oyentes mensuales. ¿Cómo se escribe en notación científica?",
@@ -306,24 +216,7 @@ function NotacionCientificaSection() {
       </div>
 
       <InteractiveBox title="Convertidor: prueba con números de verdad">
-        <label className="block text-sm font-medium mb-2">Escribe un número (seguidores, visualizaciones, etc.):</label>
-        <input
-          type="text"
-          value={decimal}
-          onChange={(e) => setDecimal(e.target.value)}
-          className="border border-gray-300 rounded-lg px-3 py-2 w-full max-w-sm font-mono text-lg focus:ring-2 focus:ring-amber-400 outline-none"
-        />
-        {parseFloat(decimal) !== 0 && !isNaN(parseFloat(decimal)) && (
-          <div className="mt-4 p-4 bg-white rounded-lg text-center">
-            <p className="text-sm text-gray-500 mb-1">En notación científica:</p>
-            <p className="text-2xl font-bold text-amber-700">
-              <MathTex expr={`${mantisa} \\times 10^{${exponente}}`} />
-            </p>
-            <p className="text-xs text-gray-400 mt-2">
-              Se movió la coma {Math.abs(exponente)} {Math.abs(exponente) === 1 ? 'posición' : 'posiciones'} hacia la {exponente >= 0 ? 'izquierda' : 'derecha'}
-            </p>
-          </div>
-        )}
+        <NotacionConversor />
       </InteractiveBox>
 
       <MiniQuiz questions={quizQuestions} />
@@ -332,11 +225,6 @@ function NotacionCientificaSection() {
 }
 
 function RadicacionSection() {
-  const [radicando, setRadicando] = useState(27)
-  const [indice, setIndice] = useState(3)
-
-  const resultado = Math.pow(radicando, 1 / indice)
-
   const quizQuestions = [
     {
       question: "Tu base cuadrada en Minecraft mide 144 bloques². ¿Cuántos bloques mide cada lado?",
@@ -398,42 +286,7 @@ function RadicacionSection() {
       </div>
 
       <InteractiveBox title="Calculadora: áreas de bases en Minecraft">
-        <div className="flex items-center gap-4 flex-wrap">
-          <div>
-            <label className="block text-xs font-medium mb-1">Índice (n)</label>
-            <input
-              type="number"
-              value={indice}
-              onChange={(e) => setIndice(Number(e.target.value) || 2)}
-              className="border rounded-lg px-3 py-2 w-20 font-mono text-center focus:ring-2 focus:ring-amber-400 outline-none"
-              min={2}
-              max={10}
-            />
-          </div>
-          <div className="text-2xl">√</div>
-          <div>
-            <label className="block text-xs font-medium mb-1">Área/Volumen (a)</label>
-            <input
-              type="number"
-              value={radicando}
-              onChange={(e) => setRadicando(Number(e.target.value))}
-              className="border rounded-lg px-3 py-2 w-28 font-mono text-center focus:ring-2 focus:ring-amber-400 outline-none"
-            />
-          </div>
-          <div className="text-2xl font-bold text-amber-700">=</div>
-          <div className="text-2xl font-mono font-bold text-amber-900">
-            {isNaN(resultado) ? 'No existe' : Number.isInteger(resultado) ? resultado : resultado.toFixed(4)}
-          </div>
-        </div>
-        <p className="mt-3 text-sm text-gray-600">
-          <MathTex expr={`{\\sqrt[${indice}]{${radicando}} = ${isNaN(resultado) ? '\\text{No existe en } \\mathbb{R}' : Number.isInteger(resultado) ? resultado : resultado.toFixed(4)}}`} />
-        </p>
-        <p className="text-xs text-gray-400 mt-1">
-          Verificación: {isNaN(resultado) ? 'N/A' : `${Number.isInteger(resultado) ? resultado : resultado.toFixed(4)}^${indice} ≈ ${Math.pow(resultado, indice).toFixed(2)}`}
-        </p>
-        <p className="text-xs text-amber-600 mt-2">
-          💡 Ejemplo: Área 144, índice 2 → lado 12 (terreno 12×12 en Minecraft)
-        </p>
+        <RaizCalculadora />
       </InteractiveBox>
 
       <MiniQuiz questions={quizQuestions} />
