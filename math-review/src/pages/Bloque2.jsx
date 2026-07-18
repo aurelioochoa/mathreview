@@ -168,7 +168,7 @@ function MCMSection() {
       <WhySection>
         Un evento especial en Roblox se repite cada 12 horas y otro cada 18 horas. ¿Cada cuándo coinciden?
         <br />
-        <strong>MCM(12, 18) = 36 minutos</strong>.
+        <strong>MCM(12, 18) = 36 horas</strong>.
         <br />
         El MCM también te sirve para sumar fracciones: necesitas el denominador común más pequeño.
       </WhySection>
