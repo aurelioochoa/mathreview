@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import TopicCard from '../components/TopicCard'
 import InteractiveBox from '../components/InteractiveBox'
-import Math from '../components/Math'
+import MathTex from '../components/MathTex'
 import MiniQuiz from '../components/MiniQuiz'
 import WhySection from '../components/WhySection'
 import CommonMistakes from '../components/CommonMistakes'
@@ -14,7 +14,7 @@ function MCDSection() {
   const [b, setB] = useState(24)
 
   const gcd = (x, y) => {
-    x = window.Math.abs(x); y = window.Math.abs(y)
+    x = Math.abs(x); y = Math.abs(y)
     while (y) { [x, y] = [y, x % y] }
     return x
   }
@@ -46,7 +46,7 @@ function MCDSection() {
   ]
 
   const factorizar = (n) => {
-    n = window.Math.abs(n)
+    n = Math.abs(n)
     if (n <= 1) return [[n, 1]]
     const factors = []
     let d = 2
@@ -92,10 +92,10 @@ function MCDSection() {
         </ol>
         <div className="mt-3 bg-white rounded p-3 text-sm">
           <p className="font-medium">Ejemplo con monomios:</p>
-          <Math expr={"\\text{MCD}(18x^2yz,\\ 36xy^2z^3,\\ 54x^2y^3z)"} display />
+          <MathTex expr={"\\text{MCD}(18x^2yz,\\ 36xy^2z^3,\\ 54x^2y^3z)"} display />
           <p className="mt-1">Coeficientes: MCD(18, 36, 54) = 18</p>
-          <p>Variables: <Math expr={"x^1 \\cdot y^1 \\cdot z^1"} /> (menor exponente de cada una)</p>
-          <p className="font-bold text-emerald-700 mt-1"><Math expr={"\\text{MCD} = 18xyz"} /></p>
+          <p>Variables: <MathTex expr={"x^1 \\cdot y^1 \\cdot z^1"} /> (menor exponente de cada una)</p>
+          <p className="font-bold text-emerald-700 mt-1"><MathTex expr={"\\text{MCD} = 18xyz"} /></p>
         </div>
       </div>
 
@@ -113,8 +113,8 @@ function MCDSection() {
           </div>
         </div>
         <div className="mt-4 p-4 bg-white rounded-lg">
-          <p className="text-sm"><strong>Factorización de {window.Math.abs(a)}:</strong> {factorizar(a).map(([f, e]) => `${f}${e > 1 ? `^${e}` : ''}`).join(' × ') || '—'}</p>
-          <p className="text-sm"><strong>Factorización de {window.Math.abs(b)}:</strong> {factorizar(b).map(([f, e]) => `${f}${e > 1 ? `^${e}` : ''}`).join(' × ') || '—'}</p>
+          <p className="text-sm"><strong>Factorización de {Math.abs(a)}:</strong> {factorizar(a).map(([f, e]) => `${f}${e > 1 ? `^${e}` : ''}`).join(' × ') || '—'}</p>
+          <p className="text-sm"><strong>Factorización de {Math.abs(b)}:</strong> {factorizar(b).map(([f, e]) => `${f}${e > 1 ? `^${e}` : ''}`).join(' × ') || '—'}</p>
           <p className="text-lg font-bold text-emerald-700 mt-2">MCD({a}, {b}) = {mcdVal}</p>
           <p className="text-xs text-emerald-600 mt-1">
             💡 Puedes repartir {mcdVal} ítems a cada uno del squad
@@ -132,12 +132,12 @@ function MCMSection() {
   const [b, setB] = useState(18)
 
   const gcd = (x, y) => {
-    x = window.Math.abs(x); y = window.Math.abs(y)
+    x = Math.abs(x); y = Math.abs(y)
     while (y) { [x, y] = [y, x % y] }
     return x
   }
 
-  const mcmVal = a && b ? window.Math.abs(a * b) / gcd(a, b) : 0
+  const mcmVal = a && b ? Math.abs(a * b) / gcd(a, b) : 0
 
   const quizQuestions = [
     {
@@ -212,8 +212,8 @@ function MCMSection() {
           </div>
         </div>
         <div className="mt-4 p-4 bg-white rounded-lg">
-          <p className="text-sm text-gray-600">Fórmula rápida: <Math expr={`\\text{MCM}(a,b) = \\frac{|a \\times b|}{\\text{MCD}(a,b)}`} /></p>
-          <p className="text-sm mt-1"><Math expr={`\\frac{|${a} \\times ${b}|}{${gcd(a,b)}} = \\frac{${window.Math.abs(a*b)}}{${gcd(a,b)}}`} /></p>
+          <p className="text-sm text-gray-600">Fórmula rápida: <MathTex expr={`\\text{MCM}(a,b) = \\frac{|a \\times b|}{\\text{MCD}(a,b)}`} /></p>
+          <p className="text-sm mt-1"><MathTex expr={`\\frac{|${a} \\times ${b}|}{${gcd(a,b)}} = \\frac{${Math.abs(a*b)}}{${gcd(a,b)}}`} /></p>
           <p className="text-lg font-bold text-emerald-700 mt-2">MCM({a}, {b}) = {mcmVal}</p>
           <p className="text-xs text-emerald-600 mt-1">
             💡 Los eventos coinciden cada {mcmVal} horas
@@ -275,7 +275,7 @@ function FraccionesAlgebraicasSection() {
       </p>
 
       <div className="text-center my-4">
-        <Math expr={"\\frac{x^2 - 4}{x^2 - 4x + 4} = \\frac{(x-2)(x+2)}{(x-2)^2} = \\frac{x+2}{x-2}"} display />
+        <MathTex expr={"\\frac{x^2 - 4}{x^2 - 4x + 4} = \\frac{(x-2)(x+2)}{(x-2)^2} = \\frac{x+2}{x-2}"} display />
       </div>
 
       <div className="bg-emerald-50 rounded-lg p-4 border border-emerald-200">
@@ -293,19 +293,19 @@ function FraccionesAlgebraicasSection() {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm">
           <div className="bg-gray-50 rounded p-2">
             <p className="text-xs text-gray-500">Factor común</p>
-            <Math expr={"ax + ay = a(x + y)"} />
+            <MathTex expr={"ax + ay = a(x + y)"} />
           </div>
           <div className="bg-gray-50 rounded p-2">
             <p className="text-xs text-gray-500">Diferencia de cuadrados</p>
-            <Math expr={"a^2 - b^2 = (a+b)(a-b)"} />
+            <MathTex expr={"a^2 - b^2 = (a+b)(a-b)"} />
           </div>
           <div className="bg-gray-50 rounded p-2">
             <p className="text-xs text-gray-500">Trinomio cuadrado perfecto</p>
-            <Math expr={"a^2 + 2ab + b^2 = (a+b)^2"} />
+            <MathTex expr={"a^2 + 2ab + b^2 = (a+b)^2"} />
           </div>
           <div className="bg-gray-50 rounded p-2">
             <p className="text-xs text-gray-500">Trinomio de la forma x² + bx + c</p>
-            <Math expr={"x^2 + bx + c = (x+p)(x+q)"} />
+            <MathTex expr={"x^2 + bx + c = (x+p)(x+q)"} />
           </div>
         </div>
       </div>
@@ -377,23 +377,23 @@ function OperacionesSection() {
           <strong>Suma/Resta:</strong> Necesitas denominador común (MCM), luego sumas/restas los numeradores
         </div>
         <div className="bg-white rounded p-2 text-sm">
-          <strong>Multiplicación:</strong> <Math expr={"\\frac{a}{b} \\cdot \\frac{c}{d} = \\frac{a \\cdot c}{b \\cdot d}"} /> (numerador × numerador, denominador × denominador)
+          <strong>Multiplicación:</strong> <MathTex expr={"\\frac{a}{b} \\cdot \\frac{c}{d} = \\frac{a \\cdot c}{b \\cdot d}"} /> (numerador × numerador, denominador × denominador)
         </div>
         <div className="bg-white rounded p-2 text-sm">
-          <strong>División:</strong> <Math expr={"\\frac{a}{b} \\div \\frac{c}{d} = \\frac{a}{b} \\cdot \\frac{d}{c}"} /> (multiplicas por el inverso, "flip" la segunda)
+          <strong>División:</strong> <MathTex expr={"\\frac{a}{b} \\div \\frac{c}{d} = \\frac{a}{b} \\cdot \\frac{d}{c}"} /> (multiplicas por el inverso, "flip" la segunda)
         </div>
       </div>
 
       <InteractiveBox title="Ejemplo paso a paso — Suma de fracciones">
         <div className="text-center mb-4">
           <div className="text-lg">
-            <Math expr={pasos[step].contenido} display />
+            <MathTex expr={pasos[step].contenido} display />
           </div>
           <p className="text-sm font-semibold text-indigo-600 mt-2">{pasos[step].titulo}</p>
         </div>
         <div className="flex justify-center gap-2">
           <button
-            onClick={() => setStep(s => window.Math.max(0, s - 1))}
+            onClick={() => setStep(s => Math.max(0, s - 1))}
             disabled={step === 0}
             className="px-4 py-2 rounded-lg bg-emerald-100 text-emerald-700 font-semibold disabled:opacity-30 hover:bg-emerald-200 transition cursor-pointer"
           >
@@ -401,7 +401,7 @@ function OperacionesSection() {
           </button>
           <span className="px-3 py-2 text-sm text-gray-500">{step + 1} / {pasos.length}</span>
           <button
-            onClick={() => setStep(s => window.Math.min(pasos.length - 1, s + 1))}
+            onClick={() => setStep(s => Math.min(pasos.length - 1, s + 1))}
             disabled={step === pasos.length - 1}
             className="px-4 py-2 rounded-lg bg-emerald-100 text-emerald-700 font-semibold disabled:opacity-30 hover:bg-emerald-200 transition cursor-pointer"
           >

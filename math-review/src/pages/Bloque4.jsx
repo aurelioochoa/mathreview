@@ -2,7 +2,7 @@ import { useState, useMemo } from 'react'
 import { Mafs, Coordinates, Plot, Theme, Point, Line, Text as MafsText } from 'mafs'
 import TopicCard from '../components/TopicCard'
 import InteractiveBox from '../components/InteractiveBox'
-import Math from '../components/Math'
+import MathTex from '../components/MathTex'
 import MiniQuiz from '../components/MiniQuiz'
 import WhySection from '../components/WhySection'
 import CommonMistakes from '../components/CommonMistakes'
@@ -144,7 +144,7 @@ function FuncionLinealSection() {
       </p>
 
       <div className="text-center my-4">
-        <Math expr={"f(x) = mx + b"} display />
+        <MathTex expr={"f(x) = mx + b"} display />
       </div>
 
       <div className="bg-violet-50 rounded-lg p-4 border border-violet-200">
@@ -169,8 +169,8 @@ function FuncionLinealSection() {
       <div className="mt-3 bg-white rounded-lg p-4 border">
         <p className="font-semibold mb-2">Dominio y recorrido:</p>
         <ul className="list-disc pl-5 text-sm space-y-1">
-          <li><strong>Dominio</strong>: todos los valores que puede tomar x → <Math expr={"D = \\mathbb{R} = (-\\infty, +\\infty)"} /></li>
-          <li><strong>Recorrido</strong> (o rango): todos los valores que puede dar f(x) → <Math expr={"R = \\mathbb{R} = (-\\infty, +\\infty)"} /></li>
+          <li><strong>Dominio</strong>: todos los valores que puede tomar x → <MathTex expr={"D = \\mathbb{R} = (-\\infty, +\\infty)"} /></li>
+          <li><strong>Recorrido</strong> (o rango): todos los valores que puede dar f(x) → <MathTex expr={"R = \\mathbb{R} = (-\\infty, +\\infty)"} /></li>
         </ul>
         <p className="text-xs text-gray-500 mt-1">Piensa en el dominio como "las preguntas que puedes hacer" y el recorrido como "las respuestas posibles".</p>
       </div>
@@ -196,7 +196,7 @@ function FuncionLinealSection() {
         </div>
 
         <div className="text-center mb-3">
-          <Math expr={`f(x) = ${m === 0 ? '' : (m === 1 ? '' : (m === -1 ? '-' : m))}${m === 0 ? '' : 'x'}${b === 0 ? (m === 0 ? '0' : '') : (b > 0 && m !== 0 ? ' + ' + b : (b < 0 ? ' - ' + window.Math.abs(b) : b))}`} />
+          <MathTex expr={`f(x) = ${m === 0 ? '' : (m === 1 ? '' : (m === -1 ? '-' : m))}${m === 0 ? '' : 'x'}${b === 0 ? (m === 0 ? '0' : '') : (b > 0 && m !== 0 ? ' + ' + b : (b < 0 ? ' - ' + Math.abs(b) : b))}`} />
         </div>
 
         <div className="bg-white rounded-lg overflow-hidden border">
@@ -288,16 +288,16 @@ function EcuacionesLinealesSection() {
 
       <InteractiveBox title="Ejemplo resuelto paso a paso">
         <div className="text-center mb-4 min-h-[80px] flex flex-col items-center justify-center">
-          <Math expr={pasos[step].expr} display />
+          <MathTex expr={pasos[step].expr} display />
           <p className="text-sm font-semibold text-violet-600 mt-3">{pasos[step].titulo}</p>
         </div>
         <div className="flex justify-center gap-2">
-          <button onClick={() => setStep(s => window.Math.max(0, s - 1))} disabled={step === 0}
+          <button onClick={() => setStep(s => Math.max(0, s - 1))} disabled={step === 0}
             className="px-4 py-2 rounded-lg bg-violet-100 text-violet-700 font-semibold disabled:opacity-30 hover:bg-violet-200 transition cursor-pointer">
             ← Anterior
           </button>
           <span className="px-3 py-2 text-sm text-gray-500">{step + 1} / {pasos.length}</span>
-          <button onClick={() => setStep(s => window.Math.min(pasos.length - 1, s + 1))} disabled={step === pasos.length - 1}
+          <button onClick={() => setStep(s => Math.min(pasos.length - 1, s + 1))} disabled={step === pasos.length - 1}
             className="px-4 py-2 rounded-lg bg-violet-100 text-violet-700 font-semibold disabled:opacity-30 hover:bg-violet-200 transition cursor-pointer">
             Siguiente →
           </button>
@@ -312,7 +312,7 @@ function EcuacionesLinealesSection() {
         </p>
         <div className="mt-3 bg-violet-50 rounded p-3 text-sm">
           <p>Sea x = páginas de Luis → Ana = 3x</p>
-          <p><Math expr={"x + 3x = 56 \\implies 4x = 56 \\implies x = 14"} /></p>
+          <p><MathTex expr={"x + 3x = 56 \\implies 4x = 56 \\implies x = 14"} /></p>
           <p className="font-bold text-violet-700 mt-1">Luis: 14 páginas, Ana: 42 páginas</p>
         </div>
       </div>
@@ -337,7 +337,7 @@ function FuncionCuadraticaSection() {
   const raices = useMemo(() => {
     if (a === 0) return []
     if (discriminante < 0) return []
-    const sqrtD = window.Math.sqrt(discriminante)
+    const sqrtD = Math.sqrt(discriminante)
     const x1 = (-bCoef + sqrtD) / (2 * a)
     const x2 = (-bCoef - sqrtD) / (2 * a)
     if (discriminante === 0) return [x1]
@@ -387,12 +387,12 @@ function FuncionCuadraticaSection() {
       />
 
       <p className="text-sm text-gray-600 mb-4">
-        La <GlossaryTerm term="Función cuadrática" definition="Función de la forma f(x) = ax² + bx + c, cuya gráfica es una parábola">función cuadrática</GlossaryTerm> tiene un <Math expr={"x^2"} /> y su gráfica es una <strong>parábola</strong> 
+        La <GlossaryTerm term="Función cuadrática" definition="Función de la forma f(x) = ax² + bx + c, cuya gráfica es una parábola">función cuadrática</GlossaryTerm> tiene un <MathTex expr={"x^2"} /> y su gráfica es una <strong>parábola</strong> 
         (tiene forma de U o de U invertida). Es como la trayectoria de una pelota cuando la lanzas al aire.
       </p>
 
       <div className="text-center my-4">
-        <Math expr={"f(x) = ax^2 + bx + c"} display />
+        <MathTex expr={"f(x) = ax^2 + bx + c"} display />
       </div>
 
       <div className="bg-violet-50 rounded-lg p-4 border border-violet-200">
@@ -400,11 +400,11 @@ function FuncionCuadraticaSection() {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm">
           <div className="bg-white rounded p-2">
             <strong>Vértice</strong>: El punto más alto o más bajo<br />
-            <Math expr={"h = \\frac{-b}{2a}, \\quad k = f(h)"} />
+            <MathTex expr={"h = \\frac{-b}{2a}, \\quad k = f(h)"} />
           </div>
           <div className="bg-white rounded p-2">
             <strong>Eje de simetría</strong>: La línea vertical que pasa por el vértice<br />
-            <Math expr={"x = \\frac{-b}{2a}"} />
+            <MathTex expr={"x = \\frac{-b}{2a}"} />
           </div>
           <div className="bg-white rounded p-2">
             <strong>Dirección</strong>:<br />
@@ -413,7 +413,7 @@ function FuncionCuadraticaSection() {
           </div>
           <div className="bg-white rounded p-2">
             <strong>Raíces</strong> (cortes con eje X):<br />
-            <Math expr={"x = \\frac{-b \\pm \\sqrt{b^2 - 4ac}}{2a}"} />
+            <MathTex expr={"x = \\frac{-b \\pm \\sqrt{b^2 - 4ac}}{2a}"} />
           </div>
         </div>
       </div>
@@ -441,7 +441,7 @@ function FuncionCuadraticaSection() {
         </div>
 
         <div className="text-center mb-3 text-sm">
-          <Math expr={`f(x) = ${a === 1 ? '' : (a === -1 ? '-' : a)}x^2 ${bCoef >= 0 ? '+' : '-'} ${window.Math.abs(bCoef)}x ${c >= 0 ? '+' : '-'} ${window.Math.abs(c)}`} />
+          <MathTex expr={`f(x) = ${a === 1 ? '' : (a === -1 ? '-' : a)}x^2 ${bCoef >= 0 ? '+' : '-'} ${Math.abs(bCoef)}x ${c >= 0 ? '+' : '-'} ${Math.abs(c)}`} />
         </div>
 
         {a !== 0 && (

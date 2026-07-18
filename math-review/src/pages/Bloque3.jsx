@@ -2,7 +2,7 @@ import { useState, useMemo } from 'react'
 import { Mafs, Coordinates, Line, Theme, Text as MafsText } from 'mafs'
 import TopicCard from '../components/TopicCard'
 import InteractiveBox from '../components/InteractiveBox'
-import Math from '../components/Math'
+import MathTex from '../components/MathTex'
 import MiniQuiz from '../components/MiniQuiz'
 import WhySection from '../components/WhySection'
 import CommonMistakes from '../components/CommonMistakes'
@@ -20,7 +20,7 @@ function MetodoGrafico() {
 
   const solucion = useMemo(() => {
     const det = a1 * b2 - a2 * b1
-    if (window.Math.abs(det) < 1e-10) return null
+    if (Math.abs(det) < 1e-10) return null
     const x = (c1 * b2 - c2 * b1) / det
     const y = (a1 * c2 - a2 * c1) / det
     return { x, y }
@@ -76,7 +76,7 @@ function MetodoGrafico() {
       <InteractiveBox title="Gráfica interactiva — Mueve los coeficientes">
         <div className="grid grid-cols-2 gap-4 mb-4">
           <div className="space-y-2">
-            <p className="text-sm font-bold text-blue-600">Ecuación 1: <Math expr={`${a1}x + (${b1})y = ${c1}`} /></p>
+            <p className="text-sm font-bold text-blue-600">Ecuación 1: <MathTex expr={`${a1}x + (${b1})y = ${c1}`} /></p>
             <div className="flex gap-2">
               <label className="text-xs">a₁<input type="number" value={a1} onChange={e => setA1(Number(e.target.value))} className="ml-1 border rounded px-2 py-1 w-16 font-mono text-sm" /></label>
               <label className="text-xs">b₁<input type="number" value={b1} onChange={e => setB1(Number(e.target.value))} className="ml-1 border rounded px-2 py-1 w-16 font-mono text-sm" /></label>
@@ -84,7 +84,7 @@ function MetodoGrafico() {
             </div>
           </div>
           <div className="space-y-2">
-            <p className="text-sm font-bold text-green-600">Ecuación 2: <Math expr={`${a2}x + (${b2})y = ${c2}`} /></p>
+            <p className="text-sm font-bold text-green-600">Ecuación 2: <MathTex expr={`${a2}x + (${b2})y = ${c2}`} /></p>
             <div className="flex gap-2">
               <label className="text-xs">a₂<input type="number" value={a2} onChange={e => setA2(Number(e.target.value))} className="ml-1 border rounded px-2 py-1 w-16 font-mono text-sm" /></label>
               <label className="text-xs">b₂<input type="number" value={b2} onChange={e => setB2(Number(e.target.value))} className="ml-1 border rounded px-2 py-1 w-16 font-mono text-sm" /></label>
@@ -126,7 +126,7 @@ function MetodoGrafico() {
         <div className="mt-3 text-center">
           {solucion ? (
             <p className="text-lg font-bold text-blue-700">
-              Solución: <Math expr={`x = ${solucion.x.toFixed(2)},\\quad y = ${solucion.y.toFixed(2)}`} />
+              Solución: <MathTex expr={`x = ${solucion.x.toFixed(2)},\\quad y = ${solucion.y.toFixed(2)}`} />
             </p>
           ) : (
             <p className="text-lg font-bold text-red-500">
@@ -234,16 +234,16 @@ function MetodoReduccion() {
 
       <InteractiveBox title="Ejemplo paso a paso">
         <div className="text-center mb-4 min-h-[100px] flex flex-col items-center justify-center">
-          <Math expr={pasos[step].expr} display />
+          <MathTex expr={pasos[step].expr} display />
           <p className="text-sm font-semibold text-blue-600 mt-3">{pasos[step].titulo}</p>
         </div>
         <div className="flex justify-center gap-2">
-          <button onClick={() => setStep(s => window.Math.max(0, s - 1))} disabled={step === 0}
+          <button onClick={() => setStep(s => Math.max(0, s - 1))} disabled={step === 0}
             className="px-4 py-2 rounded-lg bg-blue-100 text-blue-700 font-semibold disabled:opacity-30 hover:bg-blue-200 transition cursor-pointer">
             ← Anterior
           </button>
           <span className="px-3 py-2 text-sm text-gray-500">{step + 1} / {pasos.length}</span>
-          <button onClick={() => setStep(s => window.Math.min(pasos.length - 1, s + 1))} disabled={step === pasos.length - 1}
+          <button onClick={() => setStep(s => Math.min(pasos.length - 1, s + 1))} disabled={step === pasos.length - 1}
             className="px-4 py-2 rounded-lg bg-blue-100 text-blue-700 font-semibold disabled:opacity-30 hover:bg-blue-200 transition cursor-pointer">
             Siguiente →
           </button>
@@ -317,9 +317,9 @@ function MetodoCramer() {
       <div className="bg-blue-50 rounded-lg p-4 border border-blue-200">
         <p className="font-semibold text-blue-800 mb-2">Las fórmulas:</p>
         <div className="text-center space-y-3">
-          <Math expr={"D = \\begin{vmatrix} a_1 & b_1 \\\\ a_2 & b_2 \\end{vmatrix} = a_1 b_2 - a_2 b_1"} display />
-          <Math expr={"x = \\frac{D_x}{D} = \\frac{\\begin{vmatrix} c_1 & b_1 \\\\ c_2 & b_2 \\end{vmatrix}}{D}"} display />
-          <Math expr={"y = \\frac{D_y}{D} = \\frac{\\begin{vmatrix} a_1 & c_1 \\\\ a_2 & c_2 \\end{vmatrix}}{D}"} display />
+          <MathTex expr={"D = \\begin{vmatrix} a_1 & b_1 \\\\ a_2 & b_2 \\end{vmatrix} = a_1 b_2 - a_2 b_1"} display />
+          <MathTex expr={"x = \\frac{D_x}{D} = \\frac{\\begin{vmatrix} c_1 & b_1 \\\\ c_2 & b_2 \\end{vmatrix}}{D}"} display />
+          <MathTex expr={"y = \\frac{D_y}{D} = \\frac{\\begin{vmatrix} a_1 & c_1 \\\\ a_2 & c_2 \\end{vmatrix}}{D}"} display />
         </div>
         <p className="text-xs text-blue-600 mt-2">
           💡 El determinante es "cruzar y restar": diagonal principal menos diagonal secundaria.
@@ -351,13 +351,13 @@ function MetodoCramer() {
         </div>
 
         <div className="bg-white rounded-lg p-4 space-y-2 text-center">
-          <p><Math expr={`D = (${a1})(${b2}) - (${a2})(${b1}) = ${a1*b2} - ${a2*b1} = ${D}`} /></p>
-          <p><Math expr={`D_x = (${c1})(${b2}) - (${c2})(${b1}) = ${c1*b2} - ${c2*b1} = ${Dx}`} /></p>
-          <p><Math expr={`D_y = (${a1})(${c2}) - (${a2})(${c1}) = ${a1*c2} - ${a2*c1} = ${Dy}`} /></p>
+          <p><MathTex expr={`D = (${a1})(${b2}) - (${a2})(${b1}) = ${a1*b2} - ${a2*b1} = ${D}`} /></p>
+          <p><MathTex expr={`D_x = (${c1})(${b2}) - (${c2})(${b1}) = ${c1*b2} - ${c2*b1} = ${Dx}`} /></p>
+          <p><MathTex expr={`D_y = (${a1})(${c2}) - (${a2})(${c1}) = ${a1*c2} - ${a2*c1} = ${Dy}`} /></p>
           <hr className="my-3" />
           {D !== 0 ? (
             <div className="text-lg font-bold text-blue-700">
-              <Math expr={`x = \\frac{${Dx}}{${D}} = ${(Dx/D).toFixed(2)}, \\quad y = \\frac{${Dy}}{${D}} = ${(Dy/D).toFixed(2)}`} />
+              <MathTex expr={`x = \\frac{${Dx}}{${D}} = ${(Dx/D).toFixed(2)}, \\quad y = \\frac{${Dy}}{${D}} = ${(Dy/D).toFixed(2)}`} />
             </div>
           ) : (
             <p className="text-lg font-bold text-red-500">D = 0 → El sistema no tiene solución única</p>

@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Mafs, Coordinates, Polygon, Text as MafsText, Theme } from 'mafs'
 import TopicCard from '../components/TopicCard'
 import InteractiveBox from '../components/InteractiveBox'
-import Math from '../components/Math'
+import MathTex from '../components/MathTex'
 import MiniQuiz from '../components/MiniQuiz'
 import WhySection from '../components/WhySection'
 import CommonMistakes from '../components/CommonMistakes'
@@ -13,7 +13,7 @@ import GlossaryTerm from '../components/GlossaryTerm'
 function PitagorasSection() {
   const [catA, setCatA] = useState(3)
   const [catB, setCatB] = useState(4)
-  const hip = window.Math.sqrt(catA * catA + catB * catB)
+  const hip = Math.sqrt(catA * catA + catB * catB)
 
   const quizQuestions = [
     {
@@ -64,7 +64,7 @@ function PitagorasSection() {
       </p>
 
       <div className="text-center my-4">
-        <Math expr={"a^2 + b^2 = c^2"} display />
+        <MathTex expr={"a^2 + b^2 = c^2"} display />
       </div>
 
       <div className="bg-red-50 rounded-lg p-4 border border-red-200">
@@ -77,7 +77,7 @@ function PitagorasSection() {
         </p>
         <div className="mt-2 text-sm">
           <p>Ejemplo clásico: Triángulo 3-4-5</p>
-          <Math expr={"3^2 + 4^2 = 9 + 16 = 25 = 5^2 \\quad \\checkmark"} display />
+          <MathTex expr={"3^2 + 4^2 = 9 + 16 = 25 = 5^2 \\quad \\checkmark"} display />
         </div>
       </div>
 
@@ -100,7 +100,7 @@ function PitagorasSection() {
         </div>
 
         <div className="bg-white rounded-lg overflow-hidden border">
-          <Mafs viewBox={{ x: [-1, window.Math.max(catA, catB) + 2], y: [-1, window.Math.max(catA, catB) + 2] }} height={300}>
+          <Mafs viewBox={{ x: [-1, Math.max(catA, catB) + 2], y: [-1, Math.max(catA, catB) + 2] }} height={300}>
             <Coordinates.Cartesian />
             <Polygon
               points={[[0, 0], [catA, 0], [0, catB]]}
@@ -113,9 +113,9 @@ function PitagorasSection() {
         </div>
 
         <div className="mt-3 text-center text-sm">
-          <Math expr={`${catA}^2 + ${catB}^2 = ${(catA*catA).toFixed(1)} + ${(catB*catB).toFixed(1)} = ${(catA*catA + catB*catB).toFixed(1)}`} />
+          <MathTex expr={`${catA}^2 + ${catB}^2 = ${(catA*catA).toFixed(1)} + ${(catB*catB).toFixed(1)} = ${(catA*catA + catB*catB).toFixed(1)}`} />
           <br />
-          <Math expr={`c = \\sqrt{${(catA*catA + catB*catB).toFixed(1)}} = ${hip.toFixed(3)}`} />
+          <MathTex expr={`c = \\sqrt{${(catA*catA + catB*catB).toFixed(1)}} = ${hip.toFixed(3)}`} />
         </div>
 
         <div className="mt-4 bg-red-50 rounded p-3 text-sm">
@@ -137,10 +137,10 @@ function PitagorasSection() {
 
 function TrigonometriaSection() {
   const [angulo, setAngulo] = useState(30)
-  const rad = angulo * window.Math.PI / 180
-  const sen = window.Math.sin(rad)
-  const cos = window.Math.cos(rad)
-  const tan = angulo === 90 ? Infinity : window.Math.tan(rad)
+  const rad = angulo * Math.PI / 180
+  const sen = Math.sin(rad)
+  const cos = Math.cos(rad)
+  const tan = angulo === 90 ? Infinity : Math.tan(rad)
 
   const hip = 5
   const catOp = hip * sen
@@ -182,17 +182,17 @@ function TrigonometriaSection() {
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-center">
           <div className="bg-white rounded-lg p-3">
             <p className="text-2xl font-bold text-red-500">Sen</p>
-            <Math expr={"\\sin(\\alpha) = \\frac{\\text{opuesto}}{\\text{hipotenusa}}"} />
+            <MathTex expr={"\\sin(\\alpha) = \\frac{\\text{opuesto}}{\\text{hipotenusa}}"} />
             <p className="text-xs text-gray-500 mt-1"><strong>S</strong>eno = <strong>O</strong>puesto / <strong>H</strong>ipotenusa</p>
           </div>
           <div className="bg-white rounded-lg p-3">
             <p className="text-2xl font-bold text-blue-500">Cos</p>
-            <Math expr={"\\cos(\\alpha) = \\frac{\\text{adyacente}}{\\text{hipotenusa}}"} />
+            <MathTex expr={"\\cos(\\alpha) = \\frac{\\text{adyacente}}{\\text{hipotenusa}}"} />
             <p className="text-xs text-gray-500 mt-1"><strong>C</strong>oseno = <strong>A</strong>dyacente / <strong>H</strong>ipotenusa</p>
           </div>
           <div className="bg-white rounded-lg p-3">
             <p className="text-2xl font-bold text-green-500">Tan</p>
-            <Math expr={"\\tan(\\alpha) = \\frac{\\text{opuesto}}{\\text{adyacente}}"} />
+            <MathTex expr={"\\tan(\\alpha) = \\frac{\\text{opuesto}}{\\text{adyacente}}"} />
             <p className="text-xs text-gray-500 mt-1"><strong>T</strong>angente = <strong>O</strong>puesto / <strong>A</strong>dyacente</p>
           </div>
         </div>
@@ -262,8 +262,8 @@ function CilindroSection() {
   const [radio, setRadio] = useState(3)
   const [altura, setAltura] = useState(5)
 
-  const areaLateral = 2 * window.Math.PI * radio * altura
-  const areaBase = window.Math.PI * radio * radio
+  const areaLateral = 2 * Math.PI * radio * altura
+  const areaBase = Math.PI * radio * radio
   const areaTotal = areaLateral + 2 * areaBase
 
   const quizQuestions = [
@@ -302,12 +302,12 @@ function CilindroSection() {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm">
           <div className="bg-white rounded p-3 text-center">
             <p className="font-bold">Área Lateral</p>
-            <Math expr={"A_L = 2\\pi r \\cdot h"} />
+            <MathTex expr={"A_L = 2\\pi r \\cdot h"} />
             <p className="text-xs text-gray-500 mt-1">Rectángulo desenrollado: base = perímetro del círculo</p>
           </div>
           <div className="bg-white rounded p-3 text-center">
             <p className="font-bold">Área Total</p>
-            <Math expr={"A_T = 2\\pi r h + 2\\pi r^2"} />
+            <MathTex expr={"A_T = 2\\pi r h + 2\\pi r^2"} />
             <p className="text-xs text-gray-500 mt-1">Lateral + 2 tapas circulares</p>
           </div>
         </div>
@@ -419,11 +419,11 @@ function PrismaSection() {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm">
           <div className="bg-white rounded p-3 text-center">
             <p className="font-bold">Área Lateral</p>
-            <Math expr={"A_L = \\text{Perímetro base} \\times h"} />
+            <MathTex expr={"A_L = \\text{Perímetro base} \\times h"} />
           </div>
           <div className="bg-white rounded p-3 text-center">
             <p className="font-bold">Área Total</p>
-            <Math expr={"A_T = A_L + 2 \\times A_{\\text{base}}"} />
+            <MathTex expr={"A_T = A_L + 2 \\times A_{\\text{base}}"} />
           </div>
         </div>
       </div>
@@ -460,9 +460,9 @@ function PrismaSection() {
         <div className="mt-3 bg-red-50 rounded p-3 text-sm">
           <p className="font-semibold">Fórmulas generales para un prisma de n lados:</p>
           <ul className="list-disc pl-5 mt-1 space-y-1">
-            <li><strong>Vértices</strong>: <Math expr={"V = 2n"} /></li>
-            <li><strong>Aristas</strong>: <Math expr={"A = 3n"} /></li>
-            <li><strong>Caras</strong>: <Math expr={"C = n + 2"} /></li>
+            <li><strong>Vértices</strong>: <MathTex expr={"V = 2n"} /></li>
+            <li><strong>Aristas</strong>: <MathTex expr={"A = 3n"} /></li>
+            <li><strong>Caras</strong>: <MathTex expr={"C = n + 2"} /></li>
           </ul>
           <p className="text-xs text-gray-500 mt-1">Ejemplo: Prisma pentagonal (n=5) → V=10, A=15, C=7</p>
         </div>

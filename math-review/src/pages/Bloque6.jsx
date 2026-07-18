@@ -2,7 +2,7 @@ import { useState, useMemo } from 'react'
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts'
 import TopicCard from '../components/TopicCard'
 import InteractiveBox from '../components/InteractiveBox'
-import Math from '../components/Math'
+import MathTex from '../components/MathTex'
 import MiniQuiz from '../components/MiniQuiz'
 import WhySection from '../components/WhySection'
 import CommonMistakes from '../components/CommonMistakes'
@@ -28,12 +28,12 @@ function MediaMedianaModa() {
     if (n % 2 === 0) {
       mediana = (sorted[n / 2 - 1] + sorted[n / 2]) / 2
     } else {
-      mediana = sorted[window.Math.floor(n / 2)]
+      mediana = sorted[Math.floor(n / 2)]
     }
 
     const freq = {}
     sorted.forEach(v => { freq[v] = (freq[v] || 0) + 1 })
-    const maxFreq = window.Math.max(...Object.values(freq))
+    const maxFreq = Math.max(...Object.values(freq))
     const modas = Object.entries(freq).filter(([, f]) => f === maxFreq).map(([v]) => Number(v))
 
     return { media, mediana, modas, sorted, n, freq }
@@ -100,7 +100,7 @@ function MediaMedianaModa() {
           <div className="bg-white rounded-lg p-3">
             <p className="text-lg font-bold text-pink-600">Media</p>
             <p>El <strong>promedio</strong>: suma todos los valores y divide entre cuántos son.</p>
-            <Math expr={"\\bar{x} = \\frac{\\sum x_i}{n}"} />
+            <MathTex expr={"\\bar{x} = \\frac{\\sum x_i}{n}"} />
             <p className="text-xs text-gray-500 mt-1">Como repartir todo en partes iguales</p>
           </div>
           <div className="bg-white rounded-lg p-3">
@@ -181,8 +181,8 @@ function PercentilesSection() {
 
   const percentil = (p) => {
     const i = (p / 100) * (datos.length - 1)
-    const lo = window.Math.floor(i)
-    const hi = window.Math.ceil(i)
+    const lo = Math.floor(i)
+    const hi = Math.ceil(i)
     if (lo === hi) return datos[lo]
     return datos[lo] + (datos[hi] - datos[lo]) * (i - lo)
   }
@@ -377,7 +377,7 @@ function PermutacionesSection() {
       </p>
 
       <div className="text-center my-4">
-        <Math expr={"P(n, r) = \\frac{n!}{(n-r)!}"} display />
+        <MathTex expr={"P(n, r) = \\frac{n!}{(n-r)!}"} display />
       </div>
 
       <div className="bg-pink-50 rounded-lg p-4 border border-pink-200">
@@ -396,17 +396,17 @@ function PermutacionesSection() {
         <div className="flex gap-4 items-end flex-wrap mb-4">
           <div>
             <label className="block text-xs font-medium mb-1">n (total)</label>
-            <input type="number" value={n} onChange={e => setN(window.Math.max(0, Number(e.target.value)))}
+            <input type="number" value={n} onChange={e => setN(Math.max(0, Number(e.target.value)))}
               className="border rounded-lg px-3 py-2 w-20 font-mono text-center focus:ring-2 focus:ring-pink-400 outline-none" min={0} max={20} />
           </div>
           <div>
             <label className="block text-xs font-medium mb-1">r (elegir)</label>
-            <input type="number" value={r} onChange={e => setR(window.Math.max(0, Number(e.target.value)))}
+            <input type="number" value={r} onChange={e => setR(Math.max(0, Number(e.target.value)))}
               className="border rounded-lg px-3 py-2 w-20 font-mono text-center focus:ring-2 focus:ring-pink-400 outline-none" min={0} max={20} />
           </div>
         </div>
         <div className="bg-white rounded-lg p-4 text-center">
-          <Math expr={`P(${n}, ${r}) = \\frac{${n}!}{(${n}-${r})!} = \\frac{${n}!}{${n - r}!}`} />
+          <MathTex expr={`P(${n}, ${r}) = \\frac{${n}!}{(${n}-${r})!} = \\frac{${n}!}{${n - r}!}`} />
           <p className="text-2xl font-bold text-pink-600 mt-2 font-mono">{perm.toLocaleString()}</p>
         </div>
       </InteractiveBox>
@@ -461,7 +461,7 @@ function CombinacionesSection() {
       </p>
 
       <div className="text-center my-4">
-        <Math expr={"C(n, r) = \\binom{n}{r} = \\frac{n!}{r!(n-r)!}"} display />
+        <MathTex expr={"C(n, r) = \\binom{n}{r} = \\frac{n!}{r!(n-r)!}"} display />
       </div>
 
       <div className="bg-pink-50 rounded-lg p-4 border border-pink-200">
@@ -484,17 +484,17 @@ function CombinacionesSection() {
         <div className="flex gap-4 items-end flex-wrap mb-4">
           <div>
             <label className="block text-xs font-medium mb-1">n (total)</label>
-            <input type="number" value={n} onChange={e => setN(window.Math.max(0, Number(e.target.value)))}
+            <input type="number" value={n} onChange={e => setN(Math.max(0, Number(e.target.value)))}
               className="border rounded-lg px-3 py-2 w-20 font-mono text-center focus:ring-2 focus:ring-pink-400 outline-none" min={0} max={20} />
           </div>
           <div>
             <label className="block text-xs font-medium mb-1">r (elegir)</label>
-            <input type="number" value={r} onChange={e => setR(window.Math.max(0, Number(e.target.value)))}
+            <input type="number" value={r} onChange={e => setR(Math.max(0, Number(e.target.value)))}
               className="border rounded-lg px-3 py-2 w-20 font-mono text-center focus:ring-2 focus:ring-pink-400 outline-none" min={0} max={20} />
           </div>
         </div>
         <div className="bg-white rounded-lg p-4 text-center">
-          <Math expr={`C(${n}, ${r}) = \\frac{${n}!}{${r}! \\cdot ${n - r}!}`} />
+          <MathTex expr={`C(${n}, ${r}) = \\frac{${n}!}{${r}! \\cdot ${n - r}!}`} />
           <p className="text-2xl font-bold text-pink-600 mt-2 font-mono">{comb.toLocaleString()}</p>
         </div>
 
@@ -504,7 +504,7 @@ function CombinacionesSection() {
             Una banda tiene <strong>12 canciones</strong> y debe elegir <strong>4</strong> para su álbum. ¿De cuántas formas?
           </p>
           <div className="mt-2 bg-pink-50 rounded p-2">
-            <Math expr={`C(12, 4) = \\frac{12!}{4! \\cdot 8!} = \\frac{12 \\times 11 \\times 10 \\times 9}{4 \\times 3 \\times 2 \\times 1} = 495`} />
+            <MathTex expr={`C(12, 4) = \\frac{12!}{4! \\cdot 8!} = \\frac{12 \\times 11 \\times 10 \\times 9}{4 \\times 3 \\times 2 \\times 1} = 495`} />
             <p className="font-bold text-pink-700 mt-1">495 formas diferentes</p>
           </div>
         </div>
@@ -554,7 +554,7 @@ function PrincipioConteoSection() {
       </p>
 
       <div className="text-center my-4">
-        <Math expr={"\\text{Total} = n_1 \\times n_2 \\times n_3 \\times \\ldots"} display />
+        <MathTex expr={"\\text{Total} = n_1 \\times n_2 \\times n_3 \\times \\ldots"} display />
       </div>
 
       <InteractiveBox title="Ejemplo: ¿Cuántos atuendos puedes formar?">
@@ -577,7 +577,7 @@ function PrincipioConteoSection() {
         </div>
 
         <div className="text-center bg-white rounded-lg p-4">
-          <Math expr={`${camisas.length} \\times ${pantalones.length} \\times ${zapatos.length} = ${total}`} />
+          <MathTex expr={`${camisas.length} \\times ${pantalones.length} \\times ${zapatos.length} = ${total}`} />
           <p className="text-xl font-bold text-pink-600 mt-2">¡{total} atuendos diferentes!</p>
         </div>
       </InteractiveBox>

@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import TopicCard from '../components/TopicCard'
 import InteractiveBox from '../components/InteractiveBox'
-import Math from '../components/Math'
+import MathTex from '../components/MathTex'
 import MiniQuiz from '../components/MiniQuiz'
 import WhySection from '../components/WhySection'
 import CommonMistakes from '../components/CommonMistakes'
@@ -14,12 +14,12 @@ function AproximacionSection() {
   const num = parseFloat(numero) || 0
 
   const truncar = (n, dec) => {
-    const factor = window.Math.pow(10, dec)
-    return (n >= 0 ? 1 : -1) * (window.Math.floor(window.Math.abs(n) * factor) / factor)
+    const factor = Math.pow(10, dec)
+    return (n >= 0 ? 1 : -1) * (Math.floor(Math.abs(n) * factor) / factor)
   }
   const redondear = (n, dec) => {
-    const factor = window.Math.pow(10, dec)
-    return window.Math.round(n * factor) / factor
+    const factor = Math.pow(10, dec)
+    return Math.round(n * factor) / factor
   }
 
   const quizQuestions = [
@@ -78,8 +78,8 @@ function AproximacionSection() {
       </div>
 
       <div className="mt-3">
-        <p><strong>Error absoluto</strong> = <Math expr={"|\\text{valor real} - \\text{valor aproximado}|"} /></p>
-        <p><strong>Error relativo</strong> = <Math expr={"\\frac{\\text{error absoluto}}{|\\text{valor real}|}"} /></p>
+        <p><strong>Error absoluto</strong> = <MathTex expr={"|\\text{valor real} - \\text{valor aproximado}|"} /></p>
+        <p><strong>Error relativo</strong> = <MathTex expr={"\\frac{\\text{error absoluto}}{|\\text{valor real}|}"} /></p>
         <p className="text-sm text-gray-500 mt-1">El error relativo te dice <em>qué tan grave</em> fue la aproximación. Un error de $1 no es lo mismo comprando chicles ($1 de $2 = 50%) que comprando una consola ($1 de $500 = 0.2%).</p>
       </div>
 
@@ -106,7 +106,7 @@ function AproximacionSection() {
                 {[0, 1, 2, 3, 4].map(d => {
                   const t = truncar(num, d)
                   const r = redondear(num, d)
-                  const err = window.Math.abs(num - t)
+                  const err = Math.abs(num - t)
                   return (
                     <tr key={d} className="border-t border-amber-100">
                       <td className="px-3 py-2 font-mono">{d}</td>
@@ -131,7 +131,7 @@ function PotenciacionSection() {
   const [base, setBase] = useState(2)
   const [exp, setExp] = useState(3)
 
-  const resultado = window.Math.pow(base, exp)
+  const resultado = Math.pow(base, exp)
 
   const quizQuestions = [
     {
@@ -178,18 +178,18 @@ function PotenciacionSection() {
       <p className="text-sm text-gray-600 mb-4">
         Una <GlossaryTerm term="Potenciación" definition="Multiplicar un número por sí mismo varias veces. aⁿ = a × a × ... × a (n veces)">potencia</GlossaryTerm> es una multiplicación repetida.
         Es como cuando en un videojuego tu daño se multiplica: si tu ataque base es 3 y se multiplica 4 veces:
-        <Math expr={"3^4 = 3 \\times 3 \\times 3 \\times 3 = 81"} display />
+        <MathTex expr={"3^4 = 3 \\times 3 \\times 3 \\times 3 = 81"} display />
       </p>
 
       <div className="bg-amber-50 rounded-lg p-4 border border-amber-200">
         <p className="font-semibold text-amber-800 mb-2">Leyes de exponentes que DEBES saber:</p>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm">
-          <div className="bg-white rounded p-2"><Math expr={"a^m \\cdot a^n = a^{m+n}"} /></div>
-          <div className="bg-white rounded p-2"><Math expr={"\\frac{a^m}{a^n} = a^{m-n}"} /></div>
-          <div className="bg-white rounded p-2"><Math expr={"(a^m)^n = a^{m \\cdot n}"} /></div>
-          <div className="bg-white rounded p-2"><Math expr={"a^0 = 1 \\text{ (siempre!)}"} /></div>
-          <div className="bg-white rounded p-2"><Math expr={"a^{-n} = \\frac{1}{a^n}"} /></div>
-          <div className="bg-white rounded p-2"><Math expr={"(a \\cdot b)^n = a^n \\cdot b^n"} /></div>
+          <div className="bg-white rounded p-2"><MathTex expr={"a^m \\cdot a^n = a^{m+n}"} /></div>
+          <div className="bg-white rounded p-2"><MathTex expr={"\\frac{a^m}{a^n} = a^{m-n}"} /></div>
+          <div className="bg-white rounded p-2"><MathTex expr={"(a^m)^n = a^{m \\cdot n}"} /></div>
+          <div className="bg-white rounded p-2"><MathTex expr={"a^0 = 1 \\text{ (siempre!)}"} /></div>
+          <div className="bg-white rounded p-2"><MathTex expr={"a^{-n} = \\frac{1}{a^n}"} /></div>
+          <div className="bg-white rounded p-2"><MathTex expr={"(a \\cdot b)^n = a^n \\cdot b^n"} /></div>
         </div>
       </div>
 
@@ -221,8 +221,8 @@ function PotenciacionSection() {
           </div>
         </div>
         <p className="mt-3 text-sm text-gray-600">
-          <Math expr={`${base}^{${exp}} = ${isFinite(resultado) ? (Number.isInteger(resultado) ? resultado : resultado.toFixed(6)) : '\\infty'}`} />
-          {exp < 0 && <span className="ml-2">(Exponente negativo = fracción: <Math expr={`\\frac{1}{${base}^{${-exp}}}`} />)</span>}
+          <MathTex expr={`${base}^{${exp}} = ${isFinite(resultado) ? (Number.isInteger(resultado) ? resultado : resultado.toFixed(6)) : '\\infty'}`} />
+          {exp < 0 && <span className="ml-2">(Exponente negativo = fracción: <MathTex expr={`\\frac{1}{${base}^{${-exp}}}`} />)</span>}
         </p>
       </InteractiveBox>
 
@@ -237,8 +237,8 @@ function NotacionCientificaSection() {
   const convertir = (str) => {
     const n = parseFloat(str)
     if (isNaN(n) || n === 0) return { mantisa: 0, exponente: 0 }
-    const exponente = window.Math.floor(window.Math.log10(window.Math.abs(n)))
-    const mantisa = n / window.Math.pow(10, exponente)
+    const exponente = Math.floor(Math.log10(Math.abs(n)))
+    const mantisa = n / Math.pow(10, exponente)
     return { mantisa: parseFloat(mantisa.toFixed(6)), exponente }
   }
 
@@ -289,16 +289,16 @@ function NotacionCientificaSection() {
       </p>
 
       <div className="text-center my-4 text-xl">
-        <Math expr={"\\text{Número} = a \\times 10^n \\quad \\text{donde } 1 \\leq |a| < 10"} display />
+        <MathTex expr={"\\text{Número} = a \\times 10^n \\quad \\text{donde } 1 \\leq |a| < 10"} display />
       </div>
 
       <div className="bg-amber-50 rounded-lg p-4 border border-amber-200">
         <p className="font-semibold text-amber-800 mb-2">Ejemplos reales con números de redes sociales:</p>
         <ul className="list-disc pl-5 space-y-1 text-sm">
-          <li>Oyentes de Bad Bunny: <Math expr="{4.5 \\times 10^7}" /> = 45,000,000</li>
-          <li>Usuarios TikTok Ecuador: <Math expr="{1.56 \\times 10^7}" /> = 15,600,000</li>
-          <li>Visualizaciones top video: <Math expr="{8.5 \\times 10^9}" /> = 8,500,000,000</li>
-          <li>Diamantes mínimos en Free Fire: <Math expr="{1 \\times 10^1}" /> = 10</li>
+          <li>Oyentes de Bad Bunny: <MathTex expr="{4.5 \\times 10^7}" /> = 45,000,000</li>
+          <li>Usuarios TikTok Ecuador: <MathTex expr="{1.56 \\times 10^7}" /> = 15,600,000</li>
+          <li>Visualizaciones top video: <MathTex expr="{8.5 \\times 10^9}" /> = 8,500,000,000</li>
+          <li>Diamantes mínimos en Free Fire: <MathTex expr="{1 \\times 10^1}" /> = 10</li>
         </ul>
         <p className="text-xs text-amber-600 mt-2">
           💡 Exponente positivo = número grande | Exponente negativo = número pequeñito
@@ -317,10 +317,10 @@ function NotacionCientificaSection() {
           <div className="mt-4 p-4 bg-white rounded-lg text-center">
             <p className="text-sm text-gray-500 mb-1">En notación científica:</p>
             <p className="text-2xl font-bold text-amber-700">
-              <Math expr={`${mantisa} \\times 10^{${exponente}}`} />
+              <MathTex expr={`${mantisa} \\times 10^{${exponente}}`} />
             </p>
             <p className="text-xs text-gray-400 mt-2">
-              Se movió la coma {window.Math.abs(exponente)} {window.Math.abs(exponente) === 1 ? 'posición' : 'posiciones'} hacia la {exponente >= 0 ? 'izquierda' : 'derecha'}
+              Se movió la coma {Math.abs(exponente)} {Math.abs(exponente) === 1 ? 'posición' : 'posiciones'} hacia la {exponente >= 0 ? 'izquierda' : 'derecha'}
             </p>
           </div>
         )}
@@ -335,7 +335,7 @@ function RadicacionSection() {
   const [radicando, setRadicando] = useState(27)
   const [indice, setIndice] = useState(3)
 
-  const resultado = window.Math.pow(radicando, 1 / indice)
+  const resultado = Math.pow(radicando, 1 / indice)
 
   const quizQuestions = [
     {
@@ -384,16 +384,16 @@ function RadicacionSection() {
       </p>
 
       <div className="text-center my-4">
-        <Math expr={"\\sqrt[n]{a} = b \\quad \\Leftrightarrow \\quad b^n = a"} display />
+        <MathTex expr={"\\sqrt[n]{a} = b \\quad \\Leftrightarrow \\quad b^n = a"} display />
       </div>
 
       <div className="bg-amber-50 rounded-lg p-4 border border-amber-200">
         <p className="font-semibold text-amber-800 mb-2">Propiedades de radicales:</p>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm">
-          <div className="bg-white rounded p-2"><Math expr={"\\sqrt[n]{a \\cdot b} = \\sqrt[n]{a} \\cdot \\sqrt[n]{b}"} /></div>
-          <div className="bg-white rounded p-2"><Math expr={"\\sqrt[n]{\\frac{a}{b}} = \\frac{\\sqrt[n]{a}}{\\sqrt[n]{b}}"} /></div>
-          <div className="bg-white rounded p-2"><Math expr={"\\sqrt[n]{a^m} = a^{m/n}"} /></div>
-          <div className="bg-white rounded p-2"><Math expr={"\\sqrt[m]{\\sqrt[n]{a}} = \\sqrt[m \\cdot n]{a}"} /></div>
+          <div className="bg-white rounded p-2"><MathTex expr={"\\sqrt[n]{a \\cdot b} = \\sqrt[n]{a} \\cdot \\sqrt[n]{b}"} /></div>
+          <div className="bg-white rounded p-2"><MathTex expr={"\\sqrt[n]{\\frac{a}{b}} = \\frac{\\sqrt[n]{a}}{\\sqrt[n]{b}}"} /></div>
+          <div className="bg-white rounded p-2"><MathTex expr={"\\sqrt[n]{a^m} = a^{m/n}"} /></div>
+          <div className="bg-white rounded p-2"><MathTex expr={"\\sqrt[m]{\\sqrt[n]{a}} = \\sqrt[m \\cdot n]{a}"} /></div>
         </div>
       </div>
 
@@ -426,10 +426,10 @@ function RadicacionSection() {
           </div>
         </div>
         <p className="mt-3 text-sm text-gray-600">
-          <Math expr={`{\\sqrt[${indice}]{${radicando}} = ${isNaN(resultado) ? '\\text{No existe en } \\mathbb{R}' : Number.isInteger(resultado) ? resultado : resultado.toFixed(4)}}`} />
+          <MathTex expr={`{\\sqrt[${indice}]{${radicando}} = ${isNaN(resultado) ? '\\text{No existe en } \\mathbb{R}' : Number.isInteger(resultado) ? resultado : resultado.toFixed(4)}}`} />
         </p>
         <p className="text-xs text-gray-400 mt-1">
-          Verificación: {isNaN(resultado) ? 'N/A' : `${Number.isInteger(resultado) ? resultado : resultado.toFixed(4)}^${indice} ≈ ${window.Math.pow(resultado, indice).toFixed(2)}`}
+          Verificación: {isNaN(resultado) ? 'N/A' : `${Number.isInteger(resultado) ? resultado : resultado.toFixed(4)}^${indice} ≈ ${Math.pow(resultado, indice).toFixed(2)}`}
         </p>
         <p className="text-xs text-amber-600 mt-2">
           💡 Ejemplo: Área 144, índice 2 → lado 12 (terreno 12×12 en Minecraft)
