@@ -1,0 +1,7 @@
+tunnel: 7cc6ef7f-e0a9-4bc7-ad5a-acf3b8348c9a
+credentials-file: /etc/cloudflared/creds.json
+
+ingress:
+  - hostname: kidtopiaplay.com
+    service: http://app:3000
+  - service: http_status:404

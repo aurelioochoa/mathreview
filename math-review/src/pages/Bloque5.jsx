@@ -3,16 +3,62 @@ import { Mafs, Coordinates, Polygon, Text as MafsText, Theme } from 'mafs'
 import TopicCard from '../components/TopicCard'
 import InteractiveBox from '../components/InteractiveBox'
 import Math from '../components/Math'
+import MiniQuiz from '../components/MiniQuiz'
+import WhySection from '../components/WhySection'
+import CommonMistakes from '../components/CommonMistakes'
+import BlockProgress from '../components/BlockProgress'
+import ExpressSummary from '../components/ExpressSummary'
+import GlossaryTerm from '../components/GlossaryTerm'
 
 function PitagorasSection() {
   const [catA, setCatA] = useState(3)
   const [catB, setCatB] = useState(4)
   const hip = window.Math.sqrt(catA * catA + catB * catB)
 
+  const quizQuestions = [
+    {
+      question: "Un triángulo rectángulo tiene catetos de 6 y 8. ¿Cuánto mide la hipotenusa?",
+      options: ["10", "14", "48", "100"],
+      correctAnswer: 0,
+      hint: "6² + 8² = 36 + 64 = 100 = 10²",
+      reminder: "a² + b² = c². Los triángulos 3-4-5 y sus múltiplos (6-8-10, 9-12-15) son muy comunes."
+    },
+    {
+      question: "Si la hipotenusa mide 13 y un cateto mide 5, ¿cuánto mide el otro cateto?",
+      options: ["8", "12", "18", "169"],
+      correctAnswer: 0,
+      hint: "13² = 169, 5² = 25. 169 - 25 = 144 = 12²",
+      reminder: "Despeja: b² = c² - a². El triple 5-12-13 es otro clásico."
+    },
+    {
+      question: "¿Cuál es el Teorema de Pitágoras?",
+      options: ["a + b = c", "a² + b² = c²", "a × b = c", "a² × b² = c²"],
+      correctAnswer: 1,
+      hint: "Es la suma de los CUADRADOS de los catetos igual al CUADRADO de la hipotenusa.",
+      reminder: "a² + b² = c², donde c es la hipotenusa (el lado más largo, frente al ángulo recto)."
+    }
+  ]
+
   return (
     <TopicCard title="Teorema de Pitágoras" icon="📐" color="bg-bloque5">
-      <p>
-        El <strong>Teorema de Pitágoras</strong> es probablemente la fórmula más famosa de las matemáticas.
+      <WhySection>
+        En Minecraft, quieres construir una rampa diagonal entre dos puntos.
+        <br />
+        ¿Cuántos bloques necesitas? Pitágoras te da la distancia exacta.
+        <br />
+        También sirve para verificar ángulos rectos: si 3² + 4² = 5², ¡el ángulo es de 90°!
+      </WhySection>
+
+      <CommonMistakes
+        mistakes={[
+          "Confundir catetos con hipotenusa: la hipotenusa es SIEMPRE el lado más largo (frente al ángulo de 90°).",
+          "Olvidar elevar al cuadrado: es a² + b² = c², no a + b = c.",
+          "Usar Pitágoras en triángulos que NO son rectángulos — el teorema solo aplica a triángulos con ángulo de 90°."
+        ]}
+      />
+
+      <p className="text-sm text-gray-600 mb-4">
+        El <GlossaryTerm term="Teorema de Pitágoras" definition="En un triángulo rectángulo, el cuadrado de la hipotenusa es igual a la suma de los cuadrados de los catetos: a² + b² = c²">Teorema de Pitágoras</GlossaryTerm> es probablemente la fórmula más famosa de las matemáticas.
         Dice que en un <strong>triángulo rectángulo</strong> (el que tiene un ángulo de 90°), 
         el lado más largo (hipotenusa) al cuadrado es igual a la suma de los cuadrados de los otros dos lados (catetos).
       </p>
@@ -83,6 +129,8 @@ function PitagorasSection() {
           </div>
         </div>
       </InteractiveBox>
+
+      <MiniQuiz questions={quizQuestions} />
     </TopicCard>
   )
 }
@@ -97,6 +145,30 @@ function TrigonometriaSection() {
   const hip = 5
   const catOp = hip * sen
   const catAd = hip * cos
+
+  const quizQuestions = [
+    {
+      question: "En un triángulo rectángulo con ángulo de 30°, si la hipotenusa es 10, ¿cuánto mide el cateto opuesto?",
+      options: ["5", "8.66", "10", "0.5"],
+      correctAnswer: 0,
+      hint: "sen(30°) = 0.5. Cateto opuesto = hipotenusa × sen(30°) = 10 × 0.5 = 5",
+      reminder: "sen(α) = opuesto/hipotenusa → opuesto = hipotenusa × sen(α)"
+    },
+    {
+      question: "¿Qué significa SOH-CAH-TOA?",
+      options: ["Una marca de autos", "Un truco para memorizar seno, coseno y tangente", "Una fórmula de áreas", "Un tipo de triángulo"],
+      correctAnswer: 1,
+      hint: "SOH: Seno = Opuesto/Hipotenusa, CAH: Coseno = Adyacente/Hipotenusa, TOA: Tangente = Opuesto/Adyacente",
+      reminder: "SOH-CAH-TOA te ayuda a recordar las razones trigonométricas."
+    },
+    {
+      question: "Si cos(60°) = 0.5, ¿cuánto mide el cateto adyacente si la hipotenusa es 8?",
+      options: ["4", "6.93", "8", "16"],
+      correctAnswer: 0,
+      hint: "cos(60°) = adyacente/hipotenusa → adyacente = hipotenusa × cos(60°) = 8 × 0.5 = 4",
+      reminder: "cos(α) = adyacente/hipotenusa → adyacente = hipotenusa × cos(α)"
+    }
+  ]
 
   return (
     <TopicCard title="Razones Trigonométricas" icon="📏" color="bg-bloque5">
@@ -180,6 +252,8 @@ function TrigonometriaSection() {
           Identidad fundamental: sen²(α) + cos²(α) = {(sen * sen + cos * cos).toFixed(4)} ≈ 1 ✓
         </p>
       </InteractiveBox>
+
+      <MiniQuiz questions={quizQuestions} />
     </TopicCard>
   )
 }
@@ -191,6 +265,30 @@ function CilindroSection() {
   const areaLateral = 2 * window.Math.PI * radio * altura
   const areaBase = window.Math.PI * radio * radio
   const areaTotal = areaLateral + 2 * areaBase
+
+  const quizQuestions = [
+    {
+      question: "Un cilindro tiene radio 3 y altura 5. ¿Cuál es el área lateral?",
+      options: ["30π", "15π", "45π", "54π"],
+      correctAnswer: 0,
+      hint: "A_L = 2πrh = 2π(3)(5) = 30π",
+      reminder: "Área lateral = 2π × radio × altura. Es como desenrollar el cilindro en un rectángulo."
+    },
+    {
+      question: "¿Cuál es el área total de un cilindro?",
+      options: ["Solo el área lateral", "Área lateral + área de las dos tapas", "πr²", "2πr"],
+      correctAnswer: 1,
+      hint: "Área total = área lateral + 2 × área de la base",
+      reminder: "No olvides las dos tapas circulares (arriba y abajo)."
+    },
+    {
+      question: "Si desenrollas un cilindro, ¿qué forma tiene la superficie lateral?",
+      options: ["Un círculo", "Un rectángulo", "Un triángulo", "Una parábola"],
+      correctAnswer: 1,
+      hint: "La superficie lateral se convierte en un rectángulo: base = perímetro del círculo, altura = altura del cilindro",
+      reminder: "El perímetro del círculo es 2πr, que se convierte en la base del rectángulo."
+    }
+  ]
 
   return (
     <TopicCard title="El Cilindro" icon="🥫" color="bg-bloque5">
@@ -261,15 +359,57 @@ function CilindroSection() {
           </div>
         </div>
       </InteractiveBox>
+
+      <MiniQuiz questions={quizQuestions} />
     </TopicCard>
   )
 }
 
 function PrismaSection() {
+  const quizQuestions = [
+    {
+      question: "Un prisma rectangular tiene dimensiones 2×3×4. ¿Cuál es el área lateral?",
+      options: ["24", "40", "52", "28"],
+      correctAnswer: 1,
+      hint: "Perímetro base = 2(2+3) = 10. A_L = 10 × 4 = 40",
+      reminder: "Área lateral = perímetro de la base × altura."
+    },
+    {
+      question: "¿Cuántas caras tiene un prisma pentagonal?",
+      options: ["5", "6", "7", "10"],
+      correctAnswer: 2,
+      hint: "Fórmula: C = n + 2. Para pentágono, n=5 → C = 5 + 2 = 7",
+      reminder: "Un prisma de n lados tiene n caras laterales + 2 bases = n + 2 caras total."
+    },
+    {
+      question: "Un prisma triangular tiene 6 vértices. ¿Cuántas aristas tiene?",
+      options: ["6", "9", "12", "15"],
+      correctAnswer: 1,
+      hint: "Fórmula: A = 3n. Para triángulo, n=3 → A = 3×3 = 9",
+      reminder: "Prisma de n lados: Vértices = 2n, Aristas = 3n, Caras = n + 2."
+    }
+  ]
+
   return (
     <TopicCard title="El Prisma" icon="📦" color="bg-bloque5">
-      <p>
-        Un <strong>prisma</strong> es un cuerpo 3D con dos <strong>bases iguales y paralelas</strong> 
+      <WhySection>
+        Estás diseñando una caja para guardar tus controles de videojuego.
+        <br />
+        Necesitas calcular exactamente cuánto cartón usar para no desperdiciar material.
+        <br />
+        Los prismas están en todas partes: cajas, casas, edificios, contenedores.
+      </WhySection>
+
+      <CommonMistakes
+        mistakes={[
+          "Confundir prisma rectangular con prisma cuadrado — el rectangular tiene bases rectangulares, no cuadradas.",
+          "Olvidar que el área total incluye las DOS bases, no solo una.",
+          "Calcular mal el perímetro de la base para el área lateral."
+        ]}
+      />
+
+      <p className="text-sm text-gray-600 mb-4">
+        Un <GlossaryTerm term="Prisma" definition="Cuerpo geométrico con dos bases poligonales iguales y paralelas unidas por caras rectangulares">prisma</GlossaryTerm> es un cuerpo 3D con dos <strong>bases iguales y paralelas</strong> 
         (pueden ser triángulos, cuadrados, pentágonos, etc.) unidas por rectángulos.
         Una caja de zapatos es un prisma rectangular. Un Toblerone es un prisma triangular.
       </p>
@@ -327,11 +467,15 @@ function PrismaSection() {
           <p className="text-xs text-gray-500 mt-1">Ejemplo: Prisma pentagonal (n=5) → V=10, A=15, C=7</p>
         </div>
       </div>
+
+      <MiniQuiz questions={quizQuestions} />
     </TopicCard>
   )
 }
 
 export default function Bloque5() {
+  const totalTemas = 4
+
   return (
     <div>
       <div className="mb-8">
@@ -340,10 +484,50 @@ export default function Bloque5() {
         <p className="text-gray-500 mt-2">Pitágoras, seno, coseno, tangente, cilindro y prisma</p>
       </div>
 
+      <BlockProgress current={1} total={totalTemas} blockName="Bloque 5: Geometría" />
+
       <PitagorasSection />
+      
+      <BlockProgress current={2} total={totalTemas} blockName="Bloque 5: Geometría" />
+      
       <TrigonometriaSection />
+      
+      <BlockProgress current={3} total={totalTemas} blockName="Bloque 5: Geometría" />
+      
       <CilindroSection />
+      
+      <BlockProgress current={4} total={totalTemas} blockName="Bloque 5: Geometría" />
+      
       <PrismaSection />
+
+      <ExpressSummary color="bg-red-500">
+        <div className="space-y-4">
+          <div className="bg-white rounded-lg p-3 border border-red-200">
+            <p className="font-bold text-red-800 text-sm">📐 Teorema de Pitágoras</p>
+            <p className="text-xs text-gray-600 mt-1">a² + b² = c² (solo triángulos rectángulos)</p>
+            <p className="text-xs text-red-500">c es la hipotenusa (lado más largo, frente al ángulo de 90°)</p>
+          </div>
+          
+          <div className="bg-white rounded-lg p-3 border border-red-200">
+            <p className="font-bold text-red-800 text-sm">📏 Trigonometría SOH-CAH-TOA</p>
+            <p className="text-xs text-gray-600 mt-1">sen(α) = opuesto/hipotenusa</p>
+            <p className="text-xs text-gray-600">cos(α) = adyacente/hipotenusa</p>
+            <p className="text-xs text-gray-600">tan(α) = opuesto/adyacente</p>
+          </div>
+          
+          <div className="bg-white rounded-lg p-3 border border-red-200">
+            <p className="font-bold text-red-800 text-sm">🥫 Cilindro</p>
+            <p className="text-xs text-gray-600 mt-1">A_L = 2πrh (superficie lateral)</p>
+            <p className="text-xs text-gray-600">A_T = 2πrh + 2πr² (incluye tapas)</p>
+          </div>
+          
+          <div className="bg-white rounded-lg p-3 border border-red-200">
+            <p className="font-bold text-red-800 text-sm">📦 Prisma de n lados</p>
+            <p className="text-xs text-gray-600 mt-1">Vértices: 2n, Aristas: 3n, Caras: n + 2</p>
+            <p className="text-xs text-gray-600">A_L = perímetro base × altura</p>
+          </div>
+        </div>
+      </ExpressSummary>
     </div>
   )
 }

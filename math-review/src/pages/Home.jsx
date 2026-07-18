@@ -61,13 +61,20 @@ const bloques = [
 export default function Home() {
   return (
     <div>
-      <div className="text-center mb-12">
+      <div className="text-center mb-8">
+        <div className="inline-block px-4 py-2 bg-gradient-to-r from-indigo-500 to-purple-500 text-white rounded-full text-sm font-semibold mb-4">
+          🎮 Matemáticas sin estrés
+        </div>
         <h1 className="text-4xl md:text-5xl font-extrabold text-gray-800 mb-4">
           📐 Repaso de Matemáticas
         </h1>
-        <p className="text-xl text-gray-500 max-w-2xl mx-auto">
+        <p className="text-xl text-gray-500 max-w-2xl mx-auto mb-4">
           Guía de estudio interactiva para el examen remedial de 10mo.
-          Haz clic en cualquier bloque para empezar a estudiar.
+          Diseñada especialmente para que entiendas cada tema paso a paso.
+        </p>
+        <p className="text-sm text-indigo-600 font-medium max-w-xl mx-auto">
+          💡 Tip: No necesitas ser experto. Cada bloque tiene explicaciones simples, 
+          ejemplos de videojuegos y mini-quizzes para practicar sin presión.
         </p>
       </div>
 
