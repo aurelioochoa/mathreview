@@ -270,16 +270,16 @@ function MetodoCramer() {
   const quizQuestions = [
     {
       question: "Para el sistema {2x + 3y = 12, 4x - 3y = 6}, ¿cuánto vale D?",
-      options: ["6", "-6", "18", "12"],
+      options: ["6", "-18", "18", "-12"],
       correctAnswer: 1,
-      hint: "D = (2)(-3) - (4)(3) = -6 - 12 = -18? Espera... D = a₁b₂ - a₂b₁ = 2(-3) - 4(3) = -6 - 12 = -18. Revisa opciones...",
+      hint: "D = a₁b₂ - a₂b₁ = (2)(-3) - (4)(3) = -6 - 12 = -18",
       reminder: "D = a₁b₂ - a₂b₁. Cruza y resta."
     },
     {
-      question: "Si D = -18, Dx = -36, Dy = 12, ¿cuánto vale x?",
+      question: "Para ese mismo sistema, D = -18 y Dx = -54. ¿Cuánto vale x?",
       options: ["2", "-2", "3", "-3"],
-      correctAnswer: 0,
-      hint: "x = Dx/D = -36/-18 = 2",
+      correctAnswer: 2,
+      hint: "x = Dx/D = -54/-18 = 3",
       reminder: "x = Dx/D, y = Dy/D. Divide los determinantes."
     },
     {
