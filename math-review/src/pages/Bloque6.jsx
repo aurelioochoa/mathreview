@@ -2,7 +2,13 @@ import { useState, useMemo } from 'react'
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts'
 import TopicCard from '../components/TopicCard'
 import InteractiveBox from '../components/InteractiveBox'
-import Math from '../components/Math'
+import MathTex from '../components/MathTex'
+import MiniQuiz from '../components/MiniQuiz'
+import WhySection from '../components/WhySection'
+import CommonMistakes from '../components/CommonMistakes'
+import BlockProgress from '../components/BlockProgress'
+import ExpressSummary from '../components/ExpressSummary'
+import GlossaryTerm from '../components/GlossaryTerm'
 
 function MediaMedianaModa() {
   const [input, setInput] = useState('12, 15, 18, 15, 20, 22, 15, 25, 18, 30')
@@ -22,12 +28,12 @@ function MediaMedianaModa() {
     if (n % 2 === 0) {
       mediana = (sorted[n / 2 - 1] + sorted[n / 2]) / 2
     } else {
-      mediana = sorted[window.Math.floor(n / 2)]
+      mediana = sorted[Math.floor(n / 2)]
     }
 
     const freq = {}
     sorted.forEach(v => { freq[v] = (freq[v] || 0) + 1 })
-    const maxFreq = window.Math.max(...Object.values(freq))
+    const maxFreq = Math.max(...Object.values(freq))
     const modas = Object.entries(freq).filter(([, f]) => f === maxFreq).map(([v]) => Number(v))
 
     return { media, mediana, modas, sorted, n, freq }
@@ -42,10 +48,50 @@ function MediaMedianaModa() {
       .map(([val, count]) => ({ valor: Number(val), frecuencia: count }))
   }, [datos, stats])
 
+  const quizQuestions = [
+    {
+      question: "¿Cuál es la media de: 10, 20, 30, 40, 50?",
+      options: ["20", "25", "30", "40"],
+      correctAnswer: 2,
+      hint: "Suma = 150, n = 5. Media = 150/5 = 30",
+      reminder: "Media = suma de todos los valores / número de valores"
+    },
+    {
+      question: "¿Cuál es la mediana de: 3, 7, 1, 9, 5?",
+      options: ["3", "5", "7", "9"],
+      correctAnswer: 1,
+      hint: "Ordenados: 1, 3, 5, 7, 9. El del medio es 5",
+      reminder: "Mediana = valor del medio cuando los datos están ordenados"
+    },
+    {
+      question: "En los datos: 2, 3, 3, 4, 5, 5, 5, ¿cuál es la moda?",
+      options: ["2", "3", "4", "5"],
+      correctAnswer: 3,
+      hint: "El 5 aparece 3 veces, más que cualquier otro",
+      reminder: "Moda = valor que más se repite"
+    }
+  ]
+
   return (
     <TopicCard title="Media, Mediana y Moda" icon="📊" color="bg-bloque6">
-      <p>
-        Las <strong>medidas de tendencia central</strong> te dicen dónde está el "centro" de un grupo de datos.
+      <WhySection>
+        Ves las estadísticas de tu cuenta de Free Fire: kills promedio por partida, puntuación máxima frecuente.
+        <br />
+        Eso es estadística: entender tus datos para mejorar tu juego.
+        <br />
+        La media te da el promedio, la mediana el valor central, la moda lo más común.
+      </WhySection>
+
+      <CommonMistakes
+        mistakes={[
+          "Calcular la mediana sin ordenar los datos primero — siempre ordena de menor a mayor.",
+          "Confundir moda con media: la moda es el valor más frecuente, no el promedio.",
+          "Olvidar que si hay cantidad par de datos, la mediana es el promedio de los dos del centro."
+        ]}
+      />
+
+      <p className="text-sm text-gray-600 mb-4">
+        Las <GlossaryTerm term="Medidas de tendencia central" definition="Valores que representan el centro de un conjunto de datos: media, mediana y moda">medidas de tendencia central</GlossaryTerm> te dicen dónde está el "centro" de un grupo de datos.
         Es como buscar el jugador "promedio" de un equipo de fútbol.
       </p>
 
@@ -54,7 +100,7 @@ function MediaMedianaModa() {
           <div className="bg-white rounded-lg p-3">
             <p className="text-lg font-bold text-pink-600">Media</p>
             <p>El <strong>promedio</strong>: suma todos los valores y divide entre cuántos son.</p>
-            <Math expr={"\\bar{x} = \\frac{\\sum x_i}{n}"} />
+            <MathTex expr={"\\bar{x} = \\frac{\\sum x_i}{n}"} />
             <p className="text-xs text-gray-500 mt-1">Como repartir todo en partes iguales</p>
           </div>
           <div className="bg-white rounded-lg p-3">
@@ -120,6 +166,8 @@ function MediaMedianaModa() {
           </>
         )}
       </InteractiveBox>
+
+      <MiniQuiz questions={quizQuestions} />
     </TopicCard>
   )
 }
@@ -133,8 +181,8 @@ function PercentilesSection() {
 
   const percentil = (p) => {
     const i = (p / 100) * (datos.length - 1)
-    const lo = window.Math.floor(i)
-    const hi = window.Math.ceil(i)
+    const lo = Math.floor(i)
+    const hi = Math.ceil(i)
     if (lo === hi) return datos[lo]
     return datos[lo] + (datos[hi] - datos[lo]) * (i - lo)
   }
@@ -145,10 +193,50 @@ function PercentilesSection() {
   const min = datos[0]
   const max = datos[datos.length - 1]
 
+  const quizQuestions = [
+    {
+      question: "Si estás en el percentil 75 de una clase, ¿qué significa?",
+      options: ["Sacaste 75 puntos", "Le ganaste al 75% de la clase", "Estás en el lugar 75", "El 75% sacó más que tú"],
+      correctAnswer: 1,
+      hint: "Percentil 75 = le ganaste al 75% de los estudiantes",
+      reminder: "Percentil P = le ganas al P% de los datos."
+    },
+    {
+      question: "¿Qué cuartil es igual a la mediana?",
+      options: ["Q1", "Q2", "Q3", "Ninguno"],
+      correctAnswer: 1,
+      hint: "Q2 = Percentil 50 = mediana (el valor del medio)",
+      reminder: "Q2 divide los datos en dos mitades iguales, igual que la mediana."
+    },
+    {
+      question: "En los datos ordenados: 2, 4, 6, 8, 10, ¿cuál es Q1 (percentil 25)?",
+      options: ["2", "4", "6", "8"],
+      correctAnswer: 0,
+      hint: "Q1 es el valor en el 25% de los datos. Con 5 datos, está cerca del primer valor.",
+      reminder: "Q1 = percentil 25, aproximadamente el valor que deja 1/4 de los datos debajo."
+    }
+  ]
+
   return (
     <TopicCard title="Percentiles, Deciles y Cuartiles" icon="📉" color="bg-bloque6">
-      <p>
-        Los <strong>cuartiles</strong> dividen tus datos en <strong>4 partes iguales</strong>.
+      <WhySection>
+        En tu ranking de Free Fire, estás en el top 10% de jugadores.
+        <br />
+        Eso significa que le ganas al 90% de los jugadores — estás en el percentil 90.
+        <br />
+        Los percentiles te dicen dónde te posicionas respecto a otros.
+      </WhySection>
+
+      <CommonMistakes
+        mistakes={[
+          "Confundir percentil 80 con 'sacaste 80 puntos' — no, significa que le ganaste al 80%.",
+          "Olvidar que Q2 (cuartil 2) es la mediana, no Q1.",
+          "Pensar que hay 4 cuartiles — en realidad son 3 puntos que dividen en 4 partes."
+        ]}
+      />
+
+      <p className="text-sm text-gray-600 mb-4">
+        Los <GlossaryTerm term="Cuartiles" definition="Valores que dividen un conjunto de datos en 4 partes iguales: Q1 (25%), Q2 (50% = mediana), Q3 (75%)">cuartiles</GlossaryTerm> dividen tus datos en <strong>4 partes iguales</strong>.
         Los <strong>deciles</strong> en 10 partes y los <strong>percentiles</strong> en 100 partes.
         Es como cuando en un examen te dicen "estás en el percentil 80": quiere decir que le ganaste al 80% de los estudiantes.
       </p>
@@ -221,6 +309,8 @@ function PercentilesSection() {
           </ul>
         </div>
       </InteractiveBox>
+
+      <MiniQuiz questions={quizQuestions} />
     </TopicCard>
   )
 }
@@ -238,16 +328,56 @@ function PermutacionesSection() {
 
   const perm = n >= r && r >= 0 ? factorial(n) / factorial(n - r) : 0
 
+  const quizQuestions = [
+    {
+      question: "¿De cuántas formas puedes ordenar 3 libros en un estante de 5?",
+      options: ["10", "20", "60", "120"],
+      correctAnswer: 2,
+      hint: "P(5,3) = 5!/(5-3)! = 120/2 = 60",
+      reminder: "Permutación: orden SÍ importa. P(n,r) = n!/(n-r)!"
+    },
+    {
+      question: "¿Qué es 5! (factorial de 5)?",
+      options: ["25", "120", "5", "15"],
+      correctAnswer: 1,
+      hint: "5! = 5 × 4 × 3 × 2 × 1 = 120",
+      reminder: "n! = n × (n-1) × (n-2) × ... × 1"
+    },
+    {
+      question: "¿Cuándo usas permutaciones en vez de combinaciones?",
+      options: ["Cuando el orden no importa", "Cuando el orden SÍ importa", "Cuando hay menos elementos", "Nunca"],
+      correctAnswer: 1,
+      hint: "Permutaciones cuando el orden importa (pódium, contraseñas, PIN)",
+      reminder: "Permutación: orden importa. Combinación: orden no importa."
+    }
+  ]
+
   return (
     <TopicCard title="Permutaciones" icon="🔢" color="bg-bloque6">
-      <p>
-        Una <strong>permutación</strong> es cuando el <strong>orden SÍ importa</strong>.
+      <WhySection>
+        Creando un código PIN para tu celular: 4 dígitos donde cada orden es diferente.
+        <br />
+        1234 es diferente de 4321 — eso es permutación.
+        <br />
+        Las permutaciones cuentan todas las formas posibles de ordenar cosas cuando el orden importa.
+      </WhySection>
+
+      <CommonMistakes
+        mistakes={[
+          "Usar permutaciones cuando el orden no importa — ahí se usa combinación.",
+          "Olvidar que 0! = 1 (no es cero).",
+          "Confundir n con r: n es el total disponible, r es cuántos vas a elegir."
+        ]}
+      />
+
+      <p className="text-sm text-gray-600 mb-4">
+        Una <GlossaryTerm term="Permutación" definition="Número de formas de ordenar r elementos de un conjunto de n, cuando el orden SÍ importa: P(n,r) = n!/(n-r)!">permutación</GlossaryTerm> es cuando el <strong>orden SÍ importa</strong>.
         Piensa en los puestos de una carrera: no es lo mismo quedar 1°-2°-3° que 3°-2°-1°.
         ¡Son resultados diferentes!
       </p>
 
       <div className="text-center my-4">
-        <Math expr={"P(n, r) = \\frac{n!}{(n-r)!}"} display />
+        <MathTex expr={"P(n, r) = \\frac{n!}{(n-r)!}"} display />
       </div>
 
       <div className="bg-pink-50 rounded-lg p-4 border border-pink-200">
@@ -266,20 +396,22 @@ function PermutacionesSection() {
         <div className="flex gap-4 items-end flex-wrap mb-4">
           <div>
             <label className="block text-xs font-medium mb-1">n (total)</label>
-            <input type="number" value={n} onChange={e => setN(window.Math.max(0, Number(e.target.value)))}
+            <input type="number" value={n} onChange={e => setN(Math.max(0, Number(e.target.value)))}
               className="border rounded-lg px-3 py-2 w-20 font-mono text-center focus:ring-2 focus:ring-pink-400 outline-none" min={0} max={20} />
           </div>
           <div>
             <label className="block text-xs font-medium mb-1">r (elegir)</label>
-            <input type="number" value={r} onChange={e => setR(window.Math.max(0, Number(e.target.value)))}
+            <input type="number" value={r} onChange={e => setR(Math.max(0, Number(e.target.value)))}
               className="border rounded-lg px-3 py-2 w-20 font-mono text-center focus:ring-2 focus:ring-pink-400 outline-none" min={0} max={20} />
           </div>
         </div>
         <div className="bg-white rounded-lg p-4 text-center">
-          <Math expr={`P(${n}, ${r}) = \\frac{${n}!}{(${n}-${r})!} = \\frac{${n}!}{${n - r}!}`} />
+          <MathTex expr={`P(${n}, ${r}) = \\frac{${n}!}{(${n}-${r})!} = \\frac{${n}!}{${n - r}!}`} />
           <p className="text-2xl font-bold text-pink-600 mt-2 font-mono">{perm.toLocaleString()}</p>
         </div>
       </InteractiveBox>
+
+      <MiniQuiz questions={quizQuestions} />
     </TopicCard>
   )
 }
@@ -297,6 +429,30 @@ function CombinacionesSection() {
 
   const comb = n >= r && r >= 0 ? factorial(n) / (factorial(r) * factorial(n - r)) : 0
 
+  const quizQuestions = [
+    {
+      question: "¿De cuántas formas puedes elegir 3 amigos de un grupo de 8 para tu equipo?",
+      options: ["24", "56", "336", "512"],
+      correctAnswer: 1,
+      hint: "C(8,3) = 8!/(3! × 5!) = 56. El orden no importa en un equipo.",
+      reminder: "Combinación: orden NO importa. C(n,r) = n!/(r!(n-r)!)"
+    },
+    {
+      question: "Una banda tiene 10 canciones y elige 5 para un álbum. ¿Cuántas formas?",
+      options: ["252", "120", "50", "30240"],
+      correctAnswer: 0,
+      hint: "C(10,5) = 10!/(5! × 5!) = 252. El orden de las canciones en el álbum no importa para la selección.",
+      reminder: "Para elegir elementos donde el orden no importa, usa combinaciones."
+    },
+    {
+      question: "¿Cuál es la diferencia entre permutación y combinación?",
+      options: ["No hay diferencia", "Permutación: orden importa. Combinación: orden no importa", "Combinación usa división, permutación no", "Permutación es solo para números pequeños"],
+      correctAnswer: 1,
+      hint: "Permutación cuenta ordenes diferentes como distintos. Combinación los trata como iguales.",
+      reminder: "PIN (permutación): 1234 ≠ 4321. Equipo (combinación): {Ana, Beto} = {Beto, Ana}"
+    }
+  ]
+
   return (
     <TopicCard title="Combinaciones" icon="🎲" color="bg-bloque6">
       <p>
@@ -305,7 +461,7 @@ function CombinacionesSection() {
       </p>
 
       <div className="text-center my-4">
-        <Math expr={"C(n, r) = \\binom{n}{r} = \\frac{n!}{r!(n-r)!}"} display />
+        <MathTex expr={"C(n, r) = \\binom{n}{r} = \\frac{n!}{r!(n-r)!}"} display />
       </div>
 
       <div className="bg-pink-50 rounded-lg p-4 border border-pink-200">
@@ -328,17 +484,17 @@ function CombinacionesSection() {
         <div className="flex gap-4 items-end flex-wrap mb-4">
           <div>
             <label className="block text-xs font-medium mb-1">n (total)</label>
-            <input type="number" value={n} onChange={e => setN(window.Math.max(0, Number(e.target.value)))}
+            <input type="number" value={n} onChange={e => setN(Math.max(0, Number(e.target.value)))}
               className="border rounded-lg px-3 py-2 w-20 font-mono text-center focus:ring-2 focus:ring-pink-400 outline-none" min={0} max={20} />
           </div>
           <div>
             <label className="block text-xs font-medium mb-1">r (elegir)</label>
-            <input type="number" value={r} onChange={e => setR(window.Math.max(0, Number(e.target.value)))}
+            <input type="number" value={r} onChange={e => setR(Math.max(0, Number(e.target.value)))}
               className="border rounded-lg px-3 py-2 w-20 font-mono text-center focus:ring-2 focus:ring-pink-400 outline-none" min={0} max={20} />
           </div>
         </div>
         <div className="bg-white rounded-lg p-4 text-center">
-          <Math expr={`C(${n}, ${r}) = \\frac{${n}!}{${r}! \\cdot ${n - r}!}`} />
+          <MathTex expr={`C(${n}, ${r}) = \\frac{${n}!}{${r}! \\cdot ${n - r}!}`} />
           <p className="text-2xl font-bold text-pink-600 mt-2 font-mono">{comb.toLocaleString()}</p>
         </div>
 
@@ -348,11 +504,13 @@ function CombinacionesSection() {
             Una banda tiene <strong>12 canciones</strong> y debe elegir <strong>4</strong> para su álbum. ¿De cuántas formas?
           </p>
           <div className="mt-2 bg-pink-50 rounded p-2">
-            <Math expr={`C(12, 4) = \\frac{12!}{4! \\cdot 8!} = \\frac{12 \\times 11 \\times 10 \\times 9}{4 \\times 3 \\times 2 \\times 1} = 495`} />
+            <MathTex expr={`C(12, 4) = \\frac{12!}{4! \\cdot 8!} = \\frac{12 \\times 11 \\times 10 \\times 9}{4 \\times 3 \\times 2 \\times 1} = 495`} />
             <p className="font-bold text-pink-700 mt-1">495 formas diferentes</p>
           </div>
         </div>
       </InteractiveBox>
+
+      <MiniQuiz questions={quizQuestions} />
     </TopicCard>
   )
 }
@@ -364,6 +522,30 @@ function PrincipioConteoSection() {
 
   const total = camisas.length * pantalones.length * zapatos.length
 
+  const quizQuestions = [
+    {
+      question: "Tienes 4 camisas, 3 pantalones y 2 zapatos. ¿Cuántos atuendos diferentes puedes formar?",
+      options: ["9", "12", "20", "24"],
+      correctAnswer: 3,
+      hint: "4 × 3 × 2 = 24. Multiplica las opciones de cada decisión.",
+      reminder: "Principio de conteo: Total = n₁ × n₂ × n₃ × ..."
+    },
+    {
+      question: "Un menú tiene 3 entradas, 5 platos principales y 2 postres. ¿Cuántos menús completos?",
+      options: ["10", "15", "30", "25"],
+      correctAnswer: 2,
+      hint: "3 × 5 × 2 = 30 menús diferentes.",
+      reminder: "Multiplica las opciones de cada elección independiente."
+    },
+    {
+      question: "¿Cuándo usas el principio de conteo?",
+      options: ["Cuando sumas cantidades", "Cuando tienes decisiones independientes seguidas", "Cuando restas valores", "Cuando divides números"],
+      correctAnswer: 1,
+      hint: "El principio de conteo aplica cuando tomas decisiones independientes una tras otra.",
+      reminder: "Principio de conteo: para decisiones seguidas, multiplica las opciones."
+    }
+  ]
+
   return (
     <TopicCard title="Principio de Conteo" icon="👕" color="bg-bloque6">
       <p>
@@ -372,7 +554,7 @@ function PrincipioConteoSection() {
       </p>
 
       <div className="text-center my-4">
-        <Math expr={"\\text{Total} = n_1 \\times n_2 \\times n_3 \\times \\ldots"} display />
+        <MathTex expr={"\\text{Total} = n_1 \\times n_2 \\times n_3 \\times \\ldots"} display />
       </div>
 
       <InteractiveBox title="Ejemplo: ¿Cuántos atuendos puedes formar?">
@@ -395,15 +577,19 @@ function PrincipioConteoSection() {
         </div>
 
         <div className="text-center bg-white rounded-lg p-4">
-          <Math expr={`${camisas.length} \\times ${pantalones.length} \\times ${zapatos.length} = ${total}`} />
+          <MathTex expr={`${camisas.length} \\times ${pantalones.length} \\times ${zapatos.length} = ${total}`} />
           <p className="text-xl font-bold text-pink-600 mt-2">¡{total} atuendos diferentes!</p>
         </div>
       </InteractiveBox>
+
+      <MiniQuiz questions={quizQuestions} />
     </TopicCard>
   )
 }
 
 export default function Bloque6() {
+  const totalTemas = 5
+
   return (
     <div>
       <div className="mb-8">
@@ -412,11 +598,49 @@ export default function Bloque6() {
         <p className="text-gray-500 mt-2">Media, mediana, moda, percentiles, permutaciones y combinaciones</p>
       </div>
 
+      <BlockProgress current={1} total={totalTemas} blockName="Bloque 6: Estadística" />
       <MediaMedianaModa />
+      
+      <BlockProgress current={2} total={totalTemas} blockName="Bloque 6: Estadística" />
       <PercentilesSection />
+      
+      <BlockProgress current={3} total={totalTemas} blockName="Bloque 6: Estadística" />
       <PrincipioConteoSection />
+      
+      <BlockProgress current={4} total={totalTemas} blockName="Bloque 6: Estadística" />
       <PermutacionesSection />
+      
+      <BlockProgress current={5} total={totalTemas} blockName="Bloque 6: Estadística" />
       <CombinacionesSection />
+
+      <ExpressSummary color="bg-pink-500">
+        <div className="space-y-4">
+          <div className="bg-white rounded-lg p-3 border border-pink-200">
+            <p className="font-bold text-pink-800 text-sm">📊 Media, Mediana y Moda</p>
+            <p className="text-xs text-gray-600 mt-1">Media: promedio (suma/n)</p>
+            <p className="text-xs text-gray-600">Mediana: valor del medio (datos ordenados)</p>
+            <p className="text-xs text-gray-600">Moda: valor más frecuente</p>
+          </div>
+          
+          <div className="bg-white rounded-lg p-3 border border-pink-200">
+            <p className="font-bold text-pink-800 text-sm">📉 Percentiles y Cuartiles</p>
+            <p className="text-xs text-gray-600 mt-1">Q1 = P25 (25% debajo), Q2 = Mediana = P50, Q3 = P75</p>
+            <p className="text-xs text-pink-500">Percentil 80 = le ganas al 80% de los datos</p>
+          </div>
+          
+          <div className="bg-white rounded-lg p-3 border border-pink-200">
+            <p className="font-bold text-pink-800 text-sm">👕 Principio de Conteo</p>
+            <p className="text-xs text-gray-600 mt-1">Decisiones seguidas: multiplica las opciones</p>
+            <p className="text-xs text-gray-600">Total = n₁ × n₂ × n₃ × ...</p>
+          </div>
+          
+          <div className="bg-white rounded-lg p-3 border border-pink-200">
+            <p className="font-bold text-pink-800 text-sm">🎲 Permutaciones vs Combinaciones</p>
+            <p className="text-xs text-gray-600 mt-1">Permutación: orden SÍ importa → P(n,r) = n!/(n-r)!</p>
+            <p className="text-xs text-gray-600">Combinación: orden NO importa → C(n,r) = n!/(r!(n-r)!)</p>
+          </div>
+        </div>
+      </ExpressSummary>
     </div>
   )
 }

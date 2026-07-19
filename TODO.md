@@ -2,22 +2,30 @@
 
 Plan por fases. Spec: [docs/superpowers/specs/2026-07-18-math-quest-design.md](docs/superpowers/specs/2026-07-18-math-quest-design.md)
 
-## Fase 0 — Base segura
-- [ ] 🔴 Mover el token del túnel de Cloudflare de `docker-compose.yml` a `.env` (y añadir `.env` a `.gitignore`)
-- [ ] Commitear el trabajo pendiente (6 componentes nuevos, bloques reescritos, deploy)
-- [ ] Corregir bug MCM "36 minutos" vs horas (Bloque 2)
-- [ ] Corregir pregunta inconsistente de Cramer (Bloque 3, D=−18 vs opciones)
-- [ ] Renombrar componente `Math` → `MathTex` y eliminar los `window.Math`
+## Fase 0 — Base segura ✅ (rama feat/math-quest)
+- [x] 🔴 Mover el token del túnel de Cloudflare de `docker-compose.yml` a `.env` (y añadir `.env` a `.gitignore`) — ⚠️ rotar el token en el dashboard de Cloudflare (vivió en texto plano)
+- [x] Commitear el trabajo pendiente (6 componentes nuevos, bloques reescritos, deploy)
+- [x] Corregir bug MCM "36 minutos" vs horas (Bloque 2)
+- [x] Corregir pregunta inconsistente de Cramer (Bloque 3, D=−18 vs opciones)
+- [x] Renombrar componente `Math` → `MathTex` y eliminar los `window.Math`
 - [x] Crear `docs/` (análisis, research, spec) y `TODO.md`
 
-## Fase 1 — Motor piloto
-- [ ] `state/gameStore.js` (XP, estrellas, vidas, monedas, logros, racha) + `state/persistence.js` (localStorage versionado + respaldo)
-- [ ] Definir schema de contenido (mundo → niveles → pasos + reto + quests + jefe)
-- [ ] Extraer widgets de Bloque 1 a `src/widgets/` con registro por id
-- [ ] `engine/LevelPlayer.jsx` (briefing por pasos + reto con vidas y estrellas)
-- [ ] `engine/generators.js` (plantillas de preguntas parametrizadas)
-- [ ] Migrar Mundo 3 🌋 (← Bloque 1) como piloto, conviviendo con rutas viejas
-- [ ] Tests Vitest: guardado/restauración, curva XP, generadores
+## Fase 1 — Motor piloto ✅ (rama feat/math-quest, 28 tests, build OK)
+- [x] `state/gameStore.jsx` (XP, estrellas, monedas + persistencia auto) + `state/persistence.js` (localStorage versionado + respaldo) + `state/xpCurve.js`
+- [x] Definir schema de contenido (mundo → niveles → pasos de briefing + reto)
+- [x] Extraer widgets de Bloque 1 a `src/widgets/` con registro por id
+- [x] `engine/LevelPlayer.jsx` (briefing por pasos + reto con vidas y estrellas)
+- [x] `engine/generators.js` (plantillas parametrizadas + barajado de opciones)
+- [x] Migrar Mundo 3 🌋 (← Bloque 1) como piloto, conviviendo con rutas viejas (`WorldView` + rutas `/mundo/*`)
+- [x] Tests Vitest: guardado/restauración, curva XP, generadores + test de integración del bucle jugable
+- [ ] ⏳ Verificación e2e interactiva en navegador (pendiente: extensión Chrome no conectada; cubierto parcialmente por test de integración + dev server HTTP 200)
+
+### Follow-ups de la revisión final (no bloqueantes, para Fase 2/3)
+- [ ] Economía: XP/monedas se otorgan en cada completado (solo estrellas topadas con `Math.max`) — decidir la regla al añadir la tienda (Fase 3)
+- [ ] `LevelPlayer`: añadir `key={levelId}` cuando exista navegación nivel→nivel (evita estado obsoleto)
+- [ ] Retirar las preguntas duplicadas entre `Bloque1` y `mundo3` al migrar los Bloques
+- [ ] `persistence`: `try/catch` en `setItem` (QuotaExceededError)
+- [ ] Render-test de `GameProvider`/`useGame`
 
 ## Fase 2 — Migración completa
 - [ ] Extraer el resto de widgets (Bloques 2-6)

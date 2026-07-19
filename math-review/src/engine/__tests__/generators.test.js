@@ -1,0 +1,54 @@
+import { describe, it, expect } from 'vitest'
+import { staticQuestion, randInt, buildReto, shuffleOptions } from '../generators'
+
+const q = { question: '¿2+2?', options: ['3', '4', '5', '6'], correctAnswer: 1, hint: 'h', reminder: 'r' }
+
+describe('generators', () => {
+  it('staticQuestion devuelve la misma pregunta', () => {
+    expect(staticQuestion(q)()).toEqual(q)
+  })
+  it('randInt respeta límites inclusivos', () => {
+    expect(randInt(() => 0, 3, 7)).toBe(3)
+    expect(randInt(() => 0.999999, 3, 7)).toBe(7)
+  })
+  it('buildReto elige N sin repetir y ejecuta las fábricas', () => {
+    const factories = [1, 2, 3, 4, 5].map(n =>
+      staticQuestion({ ...q, question: `Q${n}` }))
+    const reto = buildReto(factories, 3, () => 0.5)
+    expect(reto).toHaveLength(3)
+    const texts = reto.map(x => x.question)
+    expect(new Set(texts).size).toBe(3)
+    reto.forEach(x => {
+      expect(x.options).toHaveLength(4)
+      expect(x.correctAnswer).toBeGreaterThanOrEqual(0)
+      expect(x.correctAnswer).toBeLessThan(4)
+    })
+  })
+  it('si pick >= fábricas, devuelve todas', () => {
+    const factories = [q, q].map(staticQuestion)
+    expect(buildReto(factories, 5)).toHaveLength(2)
+  })
+})
+
+describe('shuffleOptions', () => {
+  it('preserva el conjunto de opciones y correctAnswer sigue apuntando al valor correcto', () => {
+    const original = { question: '¿2+2?', options: ['3', '4', '5', '6'], correctAnswer: 1, hint: 'h', reminder: 'r' }
+    const correctValue = original.options[original.correctAnswer]
+    const result = shuffleOptions(original, () => 0.5)
+    expect(result.options[result.correctAnswer]).toBe(correctValue)
+    expect(new Set(result.options)).toEqual(new Set(original.options))
+  })
+
+  it('no siempre deja la respuesta correcta en el índice 0 (regresión "siempre A")', () => {
+    const original = { question: '¿2+2?', options: ['3', '4', '5', '6'], correctAnswer: 1, hint: 'h', reminder: 'r' }
+    let sawNonZero = false
+    for (let i = 0; i < 200; i++) {
+      const result = shuffleOptions(original, Math.random)
+      if (result.correctAnswer !== 0) {
+        sawNonZero = true
+        break
+      }
+    }
+    expect(sawNonZero).toBe(true)
+  })
+})
