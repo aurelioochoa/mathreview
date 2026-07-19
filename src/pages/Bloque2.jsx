@@ -90,7 +90,7 @@ function MCDSection() {
           <li>Factoriza cada polinomio completamente</li>
           <li>Toma los factores <strong>comunes</strong> con el <strong>menor exponente</strong></li>
         </ol>
-        <div className="mt-3 bg-white rounded p-3 text-sm">
+        <div className="mt-3 glass rounded-md p-3 text-sm">
           <p className="font-medium">Ejemplo con monomios:</p>
           <MathTex expr={"\\text{MCD}(18x^2yz,\\ 36xy^2z^3,\\ 54x^2y^3z)"} display />
           <p className="mt-1">Coeficientes: MCD(18, 36, 54) = 18</p>
@@ -112,7 +112,7 @@ function MCDSection() {
               className="border rounded-lg px-3 py-2 w-28 font-mono text-center focus:ring-2 focus:ring-emerald-400 outline-none" />
           </div>
         </div>
-        <div className="mt-4 p-4 bg-white rounded-lg">
+        <div className="mt-4 p-4 glass rounded-xl">
           <p className="text-sm"><strong>Factorización de {Math.abs(a)}:</strong> {factorizar(a).map(([f, e]) => `${f}${e > 1 ? `^${e}` : ''}`).join(' × ') || '—'}</p>
           <p className="text-sm"><strong>Factorización de {Math.abs(b)}:</strong> {factorizar(b).map(([f, e]) => `${f}${e > 1 ? `^${e}` : ''}`).join(' × ') || '—'}</p>
           <p className="text-lg font-bold text-emerald-700 mt-2">MCD({a}, {b}) = {mcdVal}</p>
@@ -211,7 +211,7 @@ function MCMSection() {
               className="border rounded-lg px-3 py-2 w-28 font-mono text-center focus:ring-2 focus:ring-emerald-400 outline-none" />
           </div>
         </div>
-        <div className="mt-4 p-4 bg-white rounded-lg">
+        <div className="mt-4 p-4 glass rounded-xl">
           <p className="text-sm text-gray-600">Fórmula rápida: <MathTex expr={`\\text{MCM}(a,b) = \\frac{|a \\times b|}{\\text{MCD}(a,b)}`} /></p>
           <p className="text-sm mt-1"><MathTex expr={`\\frac{|${a} \\times ${b}|}{${gcd(a,b)}} = \\frac{${Math.abs(a*b)}}{${gcd(a,b)}}`} /></p>
           <p className="text-lg font-bold text-emerald-700 mt-2">MCM({a}, {b}) = {mcmVal}</p>
@@ -288,7 +288,7 @@ function FraccionesAlgebraicasSection() {
         <p className="mt-2 text-xs text-emerald-600">⚠️ Solo puedes cancelar factores (multiplicaciones), ¡NUNCA sumas o restas!</p>
       </div>
 
-      <div className="mt-4 bg-white rounded-lg p-4 border">
+      <div className="mt-4 glass rounded-xl p-4 border">
         <p className="font-semibold mb-2">Factorizaciones que más vas a usar:</p>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm">
           <div className="bg-gray-50 rounded p-2">
@@ -373,13 +373,13 @@ function OperacionesSection() {
       </p>
 
       <div className="bg-emerald-50 rounded-lg p-4 border border-emerald-200 space-y-2">
-        <div className="bg-white rounded p-2 text-sm">
+        <div className="glass rounded-md p-2 text-sm">
           <strong>Suma/Resta:</strong> Necesitas denominador común (MCM), luego sumas/restas los numeradores
         </div>
-        <div className="bg-white rounded p-2 text-sm">
+        <div className="glass rounded-md p-2 text-sm">
           <strong>Multiplicación:</strong> <MathTex expr={"\\frac{a}{b} \\cdot \\frac{c}{d} = \\frac{a \\cdot c}{b \\cdot d}"} /> (numerador × numerador, denominador × denominador)
         </div>
-        <div className="bg-white rounded p-2 text-sm">
+        <div className="glass rounded-md p-2 text-sm">
           <strong>División:</strong> <MathTex expr={"\\frac{a}{b} \\div \\frac{c}{d} = \\frac{a}{b} \\cdot \\frac{d}{c}"} /> (multiplicas por el inverso, "flip" la segunda)
         </div>
       </div>
@@ -422,7 +422,7 @@ export default function Bloque2() {
     <div>
       <div className="mb-8">
         <span className="inline-block px-3 py-1 bg-emerald-100 text-emerald-700 rounded-full text-sm font-semibold mb-2">Bloque 2</span>
-        <h1 className="text-3xl md:text-4xl font-extrabold text-gray-800">Polinomios y Fracciones Algebraicas</h1>
+        <h1 className="font-display text-3xl md:text-4xl font-extrabold text-gray-800">Polinomios y Fracciones Algebraicas</h1>
         <p className="text-gray-500 mt-2">MCD, MCM, fracciones algebraicas y operaciones</p>
       </div>
 
@@ -444,26 +444,26 @@ export default function Bloque2() {
 
       <ExpressSummary color="bg-emerald-500">
         <div className="space-y-4">
-          <div className="bg-white rounded-lg p-3 border border-emerald-200">
+          <div className="glass rounded-xl p-3 border border-emerald-200">
             <p className="font-bold text-emerald-800 text-sm">🔗 MCD (Máximo Común Divisor)</p>
             <p className="text-xs text-gray-600 mt-1">Mayor número que divide exactamente a ambos.</p>
             <p className="text-xs text-emerald-600 mt-1">Para polinomios: toma el MENOR exponente de cada variable.</p>
           </div>
           
-          <div className="bg-white rounded-lg p-3 border border-emerald-200">
+          <div className="glass rounded-xl p-3 border border-emerald-200">
             <p className="font-bold text-emerald-800 text-sm">🔄 MCM (Mínimo Común Múltiplo)</p>
             <p className="text-xs text-gray-600 mt-1">Menor número que es múltiplo de ambos.</p>
             <p className="text-xs text-emerald-600 mt-1">Fórmula: MCM(a,b) = |a×b| / MCD(a,b)</p>
             <p className="text-xs text-emerald-600">Para polinomios: toma el MAYOR exponente.</p>
           </div>
           
-          <div className="bg-white rounded-lg p-3 border border-emerald-200">
+          <div className="glass rounded-xl p-3 border border-emerald-200">
             <p className="font-bold text-emerald-800 text-sm">➗ Fracciones Algebraicas</p>
             <p className="text-xs text-gray-600 mt-1">Simplificar: factoriza y cancela factores comunes.</p>
             <p className="text-xs text-red-500 mt-1">⚠️ Solo cancelas FACTORES, nunca términos sueltos.</p>
           </div>
           
-          <div className="bg-white rounded-lg p-3 border border-emerald-200">
+          <div className="glass rounded-xl p-3 border border-emerald-200">
             <p className="font-bold text-emerald-800 text-sm">🧮 Operaciones</p>
             <p className="text-xs text-gray-600 mt-1">Suma/Resta: MCM de denominadores.</p>
             <p className="text-xs text-gray-600">Multiplicación: (a/b)×(c/d) = (ac)/(bd).</p>

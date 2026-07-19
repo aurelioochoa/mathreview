@@ -97,18 +97,18 @@ function MediaMedianaModa() {
 
       <div className="bg-pink-50 rounded-lg p-4 border border-pink-200">
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-sm">
-          <div className="bg-white rounded-lg p-3">
+          <div className="glass rounded-xl p-3">
             <p className="text-lg font-bold text-pink-600">Media</p>
             <p>El <strong>promedio</strong>: suma todos los valores y divide entre cuántos son.</p>
             <MathTex expr={"\\bar{x} = \\frac{\\sum x_i}{n}"} />
             <p className="text-xs text-gray-500 mt-1">Como repartir todo en partes iguales</p>
           </div>
-          <div className="bg-white rounded-lg p-3">
+          <div className="glass rounded-xl p-3">
             <p className="text-lg font-bold text-purple-600">Mediana</p>
             <p>El valor del <strong>medio</strong> cuando ordenas los datos.</p>
             <p className="text-xs text-gray-500 mt-1">Si hay cantidad par, es el promedio de los dos del centro</p>
           </div>
-          <div className="bg-white rounded-lg p-3">
+          <div className="glass rounded-xl p-3">
             <p className="text-lg font-bold text-orange-600">Moda</p>
             <p>El valor que <strong>más se repite</strong>.</p>
             <p className="text-xs text-gray-500 mt-1">Como la canción más escuchada del playlist</p>
@@ -159,7 +159,7 @@ function MediaMedianaModa() {
             </div>
             <p className="text-xs text-gray-400 text-center">Las barras rosas son la(s) moda(s)</p>
 
-            <div className="mt-3 bg-white rounded p-3 text-sm">
+            <div className="mt-3 glass rounded-md p-3 text-sm">
               <p><strong>Datos ordenados:</strong> {stats.sorted.join(', ')}</p>
               <p><strong>n =</strong> {stats.n} datos</p>
             </div>
@@ -244,13 +244,13 @@ function PercentilesSection() {
       <div className="bg-pink-50 rounded-lg p-4 border border-pink-200">
         <p className="font-semibold text-pink-800 mb-2">Relación entre ellos:</p>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-sm">
-          <div className="bg-white rounded p-2 text-center">
+          <div className="glass rounded-md p-2 text-center">
             <strong>Cuartil 1 (Q1)</strong><br />= Percentil 25<br />= Decil 2.5
           </div>
-          <div className="bg-white rounded p-2 text-center">
+          <div className="glass rounded-md p-2 text-center">
             <strong>Cuartil 2 (Q2)</strong><br />= Mediana<br />= Percentil 50
           </div>
-          <div className="bg-white rounded p-2 text-center">
+          <div className="glass rounded-md p-2 text-center">
             <strong>Cuartil 3 (Q3)</strong><br />= Percentil 75<br />= Decil 7.5
           </div>
         </div>
@@ -300,7 +300,7 @@ function PercentilesSection() {
           })()}
         </div>
 
-        <div className="bg-white rounded p-3 text-sm mt-4">
+        <div className="glass rounded-md p-3 text-sm mt-4">
           <p><strong>Interpretación del Q1 = {q1}:</strong></p>
           <ul className="list-disc pl-5 text-xs space-y-1 text-gray-600 mt-1">
             <li>El 25% de los datos son ≤ {q1}</li>
@@ -405,7 +405,7 @@ function PermutacionesSection() {
               className="border rounded-lg px-3 py-2 w-20 font-mono text-center focus:ring-2 focus:ring-pink-400 outline-none" min={0} max={20} />
           </div>
         </div>
-        <div className="bg-white rounded-lg p-4 text-center">
+        <div className="glass rounded-xl p-4 text-center">
           <MathTex expr={`P(${n}, ${r}) = \\frac{${n}!}{(${n}-${r})!} = \\frac{${n}!}{${n - r}!}`} />
           <p className="text-2xl font-bold text-pink-600 mt-2 font-mono">{perm.toLocaleString()}</p>
         </div>
@@ -467,12 +467,12 @@ function CombinacionesSection() {
       <div className="bg-pink-50 rounded-lg p-4 border border-pink-200">
         <p className="font-semibold text-pink-800 mb-2">¿Cuándo uso cada una?</p>
         <div className="grid grid-cols-2 gap-3 text-sm">
-          <div className="bg-white rounded p-3 border-l-4 border-purple-400">
+          <div className="glass rounded-md p-3 border-l-4 border-purple-400">
             <p className="font-bold">Permutación</p>
             <p>Orden <strong>SÍ</strong> importa</p>
             <p className="text-xs text-gray-500 mt-1">Contraseñas, podio, PIN</p>
           </div>
-          <div className="bg-white rounded p-3 border-l-4 border-pink-400">
+          <div className="glass rounded-md p-3 border-l-4 border-pink-400">
             <p className="font-bold">Combinación</p>
             <p>Orden <strong>NO</strong> importa</p>
             <p className="text-xs text-gray-500 mt-1">Equipos, canciones, lotería</p>
@@ -493,12 +493,12 @@ function CombinacionesSection() {
               className="border rounded-lg px-3 py-2 w-20 font-mono text-center focus:ring-2 focus:ring-pink-400 outline-none" min={0} max={20} />
           </div>
         </div>
-        <div className="bg-white rounded-lg p-4 text-center">
+        <div className="glass rounded-xl p-4 text-center">
           <MathTex expr={`C(${n}, ${r}) = \\frac{${n}!}{${r}! \\cdot ${n - r}!}`} />
           <p className="text-2xl font-bold text-pink-600 mt-2 font-mono">{comb.toLocaleString()}</p>
         </div>
 
-        <div className="mt-4 bg-white rounded p-3 text-sm">
+        <div className="mt-4 glass rounded-md p-3 text-sm">
           <p className="font-semibold">Ejemplo del examen:</p>
           <p className="text-gray-700 mt-1">
             Una banda tiene <strong>12 canciones</strong> y debe elegir <strong>4</strong> para su álbum. ¿De cuántas formas?
@@ -559,24 +559,24 @@ function PrincipioConteoSection() {
 
       <InteractiveBox title="Ejemplo: ¿Cuántos atuendos puedes formar?">
         <div className="grid grid-cols-3 gap-4 text-center text-sm mb-4">
-          <div className="bg-white rounded-lg p-3 border">
+          <div className="glass rounded-xl p-3 border">
             <p className="font-bold mb-2">Camisas</p>
             <p className="text-3xl">{camisas.join(' ')}</p>
             <p className="text-pink-600 font-bold mt-1">{camisas.length} opciones</p>
           </div>
-          <div className="bg-white rounded-lg p-3 border">
+          <div className="glass rounded-xl p-3 border">
             <p className="font-bold mb-2">Pantalones</p>
             <p className="text-3xl">👖×4</p>
             <p className="text-pink-600 font-bold mt-1">{pantalones.length} opciones</p>
           </div>
-          <div className="bg-white rounded-lg p-3 border">
+          <div className="glass rounded-xl p-3 border">
             <p className="font-bold mb-2">Zapatos</p>
             <p className="text-3xl">{zapatos.join(' ')}</p>
             <p className="text-pink-600 font-bold mt-1">{zapatos.length} opciones</p>
           </div>
         </div>
 
-        <div className="text-center bg-white rounded-lg p-4">
+        <div className="text-center glass rounded-xl p-4">
           <MathTex expr={`${camisas.length} \\times ${pantalones.length} \\times ${zapatos.length} = ${total}`} />
           <p className="text-xl font-bold text-pink-600 mt-2">¡{total} atuendos diferentes!</p>
         </div>
@@ -594,7 +594,7 @@ export default function Bloque6() {
     <div>
       <div className="mb-8">
         <span className="inline-block px-3 py-1 bg-pink-100 text-pink-700 rounded-full text-sm font-semibold mb-2">Bloque 6</span>
-        <h1 className="text-3xl md:text-4xl font-extrabold text-gray-800">Estadística y Probabilidad</h1>
+        <h1 className="font-display text-3xl md:text-4xl font-extrabold text-gray-800">Estadística y Probabilidad</h1>
         <p className="text-gray-500 mt-2">Media, mediana, moda, percentiles, permutaciones y combinaciones</p>
       </div>
 
@@ -615,26 +615,26 @@ export default function Bloque6() {
 
       <ExpressSummary color="bg-pink-500">
         <div className="space-y-4">
-          <div className="bg-white rounded-lg p-3 border border-pink-200">
+          <div className="glass rounded-xl p-3 border border-pink-200">
             <p className="font-bold text-pink-800 text-sm">📊 Media, Mediana y Moda</p>
             <p className="text-xs text-gray-600 mt-1">Media: promedio (suma/n)</p>
             <p className="text-xs text-gray-600">Mediana: valor del medio (datos ordenados)</p>
             <p className="text-xs text-gray-600">Moda: valor más frecuente</p>
           </div>
           
-          <div className="bg-white rounded-lg p-3 border border-pink-200">
+          <div className="glass rounded-xl p-3 border border-pink-200">
             <p className="font-bold text-pink-800 text-sm">📉 Percentiles y Cuartiles</p>
             <p className="text-xs text-gray-600 mt-1">Q1 = P25 (25% debajo), Q2 = Mediana = P50, Q3 = P75</p>
             <p className="text-xs text-pink-500">Percentil 80 = le ganas al 80% de los datos</p>
           </div>
           
-          <div className="bg-white rounded-lg p-3 border border-pink-200">
+          <div className="glass rounded-xl p-3 border border-pink-200">
             <p className="font-bold text-pink-800 text-sm">👕 Principio de Conteo</p>
             <p className="text-xs text-gray-600 mt-1">Decisiones seguidas: multiplica las opciones</p>
             <p className="text-xs text-gray-600">Total = n₁ × n₂ × n₃ × ...</p>
           </div>
           
-          <div className="bg-white rounded-lg p-3 border border-pink-200">
+          <div className="glass rounded-xl p-3 border border-pink-200">
             <p className="font-bold text-pink-800 text-sm">🎲 Permutaciones vs Combinaciones</p>
             <p className="text-xs text-gray-600 mt-1">Permutación: orden SÍ importa → P(n,r) = n!/(n-r)!</p>
             <p className="text-xs text-gray-600">Combinación: orden NO importa → C(n,r) = n!/(r!(n-r)!)</p>

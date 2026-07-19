@@ -83,24 +83,24 @@ export default function LevelPlayer() {
     <div className="max-w-3xl mx-auto">
       <div className="mb-6">
         <span className={`inline-block px-3 py-1 ${world.color} text-white rounded-full text-sm font-semibold mb-2`}>{world.emoji} {world.name}</span>
-        <h1 className="text-2xl font-extrabold text-gray-800">{level.icon} {level.title}</h1>
+        <h1 className="font-display text-2xl font-extrabold text-gray-800">{level.icon} {level.title}</h1>
       </div>
 
       {phase === 'briefing' && (
         <div>
           <BriefingStep step={level.briefing[stepIndex]} />
           <div className="flex justify-between mt-4">
-            <button disabled={stepIndex === 0} onClick={() => setStepIndex(i => i - 1)} className="px-4 py-2 rounded-lg bg-white border disabled:opacity-40">← Anterior</button>
+            <button disabled={stepIndex === 0} onClick={() => setStepIndex(i => i - 1)} className="px-4 py-2 rounded-xl font-display glass disabled:opacity-40">← Anterior</button>
             <span className="text-sm text-gray-400 self-center">{stepIndex + 1} / {level.briefing.length}</span>
             {stepIndex + 1 < level.briefing.length
-              ? <button onClick={() => setStepIndex(i => i + 1)} className="px-4 py-2 rounded-lg bg-primary text-white">Siguiente →</button>
-              : <button onClick={() => setPhase('reto')} className="px-4 py-2 rounded-lg bg-green-500 text-white font-bold">⚔️ ¡Al reto!</button>}
+              ? <button onClick={() => setStepIndex(i => i + 1)} className="px-4 py-2 rounded-xl font-display bg-primary text-white">Siguiente →</button>
+              : <button onClick={() => setPhase('reto')} className="px-4 py-2 rounded-xl font-display bg-green-500 text-white font-bold">⚔️ ¡Al reto!</button>}
           </div>
         </div>
       )}
 
       {phase === 'reto' && q && (
-        <div className="bg-white rounded-2xl shadow p-6">
+        <div className="glass rounded-[1.75rem] shadow-lg p-6">
           <div className="flex justify-between mb-4 text-sm">
             <span>Pregunta {qIndex + 1} / {questions.length}</span>
             <span>{'❤️'.repeat(lives)}{'🖤'.repeat(3 - lives)}</span>
@@ -126,27 +126,27 @@ export default function LevelPlayer() {
             </div>
           )}
           {selected === q.correctAnswer && (
-            <button onClick={nextQuestion} className="mt-4 px-4 py-2 rounded-lg bg-green-500 text-white font-bold">✅ +{XP_PER_CORRECT} XP — Continuar</button>
+            <button onClick={nextQuestion} className="mt-4 px-4 py-2 rounded-xl font-display bg-green-500 text-white font-bold">✅ +{XP_PER_CORRECT} XP — Continuar</button>
           )}
         </div>
       )}
 
       {phase === 'fallado' && (
-        <div className="text-center bg-white rounded-2xl shadow p-8">
+        <div className="text-center glass rounded-[1.75rem] shadow-lg p-8">
           <p className="text-4xl mb-2">💀</p>
-          <h2 className="text-xl font-bold mb-2">¡Sin vidas!</h2>
+          <h2 className="font-display text-xl font-bold mb-2">¡Sin vidas!</h2>
           <p className="text-gray-500 mb-4 text-sm">Tranquilo: el XP que ganaste se queda contigo. El reto se regenera con preguntas nuevas.</p>
-          <button onClick={retry} className="px-6 py-3 rounded-xl bg-primary text-white font-bold">🔄 Reintentar</button>
+          <button onClick={retry} className="px-6 py-3 rounded-xl font-display bg-primary text-white font-bold">🔄 Reintentar</button>
         </div>
       )}
 
       {phase === 'completado' && (
-        <div className="text-center bg-white rounded-2xl shadow p-8">
+        <div className="text-center glass rounded-[1.75rem] shadow-lg p-8">
           <p className="text-4xl mb-2">🎉</p>
-          <h2 className="text-xl font-bold mb-1">¡Nivel superado!</h2>
+          <h2 className="font-display text-xl font-bold mb-1">¡Nivel superado!</h2>
           <p className="text-2xl my-2">{'⭐'.repeat(result?.stars ?? 1)}</p>
           <p className="text-sm text-gray-500 mb-4">+{XP_LEVEL_COMPLETE} XP · +{result?.coins ?? 0} 🪙</p>
-          <Link to={`/mundo/${world.slug}`} className="px-6 py-3 rounded-xl bg-primary text-white font-bold inline-block">Volver al mundo</Link>
+          <Link to={`/mundo/${world.slug}`} className="px-6 py-3 rounded-xl font-display bg-primary text-white font-bold inline-block">Volver al mundo</Link>
         </div>
       )}
     </div>

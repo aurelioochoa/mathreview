@@ -69,7 +69,7 @@ function SistemasLinealesSection() {
         </ul>
       </div>
 
-      <div className="mt-4 bg-white rounded-lg p-4 border">
+      <div className="mt-4 glass rounded-xl p-4 border">
         <p className="font-semibold mb-2">Los 4 cuadrantes del plano cartesiano:</p>
         <div className="grid grid-cols-2 gap-2 text-sm text-center max-w-xs mx-auto">
           <div className="bg-blue-50 rounded p-2">
@@ -166,7 +166,7 @@ function FuncionLinealSection() {
         </ul>
       </div>
 
-      <div className="mt-3 bg-white rounded-lg p-4 border">
+      <div className="mt-3 glass rounded-xl p-4 border">
         <p className="font-semibold mb-2">Dominio y recorrido:</p>
         <ul className="list-disc pl-5 text-sm space-y-1">
           <li><strong>Dominio</strong>: todos los valores que puede tomar x → <MathTex expr={"D = \\mathbb{R} = (-\\infty, +\\infty)"} /></li>
@@ -199,7 +199,7 @@ function FuncionLinealSection() {
           <MathTex expr={`f(x) = ${m === 0 ? '' : (m === 1 ? '' : (m === -1 ? '-' : m))}${m === 0 ? '' : 'x'}${b === 0 ? (m === 0 ? '0' : '') : (b > 0 && m !== 0 ? ' + ' + b : (b < 0 ? ' - ' + Math.abs(b) : b))}`} />
         </div>
 
-        <div className="bg-white rounded-lg overflow-hidden border">
+        <div className="glass rounded-xl overflow-hidden border">
           <Mafs viewBox={{ x: [-8, 8], y: [-8, 8] }} height={350}>
             <Coordinates.Cartesian />
             <Plot.OfX y={(x) => m * x + b} color={Theme.violet} />
@@ -304,7 +304,7 @@ function EcuacionesLinealesSection() {
         </div>
       </InteractiveBox>
 
-      <div className="bg-white rounded-lg p-4 border mt-4">
+      <div className="glass rounded-xl p-4 border mt-4">
         <p className="font-semibold mb-2">Problema tipo examen:</p>
         <p className="text-sm text-gray-700">
           Ana y Luis trabajan en un proyecto. Ana ha completado el <strong>triple</strong> de páginas que Luis. 
@@ -398,20 +398,20 @@ function FuncionCuadraticaSection() {
       <div className="bg-violet-50 rounded-lg p-4 border border-violet-200">
         <p className="font-semibold text-violet-800 mb-2">Elementos clave de una parábola:</p>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm">
-          <div className="bg-white rounded p-2">
+          <div className="glass rounded-md p-2">
             <strong>Vértice</strong>: El punto más alto o más bajo<br />
             <MathTex expr={"h = \\frac{-b}{2a}, \\quad k = f(h)"} />
           </div>
-          <div className="bg-white rounded p-2">
+          <div className="glass rounded-md p-2">
             <strong>Eje de simetría</strong>: La línea vertical que pasa por el vértice<br />
             <MathTex expr={"x = \\frac{-b}{2a}"} />
           </div>
-          <div className="bg-white rounded p-2">
+          <div className="glass rounded-md p-2">
             <strong>Dirección</strong>:<br />
             a &gt; 0 → abre hacia arriba (U)<br />
             a &lt; 0 → abre hacia abajo (∩)
           </div>
-          <div className="bg-white rounded p-2">
+          <div className="glass rounded-md p-2">
             <strong>Raíces</strong> (cortes con eje X):<br />
             <MathTex expr={"x = \\frac{-b \\pm \\sqrt{b^2 - 4ac}}{2a}"} />
           </div>
@@ -445,7 +445,7 @@ function FuncionCuadraticaSection() {
         </div>
 
         {a !== 0 && (
-          <div className="bg-white rounded-lg overflow-hidden border">
+          <div className="glass rounded-xl overflow-hidden border">
             <Mafs viewBox={{ x: [-10, 10], y: [-10, 10] }} height={400}>
               <Coordinates.Cartesian />
               <Plot.OfX y={(x) => a * x * x + bCoef * x + c} color={Theme.violet} />
@@ -491,7 +491,7 @@ export default function Bloque4() {
     <div>
       <div className="mb-8">
         <span className="inline-block px-3 py-1 bg-violet-100 text-violet-700 rounded-full text-sm font-semibold mb-2">Bloque 4</span>
-        <h1 className="text-3xl md:text-4xl font-extrabold text-gray-800">Funciones Lineales y Cuadráticas</h1>
+        <h1 className="font-display text-3xl md:text-4xl font-extrabold text-gray-800">Funciones Lineales y Cuadráticas</h1>
         <p className="text-gray-500 mt-2">Rectas, parábolas, dominio, recorrido y problemas de aplicación</p>
       </div>
 
@@ -513,25 +513,25 @@ export default function Bloque4() {
 
       <ExpressSummary color="bg-violet-500">
         <div className="space-y-4">
-          <div className="bg-white rounded-lg p-3 border border-violet-200">
+          <div className="glass rounded-xl p-3 border border-violet-200">
             <p className="font-bold text-violet-800 text-sm">📊 Sistemas Lineales</p>
             <p className="text-xs text-gray-600 mt-1">Solución = punto de intersección de las dos rectas.</p>
             <p className="text-xs text-red-500">Paralelas = no hay solución. Misma recta = infinitas.</p>
           </div>
           
-          <div className="bg-white rounded-lg p-3 border border-violet-200">
+          <div className="glass rounded-xl p-3 border border-violet-200">
             <p className="font-bold text-violet-800 text-sm">📈 Función Lineal f(x) = mx + b</p>
             <p className="text-xs text-gray-600 mt-1">m = pendiente (inclinación), b = corte con eje Y.</p>
             <p className="text-xs text-violet-600">m &gt; 0: sube, m &lt; 0: baja, m = 0: horizontal.</p>
           </div>
           
-          <div className="bg-white rounded-lg p-3 border border-violet-200">
+          <div className="glass rounded-xl p-3 border border-violet-200">
             <p className="font-bold text-violet-800 text-sm">⚖️ Ecuaciones Lineales</p>
             <p className="text-xs text-gray-600 mt-1">Pasa términos cambiando signo. Verifica al final.</p>
             <p className="text-xs text-violet-600">Lo que suma → pasa restando. Lo que multiplica → pasa dividiendo.</p>
           </div>
           
-          <div className="bg-white rounded-lg p-3 border border-violet-200">
+          <div className="glass rounded-xl p-3 border border-violet-200">
             <p className="font-bold text-violet-800 text-sm">🎢 Función Cuadrática f(x) = ax² + bx + c</p>
             <p className="text-xs text-gray-600 mt-1">Vértice: h = -b/2a. Raíces: fórmula cuadrática.</p>
             <p className="text-xs text-violet-600">a &gt; 0: U arriba. a &lt; 0: ∩ abajo. Δ = b² - 4ac.</p>

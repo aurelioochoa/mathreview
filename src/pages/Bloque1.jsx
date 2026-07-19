@@ -135,12 +135,12 @@ function PotenciacionSection() {
       <div className="bg-amber-50 rounded-lg p-4 border border-amber-200">
         <p className="font-semibold text-amber-800 mb-2">Leyes de exponentes que DEBES saber:</p>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm">
-          <div className="bg-white rounded p-2"><MathTex expr={"a^m \\cdot a^n = a^{m+n}"} /></div>
-          <div className="bg-white rounded p-2"><MathTex expr={"\\frac{a^m}{a^n} = a^{m-n}"} /></div>
-          <div className="bg-white rounded p-2"><MathTex expr={"(a^m)^n = a^{m \\cdot n}"} /></div>
-          <div className="bg-white rounded p-2"><MathTex expr={"a^0 = 1 \\text{ (siempre!)}"} /></div>
-          <div className="bg-white rounded p-2"><MathTex expr={"a^{-n} = \\frac{1}{a^n}"} /></div>
-          <div className="bg-white rounded p-2"><MathTex expr={"(a \\cdot b)^n = a^n \\cdot b^n"} /></div>
+          <div className="glass rounded-md p-2"><MathTex expr={"a^m \\cdot a^n = a^{m+n}"} /></div>
+          <div className="glass rounded-md p-2"><MathTex expr={"\\frac{a^m}{a^n} = a^{m-n}"} /></div>
+          <div className="glass rounded-md p-2"><MathTex expr={"(a^m)^n = a^{m \\cdot n}"} /></div>
+          <div className="glass rounded-md p-2"><MathTex expr={"a^0 = 1 \\text{ (siempre!)}"} /></div>
+          <div className="glass rounded-md p-2"><MathTex expr={"a^{-n} = \\frac{1}{a^n}"} /></div>
+          <div className="glass rounded-md p-2"><MathTex expr={"(a \\cdot b)^n = a^n \\cdot b^n"} /></div>
         </div>
       </div>
 
@@ -278,10 +278,10 @@ function RadicacionSection() {
       <div className="bg-amber-50 rounded-lg p-4 border border-amber-200">
         <p className="font-semibold text-amber-800 mb-2">Propiedades de radicales:</p>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm">
-          <div className="bg-white rounded p-2"><MathTex expr={"\\sqrt[n]{a \\cdot b} = \\sqrt[n]{a} \\cdot \\sqrt[n]{b}"} /></div>
-          <div className="bg-white rounded p-2"><MathTex expr={"\\sqrt[n]{\\frac{a}{b}} = \\frac{\\sqrt[n]{a}}{\\sqrt[n]{b}}"} /></div>
-          <div className="bg-white rounded p-2"><MathTex expr={"\\sqrt[n]{a^m} = a^{m/n}"} /></div>
-          <div className="bg-white rounded p-2"><MathTex expr={"\\sqrt[m]{\\sqrt[n]{a}} = \\sqrt[m \\cdot n]{a}"} /></div>
+          <div className="glass rounded-md p-2"><MathTex expr={"\\sqrt[n]{a \\cdot b} = \\sqrt[n]{a} \\cdot \\sqrt[n]{b}"} /></div>
+          <div className="glass rounded-md p-2"><MathTex expr={"\\sqrt[n]{\\frac{a}{b}} = \\frac{\\sqrt[n]{a}}{\\sqrt[n]{b}}"} /></div>
+          <div className="glass rounded-md p-2"><MathTex expr={"\\sqrt[n]{a^m} = a^{m/n}"} /></div>
+          <div className="glass rounded-md p-2"><MathTex expr={"\\sqrt[m]{\\sqrt[n]{a}} = \\sqrt[m \\cdot n]{a}"} /></div>
         </div>
       </div>
 
@@ -301,7 +301,7 @@ export default function Bloque1() {
     <div>
       <div className="mb-8">
         <span className="inline-block px-3 py-1 bg-amber-100 text-amber-700 rounded-full text-sm font-semibold mb-2">Bloque 1</span>
-        <h1 className="text-3xl md:text-4xl font-extrabold text-gray-800">Números Reales y Notación Científica</h1>
+        <h1 className="font-display text-3xl md:text-4xl font-extrabold text-gray-800">Números Reales y Notación Científica</h1>
         <p className="text-gray-500 mt-2">Aproximación, potencias, notación científica y radicales</p>
       </div>
 
@@ -323,13 +323,13 @@ export default function Bloque1() {
 
       <ExpressSummary color="bg-amber-500">
         <div className="space-y-4">
-          <div className="bg-white rounded-lg p-3 border border-amber-200">
+          <div className="glass rounded-xl p-3 border border-amber-200">
             <p className="font-bold text-amber-800 text-sm">📍 Truncar vs Redondear</p>
             <p className="text-xs text-gray-600 mt-1">Truncar = cortar decimales. Redondear = revisar siguiente dígito (≥5 sube, &lt;5 queda).</p>
             <p className="text-xs text-gray-500 mt-1">Ej: 3.14159 → truncado a 2 dec: 3.14, redondeado: 3.14</p>
           </div>
           
-          <div className="bg-white rounded-lg p-3 border border-amber-200">
+          <div className="glass rounded-xl p-3 border border-amber-200">
             <p className="font-bold text-amber-800 text-sm">⚡ Leyes de exponentes esenciales</p>
             <div className="text-xs text-gray-600 mt-1 grid grid-cols-2 gap-1">
               <span>aᵐ · aⁿ = a^(m+n)</span>
@@ -339,13 +339,13 @@ export default function Bloque1() {
             </div>
           </div>
           
-          <div className="bg-white rounded-lg p-3 border border-amber-200">
+          <div className="glass rounded-xl p-3 border border-amber-200">
             <p className="font-bold text-amber-800 text-sm">🔬 Notación científica</p>
             <p className="text-xs text-gray-600 mt-1">a × 10ⁿ donde 1 ≤ |a| &lt; 10</p>
             <p className="text-xs text-gray-500 mt-1">Ej: 45,000,000 = 4.5 × 10⁷</p>
           </div>
           
-          <div className="bg-white rounded-lg p-3 border border-amber-200">
+          <div className="glass rounded-xl p-3 border border-amber-200">
             <p className="font-bold text-amber-800 text-sm">√ Radicación</p>
             <p className="text-xs text-gray-600 mt-1">ⁿ√a = b ↔ bⁿ = a</p>
             <p className="text-xs text-red-500 mt-1">⚠️ √(a+b) ≠ √a + √b</p>

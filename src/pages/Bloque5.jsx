@@ -99,7 +99,7 @@ function PitagorasSection() {
           </div>
         </div>
 
-        <div className="bg-white rounded-lg overflow-hidden border">
+        <div className="glass rounded-xl overflow-hidden border">
           <Mafs viewBox={{ x: [-1, Math.max(catA, catB) + 2], y: [-1, Math.max(catA, catB) + 2] }} height={300}>
             <Coordinates.Cartesian />
             <Polygon
@@ -180,17 +180,17 @@ function TrigonometriaSection() {
       <div className="bg-red-50 rounded-lg p-4 border border-red-200">
         <p className="font-semibold text-red-800 mb-2">Las tres razones principales (SOH-CAH-TOA):</p>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-center">
-          <div className="bg-white rounded-lg p-3">
+          <div className="glass rounded-xl p-3">
             <p className="text-2xl font-bold text-red-500">Sen</p>
             <MathTex expr={"\\sin(\\alpha) = \\frac{\\text{opuesto}}{\\text{hipotenusa}}"} />
             <p className="text-xs text-gray-500 mt-1"><strong>S</strong>eno = <strong>O</strong>puesto / <strong>H</strong>ipotenusa</p>
           </div>
-          <div className="bg-white rounded-lg p-3">
+          <div className="glass rounded-xl p-3">
             <p className="text-2xl font-bold text-blue-500">Cos</p>
             <MathTex expr={"\\cos(\\alpha) = \\frac{\\text{adyacente}}{\\text{hipotenusa}}"} />
             <p className="text-xs text-gray-500 mt-1"><strong>C</strong>oseno = <strong>A</strong>dyacente / <strong>H</strong>ipotenusa</p>
           </div>
-          <div className="bg-white rounded-lg p-3">
+          <div className="glass rounded-xl p-3">
             <p className="text-2xl font-bold text-green-500">Tan</p>
             <MathTex expr={"\\tan(\\alpha) = \\frac{\\text{opuesto}}{\\text{adyacente}}"} />
             <p className="text-xs text-gray-500 mt-1"><strong>T</strong>angente = <strong>O</strong>puesto / <strong>A</strong>dyacente</p>
@@ -211,7 +211,7 @@ function TrigonometriaSection() {
             className="w-full max-w-sm accent-red-500" />
         </div>
 
-        <div className="bg-white rounded-lg overflow-hidden border">
+        <div className="glass rounded-xl overflow-hidden border">
           <Mafs viewBox={{ x: [-0.5, 6], y: [-0.5, 6] }} height={300}>
             <Coordinates.Cartesian />
             <Polygon
@@ -300,12 +300,12 @@ function CilindroSection() {
       <div className="bg-red-50 rounded-lg p-4 border border-red-200">
         <p className="font-semibold text-red-800 mb-2">Fórmulas del cilindro:</p>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm">
-          <div className="bg-white rounded p-3 text-center">
+          <div className="glass rounded-md p-3 text-center">
             <p className="font-bold">Área Lateral</p>
             <MathTex expr={"A_L = 2\\pi r \\cdot h"} />
             <p className="text-xs text-gray-500 mt-1">Rectángulo desenrollado: base = perímetro del círculo</p>
           </div>
-          <div className="bg-white rounded p-3 text-center">
+          <div className="glass rounded-md p-3 text-center">
             <p className="font-bold">Área Total</p>
             <MathTex expr={"A_T = 2\\pi r h + 2\\pi r^2"} />
             <p className="text-xs text-gray-500 mt-1">Lateral + 2 tapas circulares</p>
@@ -417,18 +417,18 @@ function PrismaSection() {
       <div className="bg-red-50 rounded-lg p-4 border border-red-200">
         <p className="font-semibold text-red-800 mb-2">Fórmulas del prisma:</p>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm">
-          <div className="bg-white rounded p-3 text-center">
+          <div className="glass rounded-md p-3 text-center">
             <p className="font-bold">Área Lateral</p>
             <MathTex expr={"A_L = \\text{Perímetro base} \\times h"} />
           </div>
-          <div className="bg-white rounded p-3 text-center">
+          <div className="glass rounded-md p-3 text-center">
             <p className="font-bold">Área Total</p>
             <MathTex expr={"A_T = A_L + 2 \\times A_{\\text{base}}"} />
           </div>
         </div>
       </div>
 
-      <div className="mt-4 bg-white rounded-lg p-4 border">
+      <div className="mt-4 glass rounded-xl p-4 border">
         <p className="font-semibold mb-3">Datos importantes según el tipo de prisma:</p>
         <div className="overflow-x-auto">
           <table className="w-full text-sm border-collapse">
@@ -480,7 +480,7 @@ export default function Bloque5() {
     <div>
       <div className="mb-8">
         <span className="inline-block px-3 py-1 bg-red-100 text-red-700 rounded-full text-sm font-semibold mb-2">Bloque 5</span>
-        <h1 className="text-3xl md:text-4xl font-extrabold text-gray-800">Geometría y Trigonometría</h1>
+        <h1 className="font-display text-3xl md:text-4xl font-extrabold text-gray-800">Geometría y Trigonometría</h1>
         <p className="text-gray-500 mt-2">Pitágoras, seno, coseno, tangente, cilindro y prisma</p>
       </div>
 
@@ -502,26 +502,26 @@ export default function Bloque5() {
 
       <ExpressSummary color="bg-red-500">
         <div className="space-y-4">
-          <div className="bg-white rounded-lg p-3 border border-red-200">
+          <div className="glass rounded-xl p-3 border border-red-200">
             <p className="font-bold text-red-800 text-sm">📐 Teorema de Pitágoras</p>
             <p className="text-xs text-gray-600 mt-1">a² + b² = c² (solo triángulos rectángulos)</p>
             <p className="text-xs text-red-500">c es la hipotenusa (lado más largo, frente al ángulo de 90°)</p>
           </div>
           
-          <div className="bg-white rounded-lg p-3 border border-red-200">
+          <div className="glass rounded-xl p-3 border border-red-200">
             <p className="font-bold text-red-800 text-sm">📏 Trigonometría SOH-CAH-TOA</p>
             <p className="text-xs text-gray-600 mt-1">sen(α) = opuesto/hipotenusa</p>
             <p className="text-xs text-gray-600">cos(α) = adyacente/hipotenusa</p>
             <p className="text-xs text-gray-600">tan(α) = opuesto/adyacente</p>
           </div>
           
-          <div className="bg-white rounded-lg p-3 border border-red-200">
+          <div className="glass rounded-xl p-3 border border-red-200">
             <p className="font-bold text-red-800 text-sm">🥫 Cilindro</p>
             <p className="text-xs text-gray-600 mt-1">A_L = 2πrh (superficie lateral)</p>
             <p className="text-xs text-gray-600">A_T = 2πrh + 2πr² (incluye tapas)</p>
           </div>
           
-          <div className="bg-white rounded-lg p-3 border border-red-200">
+          <div className="glass rounded-xl p-3 border border-red-200">
             <p className="font-bold text-red-800 text-sm">📦 Prisma de n lados</p>
             <p className="text-xs text-gray-600 mt-1">Vértices: 2n, Aristas: 3n, Caras: n + 2</p>
             <p className="text-xs text-gray-600">A_L = perímetro base × altura</p>

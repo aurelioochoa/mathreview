@@ -58,15 +58,15 @@ function MetodoGrafico() {
       <div className="bg-blue-50 rounded-lg p-4 border border-blue-200 mt-3">
         <p className="font-semibold text-blue-800 mb-2">Tres posibles resultados:</p>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-sm">
-          <div className="bg-white rounded p-2 text-center">
+          <div className="glass rounded-md p-2 text-center">
             <p className="font-bold text-blue-600">Se cruzan en 1 punto</p>
             <p className="text-xs">→ Una solución única</p>
           </div>
-          <div className="bg-white rounded p-2 text-center">
+          <div className="glass rounded-md p-2 text-center">
             <p className="font-bold text-yellow-600">Son la misma recta</p>
             <p className="text-xs">→ Infinitas soluciones</p>
           </div>
-          <div className="bg-white rounded p-2 text-center">
+          <div className="glass rounded-md p-2 text-center">
             <p className="font-bold text-red-600">Son paralelas</p>
             <p className="text-xs">→ No hay solución</p>
           </div>
@@ -93,7 +93,7 @@ function MetodoGrafico() {
           </div>
         </div>
 
-        <div className="bg-white rounded-lg overflow-hidden border">
+        <div className="glass rounded-xl overflow-hidden border">
           <Mafs viewBox={{ x: [-6, 6], y: [-6, 6] }} height={350}>
             <Coordinates.Cartesian />
             {b1 !== 0 && (
@@ -350,7 +350,7 @@ function MetodoCramer() {
           </div>
         </div>
 
-        <div className="bg-white rounded-lg p-4 space-y-2 text-center">
+        <div className="glass rounded-xl p-4 space-y-2 text-center">
           <p><MathTex expr={`D = (${a1})(${b2}) - (${a2})(${b1}) = ${a1*b2} - ${a2*b1} = ${D}`} /></p>
           <p><MathTex expr={`D_x = (${c1})(${b2}) - (${c2})(${b1}) = ${c1*b2} - ${c2*b1} = ${Dx}`} /></p>
           <p><MathTex expr={`D_y = (${a1})(${c2}) - (${a2})(${c1}) = ${a1*c2} - ${a2*c1} = ${Dy}`} /></p>
@@ -377,7 +377,7 @@ export default function Bloque3() {
     <div>
       <div className="mb-8">
         <span className="inline-block px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm font-semibold mb-2">Bloque 3</span>
-        <h1 className="text-3xl md:text-4xl font-extrabold text-gray-800">Sistemas de Ecuaciones 2×2</h1>
+        <h1 className="font-display text-3xl md:text-4xl font-extrabold text-gray-800">Sistemas de Ecuaciones 2×2</h1>
         <p className="text-gray-500 mt-2">Método gráfico, reducción y determinantes (Cramer)</p>
       </div>
 
@@ -395,19 +395,19 @@ export default function Bloque3() {
 
       <ExpressSummary color="bg-blue-500">
         <div className="space-y-4">
-          <div className="bg-white rounded-lg p-3 border border-blue-200">
+          <div className="glass rounded-xl p-3 border border-blue-200">
             <p className="font-bold text-blue-800 text-sm">📊 Método Gráfico</p>
             <p className="text-xs text-gray-600 mt-1">La solución es el punto donde se cruzan las dos rectas.</p>
             <p className="text-xs text-red-500 mt-1">Paralelas = no hay solución. Misma recta = infinitas soluciones.</p>
           </div>
           
-          <div className="bg-white rounded-lg p-3 border border-blue-200">
+          <div className="glass rounded-xl p-3 border border-blue-200">
             <p className="font-bold text-blue-800 text-sm">✂️ Método de Reducción</p>
             <p className="text-xs text-gray-600 mt-1">Elimina una variable sumando/restando las ecuaciones.</p>
             <p className="text-xs text-blue-600">Necesitas coeficientes opuestos para cancelar una variable.</p>
           </div>
           
-          <div className="bg-white rounded-lg p-3 border border-blue-200">
+          <div className="glass rounded-xl p-3 border border-blue-200">
             <p className="font-bold text-blue-800 text-sm">🔢 Regla de Cramer</p>
             <p className="text-xs text-gray-600 mt-1">x = Dx/D, y = Dy/D</p>
             <p className="text-xs text-blue-600">D = a₁b₂ - a₂b₁ (cruzar y restar)</p>
