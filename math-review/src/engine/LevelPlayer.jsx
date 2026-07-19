@@ -32,6 +32,7 @@ export default function LevelPlayer() {
   const [firstTryHits, setFirstTryHits] = useState(0)
   const [selected, setSelected] = useState(null)   // índice elegido en la pregunta actual
   const [failedThis, setFailedThis] = useState(false)
+  const [result, setResult] = useState(null)   // { stars, coins } de esta partida
 
   const questions = useMemo(
     () => (level ? buildReto(level.reto.factories, level.reto.pick) : []),
@@ -65,7 +66,9 @@ export default function LevelPlayer() {
     } else {
       const ratio = firstTryHits / questions.length
       const stars = ratio >= 1 ? 3 : ratio >= 0.66 ? 2 : 1
-      dispatch({ type: 'LEVEL_COMPLETED', levelKey, stars, xp: XP_LEVEL_COMPLETE, coins: stars * COINS_PER_STAR })
+      const coins = stars * COINS_PER_STAR
+      dispatch({ type: 'LEVEL_COMPLETED', levelKey, stars, xp: XP_LEVEL_COMPLETE, coins })
+      setResult({ stars, coins })
       setPhase('completado')
     }
   }
@@ -108,7 +111,7 @@ export default function LevelPlayer() {
               const isCorrect = selected !== null && i === q.correctAnswer
               const isWrong = selected === i && i !== q.correctAnswer
               return (
-                <button key={i} disabled={selected !== null && selected === q.correctAnswer} onClick={() => answer(i)}
+                <button key={i} disabled={selected !== null} onClick={() => answer(i)}
                   className={`w-full text-left px-3 py-2 rounded-lg border text-sm ${isCorrect ? 'bg-green-100 border-green-400' : isWrong ? 'bg-red-100 border-red-400' : 'bg-white border-gray-200 hover:bg-indigo-50'}`}>
                   <span className="font-bold mr-2">{String.fromCharCode(65 + i)})</span>{opt}
                 </button>
@@ -141,8 +144,8 @@ export default function LevelPlayer() {
         <div className="text-center bg-white rounded-2xl shadow p-8">
           <p className="text-4xl mb-2">🎉</p>
           <h2 className="text-xl font-bold mb-1">¡Nivel superado!</h2>
-          <p className="text-2xl my-2">{'⭐'.repeat(state.stars[levelKey] ?? 1)}</p>
-          <p className="text-sm text-gray-500 mb-4">+{XP_LEVEL_COMPLETE} XP · +{(state.stars[levelKey] ?? 1) * COINS_PER_STAR} 🪙</p>
+          <p className="text-2xl my-2">{'⭐'.repeat(result?.stars ?? 1)}</p>
+          <p className="text-sm text-gray-500 mb-4">+{XP_LEVEL_COMPLETE} XP · +{result?.coins ?? 0} 🪙</p>
           <Link to={`/mundo/${world.slug}`} className="px-6 py-3 rounded-xl bg-primary text-white font-bold inline-block">Volver al mundo</Link>
         </div>
       )}
