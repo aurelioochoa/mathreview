@@ -4,7 +4,7 @@ Juego de repaso matemático gamificado (en español) para [kidtopiaplay](https:/
 
 ## Stack
 
-Vite + React 19 + React Router + Tailwind CSS 4 + KaTeX (fórmulas) + Mafs (gráficas) + Recharts. Vitest para los tests de lógica. Sin backend: el progreso se guarda en `localStorage`.
+Vite + React 19 + React Router + Tailwind CSS 4 + KaTeX (fórmulas) + Mafs (gráficas) + Recharts + three.js / react-three-fiber / drei / motion (mapa de mundos 3D, HUD y transiciones). Vitest para los tests de lógica. Sin backend: el progreso se guarda en `localStorage`.
 
 ## Desarrollo
 
@@ -35,6 +35,7 @@ TODO.md        hoja de ruta por fases
 ## Estado
 
 - **Fase 0-1 (completas):** base saneada + motor de juego piloto. El Mundo 3 🌋 "Volcán de las Potencias" es jugable en `/mundo/volcan-potencias` (accesible desde la tarjeta beta en Home), conviviendo con las rutas originales `/bloqueN`.
+- **Rediseño visual (Spec 1, completo):** mapa de mundos 3D con fallback 2D accesible, HUD glossy, transiciones de página y celebración de nivel — todo lazy, offline y respetando `prefers-reduced-motion` y el device-tier (WebGL + núcleos).
 - **Siguiente:** migrar los Bloques 2-6 a los mundos 4-8, y añadir jefes, sidequests, logros y economía. Ver [`TODO.md`](TODO.md) y [`docs/superpowers/specs`](docs/superpowers/specs).
 
 ## Despliegue

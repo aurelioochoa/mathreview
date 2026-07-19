@@ -1,6 +1,5 @@
 import { lazy, Suspense, useMemo, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
-import { useReducedMotion } from 'motion/react'
 import { findWorld } from '../content/worlds'
 import { widgets } from '../widgets'
 import { buildReto } from './generators'
@@ -8,6 +7,7 @@ import { useGame, XP_PER_CORRECT, XP_LEVEL_COMPLETE, COINS_PER_STAR } from '../s
 import WhySection from '../components/WhySection'
 import CommonMistakes from '../components/CommonMistakes'
 import InteractiveBox from '../components/InteractiveBox'
+import { useDeviceTier } from '../three/useDeviceTier'
 
 const Celebration = lazy(() => import('../three/Celebration'))
 
@@ -42,7 +42,7 @@ export default function LevelPlayer() {
     [level, attempt],
   )
 
-  const reduceMotion = useReducedMotion()
+  const { use3D } = useDeviceTier()
 
   if (!world || !level) return <p className="text-center py-12">Nivel no encontrado. <Link className="text-primary underline" to="/">Volver</Link></p>
 
@@ -147,7 +147,7 @@ export default function LevelPlayer() {
 
       {phase === 'completado' && (
         <div className="relative text-center glass rounded-[1.75rem] shadow-lg p-8 overflow-hidden">
-          {!reduceMotion && (
+          {use3D && (
             <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
               <Suspense fallback={null}><Celebration /></Suspense>
             </div>

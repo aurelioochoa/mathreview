@@ -2,6 +2,8 @@
 
 Plan por fases. Spec: [docs/superpowers/specs/2026-07-18-math-quest-design.md](docs/superpowers/specs/2026-07-18-math-quest-design.md)
 
+**Rediseño visual (Spec 1) — completo ✅:** mapa de mundos 3D + HUD + reskin glossy + transiciones + celebración de nivel. Ver [docs/superpowers/specs/2026-07-19-rediseno-worldmap-3d-design.md](docs/superpowers/specs/2026-07-19-rediseno-worldmap-3d-design.md). La migración de contenido de bloques (Fase 2 abajo) sigue pendiente como follow-on independiente del rediseño.
+
 ## Fase 0 — Base segura ✅ (rama feat/math-quest)
 - [x] 🔴 Mover el token del túnel de Cloudflare de `docker-compose.yml` a `.env` (y añadir `.env` a `.gitignore`) — ⚠️ rotar el token en el dashboard de Cloudflare (vivió en texto plano)
 - [x] Commitear el trabajo pendiente (6 componentes nuevos, bloques reescritos, deploy)
@@ -49,7 +51,8 @@ Plan por fases. Spec: [docs/superpowers/specs/2026-07-18-math-quest-design.md](d
 
 ## Fase 5 — Pulido
 - [ ] Export/import de partida (base64 + checksum)
-- [ ] Animaciones y celebraciones (subida de nivel, logro, jefe derrotado)
+- [x] Celebración de nivel (3D offline, lazy, gateada por device-tier + reduced-motion)
+  - [ ] Pendiente: celebración de logro y de jefe derrotado
 - [ ] Suite de tests completa + validación de contenido en CI
 - [ ] README real del proyecto (reemplazar plantilla de Vite)
 - [ ] Revisar rendimiento (lazy loading por mundo)
