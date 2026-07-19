@@ -22,5 +22,5 @@ const TITLES = [
 ]
 
 export function titleForLevel(level) {
-  return TITLES[Math.min(level, TITLES.length) - 1]
+  return TITLES[Math.min(Math.max(level, 1), TITLES.length) - 1]
 }

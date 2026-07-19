@@ -23,4 +23,7 @@ describe('xpCurve', () => {
     expect(titleForLevel(8)).toBe('Gran Maestro Matemático')
     expect(titleForLevel(99)).toBe('Gran Maestro Matemático')
   })
+  it('titleForLevel(0) se clampa al título de nivel 1 en vez de undefined', () => {
+    expect(titleForLevel(0)).toBe('Aprendiz')
+  })
 })
