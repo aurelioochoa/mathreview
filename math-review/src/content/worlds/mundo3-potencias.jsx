@@ -3,22 +3,26 @@ import GlossaryTerm from '../../components/GlossaryTerm'
 import { staticQuestion, randInt } from '../../engine/generators'
 
 // ——— Fábricas parametrizadas (ejemplo del mecanismo; el resto son estáticas) ———
-function potenciaDanio() {
+export function potenciaDanio() {
   const base = randInt(Math.random, 2, 5)
   const exp = randInt(Math.random, 2, 3)
   const res = Math.pow(base, exp)
-  const opts = [res, res + base, base * exp, Math.pow(base, exp + 1)]
-    .map(String)
+  const candidates = [res + base, base * exp, Math.pow(base, exp + 1), res + 1, res * 2]
+  const options = [res]
+  for (const c of candidates) {
+    if (options.length >= 4) break
+    if (!options.includes(c)) options.push(c)
+  }
   return {
     question: `En tu juego favorito, un potenciador multiplica el daño por ${base} elevado a ${exp}. ¿Cuál es el multiplicador total?`,
-    options: opts,
+    options: options.map(String),
     correctAnswer: 0,
     hint: `${base}^${exp} = ${base} multiplicado por sí mismo ${exp} veces`,
     reminder: 'Potencia = multiplicación repetida. aⁿ = a multiplicado n veces.',
   }
 }
 
-function raizCuadradaMinecraft() {
+export function raizCuadradaMinecraft() {
   const lado = randInt(Math.random, 5, 15)
   const area = lado * lado
   const opts = [String(lado), String(lado + 2), String(Math.round(area / 2)), String(area)]
@@ -65,7 +69,7 @@ export const mundo3 = {
         factories: [
           staticQuestion({ question: 'Spotify dice que tu canción favorita tiene 2,450,890 reproducciones. Si la aproximas a 2 decimales usando millones, ¿qué valor es correcto?', options: ['2.4 millones', '2.45 millones', '2.5 millones', '2.0 millones'], correctAnswer: 1, hint: 'Mira el tercer decimal después de convertir a millones', reminder: 'Para redondear a 2 decimales, revisas el tercero. Si es 5 o más, subes el anterior.' }),
           staticQuestion({ question: 'Tienes 899 Robux. Si truncas a centenas (no redondeas), ¿cuántos tienes?', options: ['900 Robux', '800 Robux', '899 Robux', '1000 Robux'], correctAnswer: 1, hint: 'Truncar es cortar sin redondear. Solo eliminas lo sobrante.', reminder: 'Truncar = cortar los dígitos sobrantes sin modificar el anterior.' }),
-          staticQuestion({ question: 'Tu K/D ratio es 2.447. El juego lo muestra como 2.4. ¿Qué operación hizo?', options: ['Redondeó a 1 decimal', 'Truncó a 1 decimal', 'Redondeó a enteros', 'Truncó a enteros'], correctAnswer: 1, hint: 'Truncar corta sin mirar; aquí 2.447 → 2.4 cortando.', reminder: 'Truncar a 1 decimal de 2.447 da 2.4; truncar siempre corta.' }),
+          staticQuestion({ question: 'Tu K/D ratio es 2.447. El juego lo muestra como 2.4. ¿Qué operación hizo?', options: ['Redondeó a 1 decimal', 'Truncó a 1 decimal', 'Redondeó a enteros', 'Truncó a enteros'], correctAnswer: 1, hint: 'Si fuera redondeo sería 2.5, porque 4≥5? No, 4<5', reminder: 'Truncar a 1 decimal de 2.447 da 2.4. Redondear daría 2.4 también... aquí ambos coinciden, pero truncar siempre corta.' }),
         ],
       },
     },
