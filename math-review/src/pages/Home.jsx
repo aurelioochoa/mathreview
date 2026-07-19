@@ -78,6 +78,12 @@ export default function Home() {
         </p>
       </div>
 
+      <Link to="/mundo/volcan-potencias"
+        className="block max-w-xl mx-auto mb-8 p-4 rounded-2xl bg-gradient-to-r from-orange-500 to-red-500 text-white text-center shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all">
+        <p className="text-lg font-extrabold">🌋 NUEVO: Modo Juego (beta)</p>
+        <p className="text-sm opacity-90">Gana XP, estrellas y vidas en el Volcán de las Potencias</p>
+      </Link>
+
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {bloques.map((b) => (
           <Link
