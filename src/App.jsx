@@ -1,6 +1,6 @@
 import { Routes, Route } from 'react-router-dom'
 import Layout from './components/Layout'
-import Home from './pages/Home'
+import WorldMap from './pages/WorldMap'
 import Bloque1 from './pages/Bloque1'
 import Bloque2 from './pages/Bloque2'
 import Bloque3 from './pages/Bloque3'
@@ -14,7 +14,7 @@ export default function App() {
   return (
     <Routes>
       <Route element={<Layout />}>
-        <Route path="/" element={<Home />} />
+        <Route path="/" element={<WorldMap />} />
         <Route path="/bloque1" element={<Bloque1 />} />
         <Route path="/bloque2" element={<Bloque2 />} />
         <Route path="/bloque3" element={<Bloque3 />} />
