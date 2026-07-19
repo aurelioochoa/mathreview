@@ -2,22 +2,69 @@
 @import "katex/dist/katex.min.css";
 @import "mafs/core.css";
 
+/* Fuente display auto-hospedada (offline). Variable: rango de pesos 300–700. */
+@font-face {
+  font-family: "Fredoka";
+  src: url("/fonts/fredoka-variable.woff2") format("woff2");
+  font-weight: 300 700;
+  font-style: normal;
+  font-display: swap;
+}
+
 @theme {
   --color-primary: #6366f1;
   --color-primary-dark: #4f46e5;
+  --color-world-volcan: #f97316;
+  --color-world-castillo: #10b981;
+  --color-world-laberinto: #3b82f6;
+  --color-world-estacion: #8b5cf6;
+  --color-world-montanas: #ef4444;
+  --color-world-feria: #ec4899;
+  --color-world-isla: #14b8a6;
+  --color-world-reino: #eab308;
   --color-bloque1: #f59e0b;
   --color-bloque2: #10b981;
   --color-bloque3: #3b82f6;
   --color-bloque4: #8b5cf6;
   --color-bloque5: #ef4444;
   --color-bloque6: #ec4899;
+  --font-display: "Fredoka", "Nunito", system-ui, sans-serif;
+}
+
+/* Variables de vidrio/elevación (usadas por clases utilitarias glossy) */
+:root {
+  --glass-bg: rgba(255, 255, 255, 0.65);
+  --glass-border: rgba(255, 255, 255, 0.8);
+  --shadow-glow: 0 10px 40px -10px rgba(99, 102, 241, 0.45);
 }
 
 body {
   margin: 0;
   min-width: 320px;
-  font-family: system-ui, -apple-system, sans-serif;
+  font-family: "Nunito", system-ui, -apple-system, sans-serif;
+  /* Cielo de aventura: degradado suave detrás de todo */
+  background:
+    radial-gradient(1200px 600px at 50% -10%, #dbeafe 0%, transparent 60%),
+    linear-gradient(180deg, #eef2ff 0%, #faf5ff 100%);
+  background-attachment: fixed;
+}
+
+/* Superficie de vidrio reutilizable */
+.glass {
+  background: var(--glass-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-border);
 }
 
 .katex { font-size: 1.1em; }
 .MafsView { --mafs-bg: transparent; }
+
+/* Respeto global a reduced-motion como red de seguridad */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
