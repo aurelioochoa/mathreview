@@ -1,6 +1,7 @@
 import { Outlet, Link, useLocation } from 'react-router-dom'
 import { ChevronLeft, ChevronRight, Home } from 'lucide-react'
 import Hud from './Hud'
+import PageTransition from './PageTransition'
 import { adjacentBlock } from '../content/worldMap'
 
 export default function Layout() {
@@ -17,7 +18,7 @@ export default function Layout() {
       </nav>
 
       <main className="max-w-5xl mx-auto px-4 py-8">
-        <Outlet />
+        <PageTransition><Outlet /></PageTransition>
       </main>
 
       {onBlockPage && (
