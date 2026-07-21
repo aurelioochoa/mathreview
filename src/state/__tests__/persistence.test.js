@@ -38,4 +38,12 @@ describe('persistence', () => {
     localStorage.setItem(BACKUP_KEY, '{y')
     expect(loadSave()).toBeNull()
   })
+  it('no lanza cuando setItem falla (cuota llena o modo privado)', () => {
+    globalThis.localStorage = {
+      getItem: () => null,
+      setItem: () => { throw new DOMException('exceeded', 'QuotaExceededError') },
+      removeItem: () => {},
+    }
+    expect(() => persistSave({ version: 1, xp: 5 })).not.toThrow()
+  })
 })

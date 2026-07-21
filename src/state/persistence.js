@@ -18,7 +18,13 @@ export function loadSave() {
 }
 
 export function persistSave(data) {
-  const current = localStorage.getItem(SAVE_KEY)
-  if (current !== null) localStorage.setItem(BACKUP_KEY, current)
-  localStorage.setItem(SAVE_KEY, JSON.stringify(data))
+  try {
+    const current = localStorage.getItem(SAVE_KEY)
+    if (current !== null) localStorage.setItem(BACKUP_KEY, current)
+    localStorage.setItem(SAVE_KEY, JSON.stringify(data))
+  } catch {
+    // localStorage lleno (QuotaExceededError) o no disponible (modo privado):
+    // no bloquear el juego; la partida sigue viva en memoria. Sin console.warn
+    // porque esto corre en cada cambio de estado y haría spam.
+  }
 }

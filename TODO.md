@@ -13,7 +13,7 @@ Plan por fases. Spec: [docs/superpowers/specs/2026-07-18-math-quest-design.md](d
 - [x] Crear `docs/` (análisis, research, spec) y `TODO.md`
 
 ## Fase 1 — Motor piloto ✅ (rama feat/math-quest, 28 tests, build OK)
-- [x] `state/gameStore.jsx` (XP, estrellas, monedas + persistencia auto) + `state/persistence.js` (localStorage versionado + respaldo) + `state/xpCurve.js`
+- [x] `state/gameStore.js` (contexto/reducer/hook/constantes) + `state/GameProvider.jsx` (proveedor) + `state/persistence.js` (localStorage versionado + respaldo) + `state/xpCurve.js`
 - [x] Definir schema de contenido (mundo → niveles → pasos de briefing + reto)
 - [x] Extraer widgets de Bloque 1 a `src/widgets/` con registro por id
 - [x] `engine/LevelPlayer.jsx` (briefing por pasos + reto con vidas y estrellas)
@@ -24,10 +24,10 @@ Plan por fases. Spec: [docs/superpowers/specs/2026-07-18-math-quest-design.md](d
 
 ### Follow-ups de la revisión final (no bloqueantes, para Fase 2/3)
 - [ ] Economía: XP/monedas se otorgan en cada completado (solo estrellas topadas con `Math.max`) — decidir la regla al añadir la tienda (Fase 3)
-- [ ] `LevelPlayer`: añadir `key={levelId}` cuando exista navegación nivel→nivel (evita estado obsoleto)
+- [x] `LevelPlayer`: `key={levelId}` (envoltorio que fuerza remount al cambiar de nivel; preventivo, evita estado obsoleto)
 - [ ] Retirar las preguntas duplicadas entre `Bloque1` y `mundo3` al migrar los Bloques
-- [ ] `persistence`: `try/catch` en `setItem` (QuotaExceededError)
-- [ ] Render-test de `GameProvider`/`useGame`
+- [x] `persistence`: `try/catch` en `setItem` (QuotaExceededError / modo privado) + test
+- [x] Render-test de `GameProvider`/`useGame` (infra: `@testing-library/react` + `jsdom`)
 
 ## Fase 2 — Migración completa
 - [ ] Extraer el resto de widgets (Bloques 2-6)

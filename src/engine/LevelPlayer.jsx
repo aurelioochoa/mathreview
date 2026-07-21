@@ -21,7 +21,15 @@ function BriefingStep({ step }) {
   return <div>{step.body}</div>
 }
 
+// Envoltorio que fuerza el remount al cambiar de nivel (resetea phase/attempt/
+// lives/…), evitando estado obsoleto si se añade navegación nivel→nivel. Hoy el
+// fin de nivel solo enlaza de vuelta al mundo, así que es preventivo.
 export default function LevelPlayer() {
+  const { levelId } = useParams()
+  return <LevelPlayerView key={levelId} />
+}
+
+function LevelPlayerView() {
   const { slug, levelId } = useParams()
   const { dispatch } = useGame()
   const world = findWorld(slug)
