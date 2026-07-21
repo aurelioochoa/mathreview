@@ -7,7 +7,7 @@
 
 // Niveles del Mundo 3 (para calcular estado 'completed'). Deben coincidir con
 // los ids de src/content/worlds/mundo3-potencias.jsx.
-const MUNDO3_LEVELS = ['aproximacion', 'potencias', 'notacion', 'radicales']
+const MUNDO3_LEVELS = ['aproximacion', 'potenciacion', 'notacion', 'radicacion']
 
 export const worldMapNodes = [
   // — Teasers (roadmap Fase 4), bloqueados —

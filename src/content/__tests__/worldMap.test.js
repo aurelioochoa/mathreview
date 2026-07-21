@@ -73,8 +73,8 @@ describe('worldMap: worldProgress', () => {
 
   it('avance parcial: cuenta niveles y estrellas reales', () => {
     const p = worldProgress(volcan, {
-      completedLevels: ['mundo3/aproximacion', 'mundo3/potencias'],
-      stars: { 'mundo3/aproximacion': 3, 'mundo3/potencias': 1 },
+      completedLevels: ['mundo3/aproximacion', 'mundo3/potenciacion'],
+      stars: { 'mundo3/aproximacion': 3, 'mundo3/potenciacion': 1 },
     })
     expect(p.done).toBe(2)
     expect(p.stars).toBe(4)
@@ -82,7 +82,7 @@ describe('worldMap: worldProgress', () => {
   })
 
   it('todo completo: 100%', () => {
-    const all = ['mundo3/aproximacion', 'mundo3/potencias', 'mundo3/notacion', 'mundo3/radicales']
+    const all = ['mundo3/aproximacion', 'mundo3/potenciacion', 'mundo3/notacion', 'mundo3/radicacion']
     const p = worldProgress(volcan, {
       completedLevels: all,
       stars: Object.fromEntries(all.map(k => [k, 3])),
@@ -112,7 +112,7 @@ describe('worldMap: nodeState', () => {
 
   it('mundo jugable -> completed cuando TODOS sus niveles están en completedLevels', () => {
     const all = [
-      'mundo3/aproximacion', 'mundo3/potencias', 'mundo3/notacion', 'mundo3/radicales',
+      'mundo3/aproximacion', 'mundo3/potenciacion', 'mundo3/notacion', 'mundo3/radicacion',
     ]
     expect(nodeState(volcan, { completedLevels: all })).toBe('completed')
   })
