@@ -8,16 +8,18 @@ export default function Layout() {
   const location = useLocation()
   const { prev, next } = adjacentBlock(location.pathname)
   const onBlockPage = prev !== null || next !== null || location.pathname.startsWith('/bloque')
+  // El mapa (home) es full-bleed: llena el viewport bajo el HUD, sin footer.
+  const isMap = location.pathname === '/'
 
   return (
-    <div className="min-h-screen">
+    <div className={isMap ? 'h-dvh flex flex-col' : 'min-h-screen'}>
       <nav className="sticky top-0 z-50 glass border-b border-white/50 shadow-sm">
         <div className="max-w-6xl mx-auto px-4 py-2.5">
           <Hud />
         </div>
       </nav>
 
-      <main className="max-w-5xl mx-auto px-4 py-8">
+      <main className={isMap ? 'flex-1 min-h-0 overflow-auto' : 'max-w-5xl mx-auto px-4 py-8'}>
         <PageTransition><Outlet /></PageTransition>
       </main>
 
@@ -40,9 +42,11 @@ export default function Layout() {
         </div>
       )}
 
-      <footer className="text-center py-6 text-gray-400 text-sm">
-        Math Quest — repaso matemático gamificado
-      </footer>
+      {!isMap && (
+        <footer className="text-center py-6 text-gray-400 text-sm">
+          Math Quest — repaso matemático gamificado
+        </footer>
+      )}
     </div>
   )
 }

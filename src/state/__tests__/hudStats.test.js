@@ -28,6 +28,15 @@ describe('hudStats', () => {
     expect(s.progress).toBeCloseTo(0)
   })
 
+  it('totalStars suma las estrellas reales de todos los niveles', () => {
+    expect(hudStats({ xp: 0, coins: 0 }).totalStars).toBe(0)
+    expect(hudStats({ xp: 0, coins: 0, stars: {} }).totalStars).toBe(0)
+    expect(hudStats({
+      xp: 0, coins: 0,
+      stars: { 'mundo3/aproximacion': 3, 'mundo3/potencias': 2, 'mundo3/notacion': 1 },
+    }).totalStars).toBe(6)
+  })
+
   it('progress siempre queda en [0,1]', () => {
     for (const xp of [0, 1, 99, 100, 250, 999, 5000]) {
       const p = hudStats({ xp, coins: 0 }).progress

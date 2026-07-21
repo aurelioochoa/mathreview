@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom'
 import { Lock } from 'lucide-react'
 import { motion, useReducedMotion } from 'motion/react'
-import { worldMapNodes, nodeState } from '../content/worldMap'
+import { worldMapNodes, nodeState, worldProgress } from '../content/worldMap'
 import { useGame } from '../state/gameStore'
 
 // Clases de gradiente LITERALES por tema (Tailwind escanea substrings literales;
@@ -21,6 +21,7 @@ function WorldCard({ node, state }) {
   const reduce = useReducedMotion()
   const st = nodeState(node, state)
   const locked = st === 'coming-soon'
+  const progress = worldProgress(node, state)
 
   const inner = (
     <>
@@ -28,6 +29,17 @@ function WorldCard({ node, state }) {
       <h3 className="font-display font-bold text-white text-lg leading-tight">{node.title}</h3>
       <p className="text-white/85 text-sm mt-1">{node.subtitle}</p>
       {st === 'completed' && <span className="inline-block mt-2 text-amber-200 text-sm font-bold">⭐ Completado</span>}
+      {progress && (
+        <div className="mt-2">
+          <div className="flex items-center justify-between text-xs font-bold text-white/90">
+            <span>⭐ {progress.stars}/{progress.totalStars}</span>
+            <span>{progress.pct}%</span>
+          </div>
+          <div className="mt-1 h-1.5 rounded-full bg-white/25 overflow-hidden">
+            <div className="h-full rounded-full bg-white/90" style={{ width: `${progress.pct}%` }} />
+          </div>
+        </div>
+      )}
       {locked && (
         <span className="inline-flex items-center gap-1 mt-2 text-white/90 text-xs font-semibold">
           <Lock size={12} /> Próximamente

@@ -1,5 +1,4 @@
-import { createContext, useContext, useEffect, useReducer } from 'react'
-import { loadSave, persistSave } from './persistence'
+import { createContext, useContext } from 'react'
 
 export const XP_PER_CORRECT = 10
 export const XP_LEVEL_COMPLETE = 50
@@ -34,13 +33,7 @@ export function gameReducer(state, action) {
   }
 }
 
-const GameContext = createContext(null)
-
-export function GameProvider({ children }) {
-  const [state, dispatch] = useReducer(gameReducer, undefined, () => loadSave() ?? initialState)
-  useEffect(() => { persistSave(state) }, [state])
-  return <GameContext.Provider value={{ state, dispatch }}>{children}</GameContext.Provider>
-}
+export const GameContext = createContext(null)
 
 export function useGame() {
   const ctx = useContext(GameContext)

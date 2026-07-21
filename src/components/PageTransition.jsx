@@ -10,6 +10,7 @@ export default function PageTransition({ children }) {
   return (
     <AnimatePresence mode="wait">
       <motion.div
+        className="h-full"
         key={location.pathname}
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}

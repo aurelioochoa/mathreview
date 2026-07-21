@@ -342,7 +342,8 @@ function FuncionCuadraticaSection() {
     const x2 = (-bCoef - sqrtD) / (2 * a)
     if (discriminante === 0) return [x1]
     return [x1, x2]
-  }, [a, bCoef, c, discriminante])
+    // `c` ya está contenido en `discriminante`; no hace falta como dependencia.
+  }, [a, bCoef, discriminante])
 
   const quizQuestions = [
     {

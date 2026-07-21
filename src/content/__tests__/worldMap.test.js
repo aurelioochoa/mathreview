@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import {
   worldMapNodes, nodeState, blockRoutes, adjacentBlock,
+  pathOrder, teaserBranch, worldProgress,
 } from '../worldMap'
 
 describe('worldMap: modelo de nodos', () => {
@@ -31,6 +32,62 @@ describe('worldMap: modelo de nodos', () => {
   it('los ids son únicos', () => {
     const ids = worldMapNodes.map(n => n.id)
     expect(new Set(ids).size).toBe(ids.length)
+  })
+
+  it('los nodos viven en el plano XZ (y = 0) para el mapa aéreo', () => {
+    for (const n of worldMapNodes) {
+      expect(n.position[1], n.id).toBe(0)
+    }
+  })
+})
+
+describe('worldMap: caminos', () => {
+  it('pathOrder recorre los 6 mundos activos, sin repetir', () => {
+    const activeIds = new Set(worldMapNodes.filter(n => n.status === 'active').map(n => n.id))
+    expect(pathOrder).toHaveLength(6)
+    expect(new Set(pathOrder).size).toBe(6)
+    for (const id of pathOrder) expect(activeIds.has(id), id).toBe(true)
+  })
+
+  it('teaserBranch arranca en un mundo activo y termina en los 2 teasers', () => {
+    const byId = Object.fromEntries(worldMapNodes.map(n => [n.id, n]))
+    expect(byId[teaserBranch[0]].status).toBe('active')
+    for (const id of teaserBranch.slice(1)) {
+      expect(byId[id].status, id).toBe('coming-soon')
+    }
+  })
+})
+
+describe('worldMap: worldProgress', () => {
+  const volcan = worldMapNodes.find(n => n.id === 'volcan-potencias')
+  const castillo = worldMapNodes.find(n => n.id === 'castillo-algebra')
+
+  it('nodo de estudio o teaser -> null (sin progreso falso)', () => {
+    expect(worldProgress(castillo, { completedLevels: [] })).toBeNull()
+  })
+
+  it('sin avance: 0 estrellas, 0%', () => {
+    const p = worldProgress(volcan, { completedLevels: [], stars: {} })
+    expect(p).toEqual({ stars: 0, totalStars: 12, done: 0, total: 4, pct: 0 })
+  })
+
+  it('avance parcial: cuenta niveles y estrellas reales', () => {
+    const p = worldProgress(volcan, {
+      completedLevels: ['mundo3/aproximacion', 'mundo3/potencias'],
+      stars: { 'mundo3/aproximacion': 3, 'mundo3/potencias': 1 },
+    })
+    expect(p.done).toBe(2)
+    expect(p.stars).toBe(4)
+    expect(p.pct).toBe(50)
+  })
+
+  it('todo completo: 100%', () => {
+    const all = ['mundo3/aproximacion', 'mundo3/potencias', 'mundo3/notacion', 'mundo3/radicales']
+    const p = worldProgress(volcan, {
+      completedLevels: all,
+      stars: Object.fromEntries(all.map(k => [k, 3])),
+    })
+    expect(p).toEqual({ stars: 12, totalStars: 12, done: 4, total: 4, pct: 100 })
   })
 })
 

@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { Home, Coins } from 'lucide-react'
+import { Home, Coins, Star } from 'lucide-react'
 import { motion, useReducedMotion } from 'motion/react'
 import { useGame } from '../state/gameStore'
 import { hudStats } from '../state/hudStats'
@@ -35,6 +35,18 @@ export default function Hud() {
           />
         </div>
       </div>
+
+      {/* Estrellas totales (dato real) */}
+      <motion.div
+        key={`stars-${s.totalStars}`}
+        initial={reduce ? false : { scale: 0.7 }}
+        animate={{ scale: 1 }}
+        transition={reduce ? { duration: 0 } : { type: 'spring', stiffness: 500, damping: 15 }}
+        className="hidden xs:flex sm:flex items-center gap-1 font-display font-bold text-yellow-500 glass rounded-full px-3 py-1 shrink-0"
+      >
+        <Star size={16} fill="currentColor" />
+        <span className="tabular-nums">{s.totalStars}</span>
+      </motion.div>
 
       {/* Monedas con pop al cambiar */}
       <motion.div

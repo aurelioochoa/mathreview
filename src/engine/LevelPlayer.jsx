@@ -23,7 +23,7 @@ function BriefingStep({ step }) {
 
 export default function LevelPlayer() {
   const { slug, levelId } = useParams()
-  const { state, dispatch } = useGame()
+  const { dispatch } = useGame()
   const world = findWorld(slug)
   const level = world?.levels.find(l => l.id === levelId)
 
@@ -39,6 +39,8 @@ export default function LevelPlayer() {
 
   const questions = useMemo(
     () => (level ? buildReto(level.reto.factories, level.reto.pick) : []),
+    // `attempt` es intencional: al reintentar (setAttempt) regenera preguntas nuevas.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [level, attempt],
   )
 

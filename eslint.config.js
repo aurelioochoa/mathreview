@@ -23,7 +23,9 @@ export default defineConfig([
       },
     },
     rules: {
-      'no-unused-vars': ['error', { varsIgnorePattern: '^[A-Z_]' }],
+      // Ignora componentes JSX PascalCase y el namespace `motion` (usado solo
+      // como <motion.*>, que este config no rastrea sin eslint-plugin-react).
+      'no-unused-vars': ['error', { varsIgnorePattern: '^[A-Z_]|^motion$' }],
     },
   },
 ])

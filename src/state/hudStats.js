@@ -9,11 +9,13 @@ export function hudStats(state) {
   const span = ceil - floor
   const intoLevel = xp - floor
   const progress = span > 0 ? Math.min(1, Math.max(0, intoLevel / span)) : 1
+  const totalStars = Object.values(state?.stars ?? {}).reduce((a, b) => a + b, 0)
   return {
     level,
     title: titleForLevel(level),
     xp,
     coins: state?.coins ?? 0,
+    totalStars,
     intoLevel,
     span,
     progress,
