@@ -12,6 +12,11 @@ import ParabolaExplorer from './ParabolaExplorer'
 import PitagorasCalculadora from './PitagorasCalculadora'
 import TrianguloInteractivo from './TrianguloInteractivo'
 import CilindroCalculadora from './CilindroCalculadora'
+import EstadisticaCalculadora from './EstadisticaCalculadora'
+import BoxPlot from './BoxPlot'
+import PermutacionesCalculadora from './PermutacionesCalculadora'
+import CombinacionesCalculadora from './CombinacionesCalculadora'
+import AtuendosEjemplo from './AtuendosEjemplo'
 
 export const widgets = {
   'aproximacion-explorer': AproximacionExplorer,
@@ -28,4 +33,9 @@ export const widgets = {
   'pitagoras-calculadora': PitagorasCalculadora,
   'triangulo-interactivo': TrianguloInteractivo,
   'cilindro-calculadora': CilindroCalculadora,
+  'estadistica-calculadora': EstadisticaCalculadora,
+  'boxplot': BoxPlot,
+  'permutaciones-calculadora': PermutacionesCalculadora,
+  'combinaciones-calculadora': CombinacionesCalculadora,
+  'atuendos-ejemplo': AtuendosEjemplo,
 }

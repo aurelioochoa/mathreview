@@ -1,5 +1,3 @@
-import { useState, useMemo } from 'react'
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts'
 import TopicCard from '../components/TopicCard'
 import InteractiveBox from '../components/InteractiveBox'
 import MathTex from '../components/MathTex'
@@ -9,45 +7,13 @@ import CommonMistakes from '../components/CommonMistakes'
 import BlockProgress from '../components/BlockProgress'
 import ExpressSummary from '../components/ExpressSummary'
 import GlossaryTerm from '../components/GlossaryTerm'
+import EstadisticaCalculadora from '../widgets/EstadisticaCalculadora'
+import BoxPlot from '../widgets/BoxPlot'
+import PermutacionesCalculadora from '../widgets/PermutacionesCalculadora'
+import CombinacionesCalculadora from '../widgets/CombinacionesCalculadora'
+import AtuendosEjemplo from '../widgets/AtuendosEjemplo'
 
 function MediaMedianaModa() {
-  const [input, setInput] = useState('12, 15, 18, 15, 20, 22, 15, 25, 18, 30')
-
-  const datos = useMemo(() => {
-    return input.split(',').map(s => parseFloat(s.trim())).filter(n => !isNaN(n))
-  }, [input])
-
-  const stats = useMemo(() => {
-    if (datos.length === 0) return null
-    const sorted = [...datos].sort((a, b) => a - b)
-    const n = sorted.length
-
-    const media = sorted.reduce((a, b) => a + b, 0) / n
-
-    let mediana
-    if (n % 2 === 0) {
-      mediana = (sorted[n / 2 - 1] + sorted[n / 2]) / 2
-    } else {
-      mediana = sorted[Math.floor(n / 2)]
-    }
-
-    const freq = {}
-    sorted.forEach(v => { freq[v] = (freq[v] || 0) + 1 })
-    const maxFreq = Math.max(...Object.values(freq))
-    const modas = Object.entries(freq).filter(([, f]) => f === maxFreq).map(([v]) => Number(v))
-
-    return { media, mediana, modas, sorted, n, freq }
-  }, [datos])
-
-  const chartData = useMemo(() => {
-    if (!stats) return []
-    const freq = {}
-    datos.forEach(v => { freq[v] = (freq[v] || 0) + 1 })
-    return Object.entries(freq)
-      .sort(([a], [b]) => Number(a) - Number(b))
-      .map(([val, count]) => ({ valor: Number(val), frecuencia: count }))
-  }, [datos, stats])
-
   const quizQuestions = [
     {
       question: "¿Cuál es la media de: 10, 20, 30, 40, 50?",
@@ -117,54 +83,7 @@ function MediaMedianaModa() {
       </div>
 
       <InteractiveBox title="Calculadora interactiva">
-        <label className="block text-sm font-medium mb-2">Escribe tus datos separados por comas:</label>
-        <input
-          type="text"
-          value={input}
-          onChange={e => setInput(e.target.value)}
-          className="border border-gray-300 rounded-lg px-3 py-2 w-full font-mono focus:ring-2 focus:ring-pink-400 outline-none"
-        />
-
-        {stats && (
-          <>
-            <div className="mt-4 grid grid-cols-3 gap-3 text-center">
-              <div className="bg-pink-100 rounded-lg p-3">
-                <p className="text-xs font-semibold text-pink-600">MEDIA</p>
-                <p className="text-2xl font-bold font-mono">{stats.media.toFixed(2)}</p>
-              </div>
-              <div className="bg-purple-100 rounded-lg p-3">
-                <p className="text-xs font-semibold text-purple-600">MEDIANA</p>
-                <p className="text-2xl font-bold font-mono">{stats.mediana.toFixed(2)}</p>
-              </div>
-              <div className="bg-orange-100 rounded-lg p-3">
-                <p className="text-xs font-semibold text-orange-600">MODA</p>
-                <p className="text-2xl font-bold font-mono">{stats.modas.join(', ')}</p>
-              </div>
-            </div>
-
-            <div className="mt-4 h-48">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={chartData}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="valor" />
-                  <YAxis allowDecimals={false} />
-                  <Tooltip />
-                  <Bar dataKey="frecuencia" radius={[4, 4, 0, 0]}>
-                    {chartData.map((entry, i) => (
-                      <Cell key={i} fill={stats.modas.includes(entry.valor) ? '#ec4899' : '#c4b5fd'} />
-                    ))}
-                  </Bar>
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
-            <p className="text-xs text-gray-400 text-center">Las barras rosas son la(s) moda(s)</p>
-
-            <div className="mt-3 glass rounded-md p-3 text-sm">
-              <p><strong>Datos ordenados:</strong> {stats.sorted.join(', ')}</p>
-              <p><strong>n =</strong> {stats.n} datos</p>
-            </div>
-          </>
-        )}
+        <EstadisticaCalculadora />
       </InteractiveBox>
 
       <MiniQuiz questions={quizQuestions} />
@@ -173,26 +92,6 @@ function MediaMedianaModa() {
 }
 
 function PercentilesSection() {
-  const [input] = useState('4, 5, 5, 6, 6, 6, 7, 7, 7, 7, 8, 8, 8, 9, 9, 10')
-
-  const datos = useMemo(() => {
-    return input.split(',').map(s => parseFloat(s.trim())).filter(n => !isNaN(n)).sort((a, b) => a - b)
-  }, [input])
-
-  const percentil = (p) => {
-    const i = (p / 100) * (datos.length - 1)
-    const lo = Math.floor(i)
-    const hi = Math.ceil(i)
-    if (lo === hi) return datos[lo]
-    return datos[lo] + (datos[hi] - datos[lo]) * (i - lo)
-  }
-
-  const q1 = percentil(25)
-  const q2 = percentil(50)
-  const q3 = percentil(75)
-  const min = datos[0]
-  const max = datos[datos.length - 1]
-
   const quizQuestions = [
     {
       question: "Si estás en el percentil 75 de una clase, ¿qué significa?",
@@ -257,57 +156,7 @@ function PercentilesSection() {
       </div>
 
       <InteractiveBox title="Diagrama de caja (Box Plot)">
-        <p className="text-sm mb-3">Datos: {datos.join(', ')}</p>
-
-        <div className="relative h-24 mx-4 mb-6">
-          <div className="absolute top-1/2 left-0 right-0 h-0.5 bg-gray-300 -translate-y-1/2" />
-
-          {(() => {
-            const range = max - min || 1
-            const pos = (v) => `${((v - min) / range) * 100}%`
-            return (
-              <>
-                <div className="absolute top-1/4 h-1/2 bg-pink-200 border-2 border-pink-500 rounded"
-                  style={{ left: pos(q1), width: `${((q3 - q1) / range) * 100}%` }} />
-
-                <div className="absolute top-1/4 h-1/2 w-0.5 bg-pink-700"
-                  style={{ left: pos(q2) }} />
-
-                <div className="absolute top-[45%] h-[10%] w-8 border-t-2 border-pink-500"
-                  style={{ left: `calc(${pos(min)} - 16px)` }} />
-                <div className="absolute top-1/2 h-0.5 bg-pink-400"
-                  style={{ left: pos(min), width: `${((q1 - min) / range) * 100}%` }} />
-
-                <div className="absolute top-[45%] h-[10%] w-8 border-t-2 border-pink-500"
-                  style={{ left: `calc(${pos(max)} - 16px)` }} />
-                <div className="absolute top-1/2 h-0.5 bg-pink-400"
-                  style={{ left: pos(q3), width: `${((max - q3) / range) * 100}%` }} />
-
-                {[
-                  { v: min, label: `Min=${min}` },
-                  { v: q1, label: `Q1=${q1}` },
-                  { v: q2, label: `Q2=${q2}` },
-                  { v: q3, label: `Q3=${q3}` },
-                  { v: max, label: `Max=${max}` },
-                ].map(({ v, label }) => (
-                  <div key={label} className="absolute text-xs text-pink-700 font-semibold -translate-x-1/2"
-                    style={{ left: pos(v), top: '85%' }}>
-                    {label}
-                  </div>
-                ))}
-              </>
-            )
-          })()}
-        </div>
-
-        <div className="glass rounded-md p-3 text-sm mt-4">
-          <p><strong>Interpretación del Q1 = {q1}:</strong></p>
-          <ul className="list-disc pl-5 text-xs space-y-1 text-gray-600 mt-1">
-            <li>El 25% de los datos son ≤ {q1}</li>
-            <li>El percentil 25 es {q1}</li>
-            <li>Un cuarto de los datos está por debajo de {q1}</li>
-          </ul>
-        </div>
+        <BoxPlot />
       </InteractiveBox>
 
       <MiniQuiz questions={quizQuestions} />
@@ -316,18 +165,6 @@ function PercentilesSection() {
 }
 
 function PermutacionesSection() {
-  const [n, setN] = useState(12)
-  const [r, setR] = useState(4)
-
-  const factorial = (num) => {
-    if (num <= 1) return 1
-    let result = 1
-    for (let i = 2; i <= num; i++) result *= i
-    return result
-  }
-
-  const perm = n >= r && r >= 0 ? factorial(n) / factorial(n - r) : 0
-
   const quizQuestions = [
     {
       question: "¿De cuántas formas puedes ordenar 3 libros en un estante de 5?",
@@ -393,22 +230,7 @@ function PermutacionesSection() {
       </div>
 
       <InteractiveBox title="Calculadora de permutaciones">
-        <div className="flex gap-4 items-end flex-wrap mb-4">
-          <div>
-            <label className="block text-xs font-medium mb-1">n (total)</label>
-            <input type="number" value={n} onChange={e => setN(Math.max(0, Number(e.target.value)))}
-              className="border rounded-lg px-3 py-2 w-20 font-mono text-center focus:ring-2 focus:ring-pink-400 outline-none" min={0} max={20} />
-          </div>
-          <div>
-            <label className="block text-xs font-medium mb-1">r (elegir)</label>
-            <input type="number" value={r} onChange={e => setR(Math.max(0, Number(e.target.value)))}
-              className="border rounded-lg px-3 py-2 w-20 font-mono text-center focus:ring-2 focus:ring-pink-400 outline-none" min={0} max={20} />
-          </div>
-        </div>
-        <div className="glass rounded-xl p-4 text-center">
-          <MathTex expr={`P(${n}, ${r}) = \\frac{${n}!}{(${n}-${r})!} = \\frac{${n}!}{${n - r}!}`} />
-          <p className="text-2xl font-bold text-pink-600 mt-2 font-mono">{perm.toLocaleString()}</p>
-        </div>
+        <PermutacionesCalculadora />
       </InteractiveBox>
 
       <MiniQuiz questions={quizQuestions} />
@@ -417,18 +239,6 @@ function PermutacionesSection() {
 }
 
 function CombinacionesSection() {
-  const [n, setN] = useState(12)
-  const [r, setR] = useState(4)
-
-  const factorial = (num) => {
-    if (num <= 1) return 1
-    let result = 1
-    for (let i = 2; i <= num; i++) result *= i
-    return result
-  }
-
-  const comb = n >= r && r >= 0 ? factorial(n) / (factorial(r) * factorial(n - r)) : 0
-
   const quizQuestions = [
     {
       question: "¿De cuántas formas puedes elegir 3 amigos de un grupo de 8 para tu equipo?",
@@ -481,33 +291,7 @@ function CombinacionesSection() {
       </div>
 
       <InteractiveBox title="Calculadora de combinaciones">
-        <div className="flex gap-4 items-end flex-wrap mb-4">
-          <div>
-            <label className="block text-xs font-medium mb-1">n (total)</label>
-            <input type="number" value={n} onChange={e => setN(Math.max(0, Number(e.target.value)))}
-              className="border rounded-lg px-3 py-2 w-20 font-mono text-center focus:ring-2 focus:ring-pink-400 outline-none" min={0} max={20} />
-          </div>
-          <div>
-            <label className="block text-xs font-medium mb-1">r (elegir)</label>
-            <input type="number" value={r} onChange={e => setR(Math.max(0, Number(e.target.value)))}
-              className="border rounded-lg px-3 py-2 w-20 font-mono text-center focus:ring-2 focus:ring-pink-400 outline-none" min={0} max={20} />
-          </div>
-        </div>
-        <div className="glass rounded-xl p-4 text-center">
-          <MathTex expr={`C(${n}, ${r}) = \\frac{${n}!}{${r}! \\cdot ${n - r}!}`} />
-          <p className="text-2xl font-bold text-pink-600 mt-2 font-mono">{comb.toLocaleString()}</p>
-        </div>
-
-        <div className="mt-4 glass rounded-md p-3 text-sm">
-          <p className="font-semibold">Ejemplo del examen:</p>
-          <p className="text-gray-700 mt-1">
-            Una banda tiene <strong>12 canciones</strong> y debe elegir <strong>4</strong> para su álbum. ¿De cuántas formas?
-          </p>
-          <div className="mt-2 bg-pink-50 rounded p-2">
-            <MathTex expr={`C(12, 4) = \\frac{12!}{4! \\cdot 8!} = \\frac{12 \\times 11 \\times 10 \\times 9}{4 \\times 3 \\times 2 \\times 1} = 495`} />
-            <p className="font-bold text-pink-700 mt-1">495 formas diferentes</p>
-          </div>
-        </div>
+        <CombinacionesCalculadora />
       </InteractiveBox>
 
       <MiniQuiz questions={quizQuestions} />
@@ -516,12 +300,6 @@ function CombinacionesSection() {
 }
 
 function PrincipioConteoSection() {
-  const camisas = ['🔴', '🔵', '🟢']
-  const pantalones = ['👖', '👖', '👖', '👖']
-  const zapatos = ['👟', '👞']
-
-  const total = camisas.length * pantalones.length * zapatos.length
-
   const quizQuestions = [
     {
       question: "Tienes 4 camisas, 3 pantalones y 2 zapatos. ¿Cuántos atuendos diferentes puedes formar?",
@@ -558,28 +336,7 @@ function PrincipioConteoSection() {
       </div>
 
       <InteractiveBox title="Ejemplo: ¿Cuántos atuendos puedes formar?">
-        <div className="grid grid-cols-3 gap-4 text-center text-sm mb-4">
-          <div className="glass rounded-xl p-3 border">
-            <p className="font-bold mb-2">Camisas</p>
-            <p className="text-3xl">{camisas.join(' ')}</p>
-            <p className="text-pink-600 font-bold mt-1">{camisas.length} opciones</p>
-          </div>
-          <div className="glass rounded-xl p-3 border">
-            <p className="font-bold mb-2">Pantalones</p>
-            <p className="text-3xl">👖×4</p>
-            <p className="text-pink-600 font-bold mt-1">{pantalones.length} opciones</p>
-          </div>
-          <div className="glass rounded-xl p-3 border">
-            <p className="font-bold mb-2">Zapatos</p>
-            <p className="text-3xl">{zapatos.join(' ')}</p>
-            <p className="text-pink-600 font-bold mt-1">{zapatos.length} opciones</p>
-          </div>
-        </div>
-
-        <div className="text-center glass rounded-xl p-4">
-          <MathTex expr={`${camisas.length} \\times ${pantalones.length} \\times ${zapatos.length} = ${total}`} />
-          <p className="text-xl font-bold text-pink-600 mt-2">¡{total} atuendos diferentes!</p>
-        </div>
+        <AtuendosEjemplo />
       </InteractiveBox>
 
       <MiniQuiz questions={quizQuestions} />
