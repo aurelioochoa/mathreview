@@ -9,6 +9,9 @@ import SistemasGrafica from './SistemasGrafica'
 import CramerCalculadora from './CramerCalculadora'
 import PendienteOrdenada from './PendienteOrdenada'
 import ParabolaExplorer from './ParabolaExplorer'
+import PitagorasCalculadora from './PitagorasCalculadora'
+import TrianguloInteractivo from './TrianguloInteractivo'
+import CilindroCalculadora from './CilindroCalculadora'
 
 export const widgets = {
   'aproximacion-explorer': AproximacionExplorer,
@@ -22,4 +25,7 @@ export const widgets = {
   'cramer-calculadora': CramerCalculadora,
   'pendiente-ordenada': PendienteOrdenada,
   'parabola-explorer': ParabolaExplorer,
+  'pitagoras-calculadora': PitagorasCalculadora,
+  'triangulo-interactivo': TrianguloInteractivo,
+  'cilindro-calculadora': CilindroCalculadora,
 }

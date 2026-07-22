@@ -1,5 +1,3 @@
-import { useState } from 'react'
-import { Mafs, Coordinates, Polygon, Text as MafsText, Theme } from 'mafs'
 import TopicCard from '../components/TopicCard'
 import InteractiveBox from '../components/InteractiveBox'
 import MathTex from '../components/MathTex'
@@ -9,12 +7,11 @@ import CommonMistakes from '../components/CommonMistakes'
 import BlockProgress from '../components/BlockProgress'
 import ExpressSummary from '../components/ExpressSummary'
 import GlossaryTerm from '../components/GlossaryTerm'
+import PitagorasCalculadora from '../widgets/PitagorasCalculadora'
+import TrianguloInteractivo from '../widgets/TrianguloInteractivo'
+import CilindroCalculadora from '../widgets/CilindroCalculadora'
 
 function PitagorasSection() {
-  const [catA, setCatA] = useState(3)
-  const [catB, setCatB] = useState(4)
-  const hip = Math.sqrt(catA * catA + catB * catB)
-
   const quizQuestions = [
     {
       question: "Un triángulo rectángulo tiene catetos de 6 y 8. ¿Cuánto mide la hipotenusa?",
@@ -82,52 +79,7 @@ function PitagorasSection() {
       </div>
 
       <InteractiveBox title="Calculadora de Pitágoras">
-        <div className="flex items-center gap-4 flex-wrap mb-4">
-          <div>
-            <label className="block text-xs font-medium mb-1">Cateto a</label>
-            <input type="number" value={catA} onChange={e => setCatA(Number(e.target.value) || 1)}
-              className="border rounded-lg px-3 py-2 w-24 font-mono text-center focus:ring-2 focus:ring-red-400 outline-none" min={0.1} step={0.5} />
-          </div>
-          <div>
-            <label className="block text-xs font-medium mb-1">Cateto b</label>
-            <input type="number" value={catB} onChange={e => setCatB(Number(e.target.value) || 1)}
-              className="border rounded-lg px-3 py-2 w-24 font-mono text-center focus:ring-2 focus:ring-red-400 outline-none" min={0.1} step={0.5} />
-          </div>
-          <div className="text-center">
-            <p className="text-xs font-medium mb-1">Hipotenusa c</p>
-            <p className="text-2xl font-bold text-red-600 font-mono">{hip.toFixed(3)}</p>
-          </div>
-        </div>
-
-        <div className="glass rounded-xl overflow-hidden border">
-          <Mafs viewBox={{ x: [-1, Math.max(catA, catB) + 2], y: [-1, Math.max(catA, catB) + 2] }} height={300}>
-            <Coordinates.Cartesian />
-            <Polygon
-              points={[[0, 0], [catA, 0], [0, catB]]}
-              color={Theme.red}
-            />
-            <MafsText x={catA / 2} y={-0.5} size={16}>a = {catA}</MafsText>
-            <MafsText x={-0.7} y={catB / 2} size={16}>b = {catB}</MafsText>
-            <MafsText x={catA / 2 + 0.3} y={catB / 2 + 0.3} size={16}>c = {hip.toFixed(2)}</MafsText>
-          </Mafs>
-        </div>
-
-        <div className="mt-3 text-center text-sm">
-          <MathTex expr={`${catA}^2 + ${catB}^2 = ${(catA*catA).toFixed(1)} + ${(catB*catB).toFixed(1)} = ${(catA*catA + catB*catB).toFixed(1)}`} />
-          <br />
-          <MathTex expr={`c = \\sqrt{${(catA*catA + catB*catB).toFixed(1)}} = ${hip.toFixed(3)}`} />
-        </div>
-
-        <div className="mt-4 bg-red-50 rounded p-3 text-sm">
-          <p className="font-semibold">Áreas de los cuadrados:</p>
-          <div className="flex gap-4 justify-center mt-1">
-            <span>a²= <strong>{(catA * catA).toFixed(1)}</strong></span>
-            <span>+</span>
-            <span>b² = <strong>{(catB * catB).toFixed(1)}</strong></span>
-            <span>=</span>
-            <span>c² = <strong>{(hip * hip).toFixed(1)}</strong></span>
-          </div>
-        </div>
+        <PitagorasCalculadora />
       </InteractiveBox>
 
       <MiniQuiz questions={quizQuestions} />
@@ -136,16 +88,6 @@ function PitagorasSection() {
 }
 
 function TrigonometriaSection() {
-  const [angulo, setAngulo] = useState(30)
-  const rad = angulo * Math.PI / 180
-  const sen = Math.sin(rad)
-  const cos = Math.cos(rad)
-  const tan = angulo === 90 ? Infinity : Math.tan(rad)
-
-  const hip = 5
-  const catOp = hip * sen
-  const catAd = hip * cos
-
   const quizQuestions = [
     {
       question: "En un triángulo rectángulo con ángulo de 30°, si la hipotenusa es 10, ¿cuánto mide el cateto opuesto?",
@@ -202,55 +144,7 @@ function TrigonometriaSection() {
       </div>
 
       <InteractiveBox title="Triángulo interactivo — Cambia el ángulo">
-        <div className="mb-4">
-          <label className="block text-sm font-bold text-red-700 mb-1">
-            Ángulo α = {angulo}°
-          </label>
-          <input type="range" min={5} max={85} step={1} value={angulo}
-            onChange={e => setAngulo(Number(e.target.value))}
-            className="w-full max-w-sm accent-red-500" />
-        </div>
-
-        <div className="glass rounded-xl overflow-hidden border">
-          <Mafs viewBox={{ x: [-0.5, 6], y: [-0.5, 6] }} height={300}>
-            <Coordinates.Cartesian />
-            <Polygon
-              points={[[0, 0], [catAd, 0], [0, catOp]]}
-              color={Theme.red}
-            />
-            <MafsText x={catAd / 2} y={-0.4} size={14}>
-              adyacente = {catAd.toFixed(2)}
-            </MafsText>
-            <MafsText x={-0.5} y={catOp / 2} size={14}>
-              opuesto = {catOp.toFixed(2)}
-            </MafsText>
-            <MafsText x={catAd / 2 + 0.5} y={catOp / 2 + 0.3} size={14}>
-              hip = {hip}
-            </MafsText>
-            <MafsText x={0.8} y={0.3} size={14}>
-              α = {angulo}°
-            </MafsText>
-          </Mafs>
-        </div>
-
-        <div className="mt-4 grid grid-cols-3 gap-3 text-center text-sm">
-          <div className="bg-red-50 rounded-lg p-3">
-            <p className="font-bold text-red-600">sen({angulo}°)</p>
-            <p className="text-xl font-mono">{sen.toFixed(4)}</p>
-          </div>
-          <div className="bg-blue-50 rounded-lg p-3">
-            <p className="font-bold text-blue-600">cos({angulo}°)</p>
-            <p className="text-xl font-mono">{cos.toFixed(4)}</p>
-          </div>
-          <div className="bg-green-50 rounded-lg p-3">
-            <p className="font-bold text-green-600">tan({angulo}°)</p>
-            <p className="text-xl font-mono">{isFinite(tan) ? tan.toFixed(4) : '∞'}</p>
-          </div>
-        </div>
-
-        <p className="text-xs text-gray-400 text-center mt-2">
-          Identidad fundamental: sen²(α) + cos²(α) = {(sen * sen + cos * cos).toFixed(4)} ≈ 1 ✓
-        </p>
+        <TrianguloInteractivo />
       </InteractiveBox>
 
       <MiniQuiz questions={quizQuestions} />
@@ -259,13 +153,6 @@ function TrigonometriaSection() {
 }
 
 function CilindroSection() {
-  const [radio, setRadio] = useState(3)
-  const [altura, setAltura] = useState(5)
-
-  const areaLateral = 2 * Math.PI * radio * altura
-  const areaBase = Math.PI * radio * radio
-  const areaTotal = areaLateral + 2 * areaBase
-
   const quizQuestions = [
     {
       question: "Un cilindro tiene radio 3 y altura 5. ¿Cuál es el área lateral?",
@@ -314,50 +201,7 @@ function CilindroSection() {
       </div>
 
       <InteractiveBox title="Calculadora del cilindro">
-        <div className="flex gap-4 mb-4 flex-wrap">
-          <div>
-            <label className="block text-xs font-bold text-red-700 mb-1">Radio = {radio}</label>
-            <input type="range" min={1} max={8} step={0.5} value={radio}
-              onChange={e => setRadio(Number(e.target.value))}
-              className="w-40 accent-red-500" />
-          </div>
-          <div>
-            <label className="block text-xs font-bold text-red-700 mb-1">Altura = {altura}</label>
-            <input type="range" min={1} max={12} step={0.5} value={altura}
-              onChange={e => setAltura(Number(e.target.value))}
-              className="w-40 accent-red-500" />
-          </div>
-        </div>
-
-        <div className="flex flex-col sm:flex-row gap-4 items-center justify-center">
-          <div className="relative w-32 flex flex-col items-center">
-            <div className="w-full bg-red-200 rounded-t-full h-6 border-2 border-red-400" />
-            <div className="w-full bg-red-100 border-l-2 border-r-2 border-red-400" style={{ height: `${altura * 15}px` }} />
-            <div className="w-full bg-red-200 rounded-b-full h-6 border-2 border-red-400" />
-            <p className="text-xs text-gray-500 mt-1">r={radio}, h={altura}</p>
-          </div>
-          <div className="text-3xl text-gray-400">→</div>
-          <div className="flex flex-col items-center gap-2">
-            <div className="bg-red-100 border-2 border-red-400 rounded-full" style={{ width: `${radio * 16}px`, height: `${radio * 16}px` }} />
-            <div className="bg-red-50 border-2 border-red-400 rounded" style={{ width: `${radio * 2 * 16}px`, height: `${altura * 12}px` }}>
-              <p className="text-xs text-center mt-1 text-red-600">Lateral</p>
-            </div>
-            <div className="bg-red-100 border-2 border-red-400 rounded-full" style={{ width: `${radio * 16}px`, height: `${radio * 16}px` }} />
-            <p className="text-xs text-gray-500">Red desplegada</p>
-          </div>
-        </div>
-
-        <div className="mt-4 grid grid-cols-3 gap-2 text-center text-sm">
-          <div className="bg-red-50 rounded p-2">
-            <strong>A. Lateral</strong><br />{areaLateral.toFixed(2)}
-          </div>
-          <div className="bg-red-50 rounded p-2">
-            <strong>A. Base</strong><br />{areaBase.toFixed(2)}
-          </div>
-          <div className="bg-red-100 rounded p-2">
-            <strong>A. Total</strong><br />{areaTotal.toFixed(2)}
-          </div>
-        </div>
+        <CilindroCalculadora />
       </InteractiveBox>
 
       <MiniQuiz questions={quizQuestions} />
