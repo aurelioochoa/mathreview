@@ -10,6 +10,8 @@ export function validateContent({ worlds, widgets, worldMapNodes }) {
     if (!w.slug) problems.push(`mundo ${w.id} sin slug`)
     if (slugs.has(w.slug)) problems.push(`slug duplicado: ${w.slug}`)
     slugs.add(w.slug)
+    if (!w.boss || typeof w.boss.name !== 'string' || typeof w.boss.emoji !== 'string')
+      problems.push(`mundo ${w.id}: falta boss bien formado { name, emoji, intro }`)
     if (!Array.isArray(w.levels) || w.levels.length === 0) {
       problems.push(`mundo ${w.id} sin niveles`)
       continue

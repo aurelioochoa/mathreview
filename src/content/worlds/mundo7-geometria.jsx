@@ -96,6 +96,7 @@ export const mundo7 = {
   id: 'mundo7', slug: 'montanas-geometria', name: 'Montañas de Geometría',
   emoji: '⛰️', color: 'bg-bloque5',
   description: 'Pitágoras, trigonometría, cilindro y prisma',
+  boss: { name: 'El Coloso de la Cima', emoji: '🗿', intro: 'En la cumbre, el Coloso mide cada ángulo y cada lado de tu conocimiento.' },
   levels: [
     {
       id: 'pitagoras', title: 'Teorema de Pitágoras', icon: '📐',

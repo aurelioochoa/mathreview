@@ -32,6 +32,7 @@ export const mundo5 = {
   id: 'mundo5', slug: 'laberinto-sistemas', name: 'Laberinto de Sistemas',
   emoji: '🌀', color: 'bg-bloque3',
   description: 'Sistemas 2×2: introducción, método gráfico, reducción y Cramer',
+  boss: { name: 'El Minotauro del Laberinto', emoji: '🐂', intro: 'Sin resolver sus sistemas, no hay salida del laberinto.' },
   levels: [
     {
       id: 'intro-sistemas', title: 'Introducción a los Sistemas 2×2', icon: '🔀',

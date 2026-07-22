@@ -56,3 +56,10 @@ export function makeOptions(correct, distractors = []) {
   for (let k = 1; options.length < 4; k++) push(`${correct} (${k})`)
   return { options, correctAnswer: 0 }
 }
+
+// Pila de preguntas del jefe: todas las fábricas de todos los niveles del mundo,
+// barajadas. Reutiliza buildReto (que a su vez baraja opciones con shuffleOptions).
+export function buildBossPool(world, pick, rng = Math.random) {
+  const factories = world.levels.flatMap(l => l.reto.factories)
+  return buildReto(factories, pick, rng)
+}
