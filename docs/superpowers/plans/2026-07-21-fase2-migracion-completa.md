@@ -891,11 +891,14 @@ export function cosAdyacente(rng = Math.random) {
 }
 
 export function areaLateralCilindro(rng = Math.random) {
-  const r = randInt(rng, 3, 9), h = randInt(rng, 2, 12) // r≥3 evita colisión r²h == 2rh
-  const coef = 2 * r * h
+  const r = randInt(rng, 2, 9), h = randInt(rng, 2, 12)
+  const coef = 2 * r * h // A_L = 2πrh
+  // Distractores como múltiplos distintos de rh (coefs {1,3,4} vs correcto 2) →
+  // 4 opciones "kπ" siempre distintas; el correcto es string y makeOptions no
+  // puede rellenar numéricamente, así que los distractores deben venir distintos.
   return {
     question: `Un cilindro tiene radio ${r} y altura ${h}. ¿Cuál es su área lateral?`,
-    ...makeOptions(`${coef}π`, [`${r * h}π`, `${r * r * h}π`, `${(r + h) * 2}π`]),
+    ...makeOptions(`${coef}π`, [`${r * h}π`, `${3 * r * h}π`, `${4 * r * h}π`]),
     hint: `A_L = 2πrh = 2π(${r})(${h}) = ${coef}π.`,
     reminder: 'Área lateral del cilindro = 2π·r·h.',
   }
