@@ -148,4 +148,14 @@ describe('worldMap: navegación de bloques', () => {
     expect(adjacentBlock('/otra').prev).toBeNull()
     expect(adjacentBlock('/otra').next).toBeNull()
   })
+
+  it('cada blockRoutes.slug corresponde a un nodo activo del mapa', () => {
+    const activeSlugs = new Set(
+      worldMapNodes.filter(n => n.status === 'active').map(n => n.id)
+    )
+    for (const b of blockRoutes) {
+      expect(b.slug, b.path).toBeTruthy()
+      expect(activeSlugs.has(b.slug), `${b.path} -> ${b.slug}`).toBe(true)
+    }
+  })
 })

@@ -2,7 +2,7 @@
 
 Plan por fases. Spec: [docs/superpowers/specs/2026-07-18-math-quest-design.md](docs/superpowers/specs/2026-07-18-math-quest-design.md)
 
-**Rediseño visual (Spec 1) — completo ✅:** mapa de mundos 3D + HUD + reskin glossy + transiciones + celebración de nivel. Ver [docs/superpowers/specs/2026-07-19-rediseno-worldmap-3d-design.md](docs/superpowers/specs/2026-07-19-rediseno-worldmap-3d-design.md). La migración de contenido de bloques (Fase 2 abajo) sigue pendiente como follow-on independiente del rediseño.
+**Rediseño visual (Spec 1) — completo ✅:** mapa de mundos 3D + HUD + reskin glossy + transiciones + celebración de nivel. Ver [docs/superpowers/specs/2026-07-19-rediseno-worldmap-3d-design.md](docs/superpowers/specs/2026-07-19-rediseno-worldmap-3d-design.md). **La migración de contenido de bloques (Fase 2) ahora completa ✅:** todos los Mundos 4-8 migrados, widgets extraídos, redirects de bloques, validación de contenido.
 
 ## Fase 0 — Base segura ✅ (rama feat/math-quest)
 - [x] 🔴 Mover el token del túnel de Cloudflare de `docker-compose.yml` a `.env` (y añadir `.env` a `.gitignore`) — ⚠️ rotar el token en el dashboard de Cloudflare (vivió en texto plano)
@@ -25,16 +25,16 @@ Plan por fases. Spec: [docs/superpowers/specs/2026-07-18-math-quest-design.md](d
 ### Follow-ups de la revisión final (no bloqueantes, para Fase 2/3)
 - [ ] Economía: XP/monedas se otorgan en cada completado (solo estrellas topadas con `Math.max`) — decidir la regla al añadir la tienda (Fase 3)
 - [x] `LevelPlayer`: `key={levelId}` (envoltorio que fuerza remount al cambiar de nivel; preventivo, evita estado obsoleto)
-- [ ] Retirar las preguntas duplicadas entre `Bloque1` y `mundo3` al migrar los Bloques
+- [x] Retirar las preguntas duplicadas entre `Bloque1` y `mundo3` al migrar los Bloques
 - [x] `persistence`: `try/catch` en `setItem` (QuotaExceededError / modo privado) + test
 - [x] Render-test de `GameProvider`/`useGame` (infra: `@testing-library/react` + `jsdom`)
 
-## Fase 2 — Migración completa
-- [ ] Extraer el resto de widgets (Bloques 2-6)
-- [ ] Migrar Mundo 4 🏰 (← Bloques 2+4 parte), Mundo 5 🌀 (← B3), Mundo 6 🚀 (← B4), Mundo 7 ⛰️ (← B5), Mundo 8 🎡 (← B6)
-- [ ] Añadir nivel de probabilidad básica al Mundo 8
-- [ ] `engine/WorldMap.jsx` reemplaza Home; redirects `/bloqueN` → mundo; ruta 404
-- [ ] Script de validación de contenido (preguntas, widgets, estructura de mundos)
+## Fase 2 — Migración completa ✅
+- [x] Extraer el resto de widgets (Bloques 2-6)
+- [x] Migrar Mundo 4 🏰 (← Bloques 2+4 parte), Mundo 5 🌀 (← B3), Mundo 6 🚀 (← B4), Mundo 7 ⛰️ (← B5), Mundo 8 🎡 (← B6)
+- [x] Añadir nivel de probabilidad básica al Mundo 8
+- [x] `engine/WorldMap.jsx` reemplaza Home; redirects `/bloqueN` → mundo; ruta 404
+- [x] Script de validación de contenido (preguntas, widgets, estructura de mundos)
 
 ## Fase 3 — Gamificación completa (→ MVP jugable)
 - [ ] `engine/BossArena.jsx` (jefe con barra de vida) para los mundos 3-8
