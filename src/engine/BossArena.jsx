@@ -140,6 +140,12 @@ function BossArenaView() {
           <div className="relative">
             <p className="text-5xl mb-2">🏆</p>
             <h2 className="font-display text-xl font-bold mb-1">¡{world.boss.name} derrotado!</h2>
+            <div className="mb-2 flex justify-between text-sm">
+              <span>💀 {world.boss.emoji} Jefe derrotado</span>
+            </div>
+            <div className="h-3 rounded-full bg-gray-200 overflow-hidden mb-4">
+              <div className="h-full bg-red-500 transition-all" style={{ width: '0%' }} />
+            </div>
             <p className="text-sm text-gray-500 mb-4">+{XP_BOSS} XP · +{COINS_BOSS} 🪙 · ⭐ Maestría del mundo</p>
             <Link to={`/mundo/${world.slug}`} className="px-6 py-3 rounded-xl bg-primary text-white font-display font-bold inline-block">Volver al mundo</Link>
           </div>
