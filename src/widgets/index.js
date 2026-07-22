@@ -7,6 +7,8 @@ import McmCalculadora from './McmCalculadora'
 import FraccionesEjemplo from './FraccionesEjemplo'
 import SistemasGrafica from './SistemasGrafica'
 import CramerCalculadora from './CramerCalculadora'
+import PendienteOrdenada from './PendienteOrdenada'
+import ParabolaExplorer from './ParabolaExplorer'
 
 export const widgets = {
   'aproximacion-explorer': AproximacionExplorer,
@@ -18,4 +20,6 @@ export const widgets = {
   'fracciones-ejemplo': FraccionesEjemplo,
   'sistemas-grafica': SistemasGrafica,
   'cramer-calculadora': CramerCalculadora,
+  'pendiente-ordenada': PendienteOrdenada,
+  'parabola-explorer': ParabolaExplorer,
 }
