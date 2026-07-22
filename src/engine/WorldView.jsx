@@ -1,5 +1,6 @@
 import { Link, useParams } from 'react-router-dom'
 import { findWorld } from '../content/worlds'
+import { questsForWorld } from '../content/quests'
 import { useGame } from '../state/gameStore'
 import { levelForXp, titleForLevel } from '../state/xpCurve'
 
@@ -12,6 +13,7 @@ export default function WorldView() {
   const playerLevel = levelForXp(state.xp)
   const allLevelsDone = world.levels.every(l => state.completedLevels.includes(`${world.id}/${l.id}`))
   const mastered = state.bossDefeats.includes(world.id)
+  const quests = questsForWorld(world.id)
 
   return (
     <div className="max-w-3xl mx-auto">
@@ -75,6 +77,25 @@ export default function WorldView() {
           </div>
         )}
       </div>
+
+      {quests.length > 0 && (
+        <div className="mt-6">
+          <h2 className="font-display font-bold text-gray-700 mb-2">📋 Sidequests</h2>
+          <div className="space-y-2">
+            {quests.map(quest => {
+              const done = state.questsCompleted.includes(`${world.id}/${quest.id}`)
+              return (
+                <Link key={quest.id} to={`/mundo/${world.slug}/quest/${quest.id}`}
+                  className="flex items-center gap-3 glass rounded-2xl p-3 shadow-sm hover:shadow-md transition-all">
+                  <span className="text-2xl">{quest.emoji}</span>
+                  <span className="flex-1 font-semibold text-gray-800">{quest.title}</span>
+                  <span className="text-sm">{done ? '✅' : '➕ XP'}</span>
+                </Link>
+              )
+            })}
+          </div>
+        </div>
+      )}
     </div>
   )
 }
