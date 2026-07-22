@@ -4,6 +4,7 @@ import WorldMap from './pages/WorldMap'
 import WorldView from './engine/WorldView'
 import LevelPlayer from './engine/LevelPlayer'
 import StudyView from './engine/StudyView'
+import BossArena from './engine/BossArena'
 import NotFound from './components/NotFound'
 import { blockRoutes } from './content/worldMap'
 
@@ -15,6 +16,7 @@ export default function App() {
         <Route path="/mundo/:slug" element={<WorldView />} />
         <Route path="/mundo/:slug/nivel/:levelId" element={<LevelPlayer />} />
         <Route path="/mundo/:slug/estudio" element={<StudyView />} />
+        <Route path="/mundo/:slug/jefe" element={<BossArena />} />
         {blockRoutes.map(b => (
           <Route key={b.path} path={b.path} element={<Navigate to={`/mundo/${b.slug}`} replace />} />
         ))}
