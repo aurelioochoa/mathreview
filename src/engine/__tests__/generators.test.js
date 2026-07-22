@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { staticQuestion, randInt, buildReto, shuffleOptions } from '../generators'
+import { staticQuestion, randInt, buildReto, shuffleOptions, makeOptions } from '../generators'
 
 const q = { question: '¿2+2?', options: ['3', '4', '5', '6'], correctAnswer: 1, hint: 'h', reminder: 'r' }
 
@@ -50,5 +50,30 @@ describe('shuffleOptions', () => {
       }
     }
     expect(sawNonZero).toBe(true)
+  })
+})
+
+describe('makeOptions', () => {
+  it('pone el correcto en el índice 0 y devuelve 4 opciones', () => {
+    const r = makeOptions(5, [6, 7, 8])
+    expect(r.correctAnswer).toBe(0)
+    expect(r.options).toEqual(['5', '6', '7', '8'])
+  })
+  it('deduplica distractores repetidos o iguales al correcto', () => {
+    const r = makeOptions(5, [5, 6, 6, 7])
+    expect(r.options).toHaveLength(4)
+    expect(new Set(r.options).size).toBe(4)
+    expect(r.options[0]).toBe('5')
+  })
+  it('rellena con vecinos numéricos si faltan distractores', () => {
+    const r = makeOptions(10, [10]) // solo colisiones → rellena
+    expect(r.options).toHaveLength(4)
+    expect(new Set(r.options).size).toBe(4)
+    expect(r.options[0]).toBe('10')
+  })
+  it('conserva distractores string distintos', () => {
+    const r = makeOptions('x = 3', ['x = 4', 'x = 2', 'x = -3'])
+    expect(r.options).toHaveLength(4)
+    expect(new Set(r.options).size).toBe(4)
   })
 })

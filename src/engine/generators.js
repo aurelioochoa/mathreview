@@ -34,3 +34,25 @@ export function buildReto(factories, pick, rng = Math.random) {
   }
   return pool.slice(0, Math.min(pick, pool.length)).map(f => shuffleOptions(f(), rng))
 }
+
+// Arma { options: [correcto, +3 distractores], correctAnswer: 0 } con 4 opciones
+// distintas (dedup por string). Si faltan distractores y el correcto es numérico,
+// sintetiza vecinos (correcto ± k). buildReto baraja después → índice 0 seguro.
+export function makeOptions(correct, distractors = []) {
+  const s = (v) => String(v)
+  const seen = new Set([s(correct)])
+  const options = [s(correct)]
+  const push = (v) => {
+    const str = s(v)
+    if (!seen.has(str)) { seen.add(str); options.push(str); return true }
+    return false
+  }
+  for (const d of distractors) { if (options.length >= 4) break; push(d) }
+  const n = Number(correct)
+  for (let k = 1; options.length < 4 && Number.isFinite(n) && k <= 99; k++) {
+    push(n + k) || push(n - k)
+  }
+  // Respaldo no numérico (fábricas bien hechas no deberían llegar aquí):
+  for (let k = 1; options.length < 4; k++) push(`${correct} (${k})`)
+  return { options, correctAnswer: 0 }
+}
