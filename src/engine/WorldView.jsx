@@ -24,6 +24,12 @@ export default function WorldView() {
         </div>
       </div>
 
+      <div className="mb-4">
+        <Link to={`/mundo/${world.slug}/estudio`} className="inline-flex items-center gap-1 text-sm font-semibold text-primary glass rounded-full px-3 py-1.5 hover:shadow-md transition">
+          📖 Modo estudio
+        </Link>
+      </div>
+
       <div className="space-y-3">
         {world.levels.map((level, i) => {
           const key = `${world.id}/${level.id}`

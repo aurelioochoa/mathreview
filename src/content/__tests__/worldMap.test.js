@@ -13,10 +13,19 @@ describe('worldMap: modelo de nodos', () => {
 
   it('cada nodo activo apunta a una ruta válida conocida', () => {
     const validTargets = new Set([
-      '/mundo/volcan-potencias', '/bloque2', '/bloque3', '/bloque4', '/bloque5', '/bloque6',
+      '/mundo/volcan-potencias', '/mundo/castillo-algebra', '/mundo/laberinto-sistemas',
+      '/mundo/estacion-funciones', '/mundo/montanas-geometria', '/mundo/feria-datos',
     ])
     for (const n of worldMapNodes.filter(n => n.status === 'active')) {
       expect(validTargets.has(n.target), `${n.id} -> ${n.target}`).toBe(true)
+    }
+  })
+
+  it('los 6 mundos activos son de modo juego con levelKeys y studyTarget', () => {
+    for (const n of worldMapNodes.filter(n => n.status === 'active')) {
+      expect(n.mode, n.id).toBe('game')
+      expect(Array.isArray(n.levelKeys) && n.levelKeys.length > 0, n.id).toBe(true)
+      expect(n.studyTarget, n.id).toMatch(/^\/mundo\/.+\/estudio$/)
     }
   })
 
@@ -61,9 +70,15 @@ describe('worldMap: caminos', () => {
 describe('worldMap: worldProgress', () => {
   const volcan = worldMapNodes.find(n => n.id === 'volcan-potencias')
   const castillo = worldMapNodes.find(n => n.id === 'castillo-algebra')
+  const isla = worldMapNodes.find(n => n.id === 'isla-numerica')
 
-  it('nodo de estudio o teaser -> null (sin progreso falso)', () => {
-    expect(worldProgress(castillo, { completedLevels: [] })).toBeNull()
+  it('teaser (coming-soon) -> null (sin progreso falso)', () => {
+    expect(worldProgress(isla, { completedLevels: [] })).toBeNull()
+  })
+
+  it('mundo jugable sin avance: 0 estrellas, 0%', () => {
+    const p = worldProgress(castillo, { completedLevels: [], stars: {} })
+    expect(p).toEqual({ stars: 0, totalStars: 15, done: 0, total: 5, pct: 0 })
   })
 
   it('sin avance: 0 estrellas, 0%', () => {
@@ -100,7 +115,7 @@ describe('worldMap: nodeState', () => {
     expect(nodeState(isla, { completedLevels: [] })).toBe('coming-soon')
   })
 
-  it('nodo de estudio -> siempre available', () => {
+  it('mundo jugable -> available si no está completo', () => {
     expect(nodeState(castillo, { completedLevels: [] })).toBe('available')
     expect(nodeState(castillo, { completedLevels: ['mundo3/aproximacion'] })).toBe('available')
   })

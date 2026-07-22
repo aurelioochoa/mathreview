@@ -29,37 +29,48 @@ export const worldMapNodes = [
     title: 'Volcán de las Potencias', subtitle: 'Potencias, notación científica y radicales',
     theme: 'world-volcan', shape: 'crystal', position: [-3.6, 0, -2.2],
     target: '/mundo/volcan-potencias', mode: 'game', status: 'active',
+    studyTarget: '/mundo/volcan-potencias/estudio',
     levelKeys: MUNDO3_LEVELS.map(id => `mundo3/${id}`),
   },
   {
     id: 'castillo-algebra', world: 'Castillo del Álgebra', emoji: '🏰',
     title: 'Castillo del Álgebra', subtitle: 'Polinomios, MCD/MCM y fracciones algebraicas',
     theme: 'world-castillo', shape: 'castle', position: [-0.4, 0, -3.0],
-    target: '/bloque2', mode: 'study', status: 'active',
+    target: '/mundo/castillo-algebra', mode: 'game', status: 'active',
+    studyTarget: '/mundo/castillo-algebra/estudio',
+    levelKeys: ['mundo4/mcd', 'mundo4/mcm', 'mundo4/fracciones-algebraicas', 'mundo4/operaciones', 'mundo4/ecuaciones-lineales'],
   },
   {
     id: 'laberinto-sistemas', world: 'Laberinto de Sistemas', emoji: '🌀',
     title: 'Laberinto de Sistemas', subtitle: 'Sistemas 2×2: gráfico, reducción y Cramer',
     theme: 'world-laberinto', shape: 'maze', position: [2.8, 0, -2.0],
-    target: '/bloque3', mode: 'study', status: 'active',
+    target: '/mundo/laberinto-sistemas', mode: 'game', status: 'active',
+    studyTarget: '/mundo/laberinto-sistemas/estudio',
+    levelKeys: ['mundo5/intro-sistemas', 'mundo5/metodo-grafico', 'mundo5/reduccion', 'mundo5/cramer'],
   },
   {
     id: 'estacion-funciones', world: 'Estación de Funciones', emoji: '🚀',
     title: 'Estación de Funciones', subtitle: 'Funciones lineales y cuadráticas',
     theme: 'world-estacion', shape: 'rocket', position: [4.4, 0, 0.4],
-    target: '/bloque4', mode: 'study', status: 'active',
+    target: '/mundo/estacion-funciones', mode: 'game', status: 'active',
+    studyTarget: '/mundo/estacion-funciones/estudio',
+    levelKeys: ['mundo6/funcion-lineal', 'mundo6/funcion-cuadratica'],
   },
   {
     id: 'montanas-geometria', world: 'Montañas de Geometría', emoji: '⛰️',
     title: 'Montañas de Geometría', subtitle: 'Pitágoras, trigonometría, cilindro y prisma',
     theme: 'world-montanas', shape: 'mountain', position: [1.4, 0, 1.5],
-    target: '/bloque5', mode: 'study', status: 'active',
+    target: '/mundo/montanas-geometria', mode: 'game', status: 'active',
+    studyTarget: '/mundo/montanas-geometria/estudio',
+    levelKeys: ['mundo7/pitagoras', 'mundo7/trigonometria', 'mundo7/cilindro', 'mundo7/prisma'],
   },
   {
     id: 'feria-datos', world: 'Feria de Datos', emoji: '🎡',
     title: 'Feria de Datos', subtitle: 'Estadística, conteo y probabilidad',
     theme: 'world-feria', shape: 'ferris', position: [-1.8, 0, 2.3],
-    target: '/bloque6', mode: 'study', status: 'active',
+    target: '/mundo/feria-datos', mode: 'game', status: 'active',
+    studyTarget: '/mundo/feria-datos/estudio',
+    levelKeys: ['mundo8/estadistica', 'mundo8/percentiles', 'mundo8/conteo', 'mundo8/permutaciones', 'mundo8/combinaciones', 'mundo8/probabilidad'],
   },
 ]
 
@@ -102,12 +113,12 @@ export function nodeState(node, gameState) {
 
 // Navegación prev/next entre las páginas de bloque (se conservan las rutas).
 export const blockRoutes = [
-  { path: '/bloque1', label: 'Volcán de las Potencias' },
-  { path: '/bloque2', label: 'Castillo del Álgebra' },
-  { path: '/bloque3', label: 'Laberinto de Sistemas' },
-  { path: '/bloque4', label: 'Estación de Funciones' },
-  { path: '/bloque5', label: 'Montañas de Geometría' },
-  { path: '/bloque6', label: 'Feria de Datos' },
+  { path: '/bloque1', slug: 'volcan-potencias', label: 'Volcán de las Potencias' },
+  { path: '/bloque2', slug: 'castillo-algebra', label: 'Castillo del Álgebra' },
+  { path: '/bloque3', slug: 'laberinto-sistemas', label: 'Laberinto de Sistemas' },
+  { path: '/bloque4', slug: 'estacion-funciones', label: 'Estación de Funciones' },
+  { path: '/bloque5', slug: 'montanas-geometria', label: 'Montañas de Geometría' },
+  { path: '/bloque6', slug: 'feria-datos', label: 'Feria de Datos' },
 ]
 
 export function adjacentBlock(pathname) {
