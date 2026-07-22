@@ -3,7 +3,7 @@ import { Link, useParams } from 'react-router-dom'
 import { findWorld } from '../content/worlds'
 import { widgets } from '../widgets'
 import { buildReto } from './generators'
-import { useGame, XP_PER_CORRECT, XP_LEVEL_COMPLETE, COINS_PER_STAR } from '../state/gameStore'
+import { useGame, XP_PER_CORRECT, XP_LEVEL_COMPLETE, coinsForCompletion } from '../state/gameStore'
 import WhySection from '../components/WhySection'
 import CommonMistakes from '../components/CommonMistakes'
 import InteractiveBox from '../components/InteractiveBox'
@@ -31,7 +31,7 @@ export default function LevelPlayer() {
 
 function LevelPlayerView() {
   const { slug, levelId } = useParams()
-  const { dispatch } = useGame()
+  const { state, dispatch } = useGame()
   const world = findWorld(slug)
   const level = world?.levels.find(l => l.id === levelId)
 
@@ -81,8 +81,8 @@ function LevelPlayerView() {
     } else {
       const ratio = firstTryHits / questions.length
       const stars = ratio >= 1 ? 3 : ratio >= 0.66 ? 2 : 1
-      const coins = stars * COINS_PER_STAR
-      dispatch({ type: 'LEVEL_COMPLETED', levelKey, stars, xp: XP_LEVEL_COMPLETE, coins })
+      const coins = coinsForCompletion(state.stars[levelKey], stars)
+      dispatch({ type: 'LEVEL_COMPLETED', levelKey, stars, xp: XP_LEVEL_COMPLETE })
       setResult({ stars, coins })
       setPhase('completado')
     }

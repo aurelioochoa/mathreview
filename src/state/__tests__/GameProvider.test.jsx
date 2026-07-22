@@ -22,7 +22,7 @@ describe('GameProvider + useGame', () => {
     const { result } = renderHook(() => useGame(), { wrapper: GameProvider })
     expect(typeof result.current.dispatch).toBe('function')
     expect(result.current.state).toMatchObject({
-      version: 1, xp: 0, coins: 0, stars: {}, completedLevels: [],
+      version: 2, xp: 0, coins: 0, stars: {}, completedLevels: [],
     })
   })
 
@@ -35,7 +35,7 @@ describe('GameProvider + useGame', () => {
     })
     expect(result.current.state.stars['mundo3/x']).toBe(2)
     expect(result.current.state.xp).toBe(50)
-    expect(result.current.state.coins).toBe(20)
+    expect(result.current.state.coins).toBe(35) // 2★ primer clear = 2*COINS_PER_STAR + BASE_FIRST_CLEAR
     expect(result.current.state.completedLevels).toContain('mundo3/x')
   })
 })

@@ -71,7 +71,7 @@ describe('integración: Mundo 5 jugable', () => {
     expect(state.completedLevels.includes(prevKey)).toBe(true)
     expect(state.stars[keyL0]).toBe(3)
     expect(state.xp).toBe(50)
-    expect(state.coins).toBe(30)
+    expect(state.coins).toBe(45) // 3★ primer clear = 3*COINS_PER_STAR + BASE_FIRST_CLEAR
     expect(levelForXp(state.xp)).toBe(1) // 50 XP < 100 → sigue nivel 1 de jugador
   })
 
