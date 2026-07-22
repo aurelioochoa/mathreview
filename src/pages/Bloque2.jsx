@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import TopicCard from '../components/TopicCard'
 import InteractiveBox from '../components/InteractiveBox'
 import MathTex from '../components/MathTex'
@@ -8,19 +7,11 @@ import CommonMistakes from '../components/CommonMistakes'
 import BlockProgress from '../components/BlockProgress'
 import ExpressSummary from '../components/ExpressSummary'
 import GlossaryTerm from '../components/GlossaryTerm'
+import McdCalculadora from '../widgets/McdCalculadora'
+import McmCalculadora from '../widgets/McmCalculadora'
+import FraccionesEjemplo from '../widgets/FraccionesEjemplo'
 
 function MCDSection() {
-  const [a, setA] = useState(36)
-  const [b, setB] = useState(24)
-
-  const gcd = (x, y) => {
-    x = Math.abs(x); y = Math.abs(y)
-    while (y) { [x, y] = [y, x % y] }
-    return x
-  }
-
-  const mcdVal = gcd(a, b)
-
   const quizQuestions = [
     {
       question: "Tienes 48 diamantes y 36 potions para repartir en grupos iguales entre tu squad de Free Fire. ¿Cuál es el máximo número de jugadores que pueden recibir la misma cantidad de ambos?",
@@ -44,21 +35,6 @@ function MCDSection() {
       reminder: "Ambos números deben ser divisibles por el MCD."
     }
   ]
-
-  const factorizar = (n) => {
-    n = Math.abs(n)
-    if (n <= 1) return [[n, 1]]
-    const factors = []
-    let d = 2
-    while (d * d <= n) {
-      let count = 0
-      while (n % d === 0) { count++; n /= d }
-      if (count > 0) factors.push([d, count])
-      d++
-    }
-    if (n > 1) factors.push([n, 1])
-    return factors
-  }
 
   return (
     <TopicCard title="Máximo Común Divisor (MCD)" icon="🔗" color="bg-bloque2">
@@ -100,26 +76,7 @@ function MCDSection() {
       </div>
 
       <InteractiveBox title="Calculadora de MCD: repartiendo loot del squad">
-        <div className="flex items-center gap-4 flex-wrap">
-          <div>
-            <label className="block text-xs font-medium mb-1">Ítems tipo A</label>
-            <input type="number" value={a} onChange={e => setA(Number(e.target.value))}
-              className="border rounded-lg px-3 py-2 w-28 font-mono text-center focus:ring-2 focus:ring-emerald-400 outline-none" />
-          </div>
-          <div>
-            <label className="block text-xs font-medium mb-1">Ítems tipo B</label>
-            <input type="number" value={b} onChange={e => setB(Number(e.target.value))}
-              className="border rounded-lg px-3 py-2 w-28 font-mono text-center focus:ring-2 focus:ring-emerald-400 outline-none" />
-          </div>
-        </div>
-        <div className="mt-4 p-4 glass rounded-xl">
-          <p className="text-sm"><strong>Factorización de {Math.abs(a)}:</strong> {factorizar(a).map(([f, e]) => `${f}${e > 1 ? `^${e}` : ''}`).join(' × ') || '—'}</p>
-          <p className="text-sm"><strong>Factorización de {Math.abs(b)}:</strong> {factorizar(b).map(([f, e]) => `${f}${e > 1 ? `^${e}` : ''}`).join(' × ') || '—'}</p>
-          <p className="text-lg font-bold text-emerald-700 mt-2">MCD({a}, {b}) = {mcdVal}</p>
-          <p className="text-xs text-emerald-600 mt-1">
-            💡 Puedes repartir {mcdVal} ítems a cada uno del squad
-          </p>
-        </div>
+        <McdCalculadora />
       </InteractiveBox>
 
       <MiniQuiz questions={quizQuestions} />
@@ -128,17 +85,6 @@ function MCDSection() {
 }
 
 function MCMSection() {
-  const [a, setA] = useState(12)
-  const [b, setB] = useState(18)
-
-  const gcd = (x, y) => {
-    x = Math.abs(x); y = Math.abs(y)
-    while (y) { [x, y] = [y, x % y] }
-    return x
-  }
-
-  const mcmVal = a && b ? Math.abs(a * b) / gcd(a, b) : 0
-
   const quizQuestions = [
     {
       question: "Un evento especial en Roblox se repite cada 12 horas y otro cada 18 horas. ¿Cada cuántas horas coinciden?",
@@ -199,26 +145,7 @@ function MCMSection() {
       </div>
 
       <InteractiveBox title="Calculadora de MCM: sincronizando eventos">
-        <div className="flex items-center gap-4 flex-wrap">
-          <div>
-            <label className="block text-xs font-medium mb-1">Evento A (horas)</label>
-            <input type="number" value={a} onChange={e => setA(Number(e.target.value))}
-              className="border rounded-lg px-3 py-2 w-28 font-mono text-center focus:ring-2 focus:ring-emerald-400 outline-none" />
-          </div>
-          <div>
-            <label className="block text-xs font-medium mb-1">Evento B (horas)</label>
-            <input type="number" value={b} onChange={e => setB(Number(e.target.value))}
-              className="border rounded-lg px-3 py-2 w-28 font-mono text-center focus:ring-2 focus:ring-emerald-400 outline-none" />
-          </div>
-        </div>
-        <div className="mt-4 p-4 glass rounded-xl">
-          <p className="text-sm text-gray-600">Fórmula rápida: <MathTex expr={`\\text{MCM}(a,b) = \\frac{|a \\times b|}{\\text{MCD}(a,b)}`} /></p>
-          <p className="text-sm mt-1"><MathTex expr={`\\frac{|${a} \\times ${b}|}{${gcd(a,b)}} = \\frac{${Math.abs(a*b)}}{${gcd(a,b)}}`} /></p>
-          <p className="text-lg font-bold text-emerald-700 mt-2">MCM({a}, {b}) = {mcmVal}</p>
-          <p className="text-xs text-emerald-600 mt-1">
-            💡 Los eventos coinciden cada {mcmVal} horas
-          </p>
-        </div>
+        <McmCalculadora />
       </InteractiveBox>
 
       <MiniQuiz questions={quizQuestions} />
@@ -316,16 +243,6 @@ function FraccionesAlgebraicasSection() {
 }
 
 function OperacionesSection() {
-  const [step, setStep] = useState(0)
-
-  const pasos = [
-    { titulo: 'Problema', contenido: '\\frac{2}{x+1} + \\frac{3}{x-1}' },
-    { titulo: 'Paso 1: Encontrar MCM de denominadores', contenido: '\\text{MCM} = (x+1)(x-1)' },
-    { titulo: 'Paso 2: Multiplicar cada fracción', contenido: '\\frac{2(x-1)}{(x+1)(x-1)} + \\frac{3(x+1)}{(x+1)(x-1)}' },
-    { titulo: 'Paso 3: Expandir numeradores', contenido: '\\frac{2x - 2 + 3x + 3}{(x+1)(x-1)}' },
-    { titulo: 'Paso 4: Simplificar', contenido: '\\frac{5x + 1}{x^2 - 1}' },
-  ]
-
   const quizQuestions = [
     {
       question: "¿Cuál es el resultado de 1/x + 1/(x+1)?",
@@ -385,29 +302,7 @@ function OperacionesSection() {
       </div>
 
       <InteractiveBox title="Ejemplo paso a paso — Suma de fracciones">
-        <div className="text-center mb-4">
-          <div className="text-lg">
-            <MathTex expr={pasos[step].contenido} display />
-          </div>
-          <p className="text-sm font-semibold text-indigo-600 mt-2">{pasos[step].titulo}</p>
-        </div>
-        <div className="flex justify-center gap-2">
-          <button
-            onClick={() => setStep(s => Math.max(0, s - 1))}
-            disabled={step === 0}
-            className="px-4 py-2 rounded-lg bg-emerald-100 text-emerald-700 font-semibold disabled:opacity-30 hover:bg-emerald-200 transition cursor-pointer"
-          >
-            ← Anterior
-          </button>
-          <span className="px-3 py-2 text-sm text-gray-500">{step + 1} / {pasos.length}</span>
-          <button
-            onClick={() => setStep(s => Math.min(pasos.length - 1, s + 1))}
-            disabled={step === pasos.length - 1}
-            className="px-4 py-2 rounded-lg bg-emerald-100 text-emerald-700 font-semibold disabled:opacity-30 hover:bg-emerald-200 transition cursor-pointer"
-          >
-            Siguiente →
-          </button>
-        </div>
+        <FraccionesEjemplo />
       </InteractiveBox>
 
       <MiniQuiz questions={quizQuestions} />
