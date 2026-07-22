@@ -27,4 +27,21 @@ describe('fábricas del Mundo 8', () => {
     const q = combinaciones(() => 0)
     expect(q.options[q.correctAnswer]).toBe('10')
   })
+  it('correctitud con rng determinista (rng=()=>0)', () => {
+    const casos = [
+      [media, '5'],                 // valores [0,4,5,6,10] → media 5
+      [mediana, '5'],               // [1,2,5,8,11] → mediana 5
+      [moda, '1'],                  // moda 1 (aparece 3 veces)
+      [principioConteo, '8'],       // 2×2×2
+      [menuConteo, '12'],           // 2×3×2
+      [factorial, '6'],             // 3! = 6
+      [probEvento, '1/4'],          // 1 favorable de 4
+      [probComplementario, '4/5'],  // 1 − 1/5 = 4/5
+      [probIndependientes, '1/6'],  // 1/2 × 1/3 (d2 ajustado a 3)
+    ]
+    for (const [f, esperado] of casos) {
+      const q = f(() => 0)
+      expect(q.options[q.correctAnswer], f.name).toBe(esperado)
+    }
+  })
 })

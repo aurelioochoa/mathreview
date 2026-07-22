@@ -25,4 +25,18 @@ describe('fábricas del Mundo 7', () => {
     const q = carasPrisma(() => 0)
     expect(q.options[q.correctAnswer]).toBe('5')
   })
+  it('correctitud con rng determinista (rng=()=>0)', () => {
+    const casos = [
+      [catetoFaltante, '4'],        // triple 3-4-5: hip 5, cateto 3 → falta 4
+      [senOpuesto, '2'],            // hip=4, sen(30°)=0.5 → opuesto 2
+      [cosAdyacente, '2'],          // hip=4, cos(60°)=0.5 → adyacente 2
+      [areaLateralCilindro, '8π'],  // r=2, h=2 → 2πrh = 8π
+      [areaLateralPrisma, '24'],    // 2×2×3 → perímetro 8 × altura 3 = 24
+      [aristasPrisma, '9'],         // n=3 → 3n = 9
+    ]
+    for (const [f, esperado] of casos) {
+      const q = f(() => 0)
+      expect(q.options[q.correctAnswer], f.name).toBe(esperado)
+    }
+  })
 })

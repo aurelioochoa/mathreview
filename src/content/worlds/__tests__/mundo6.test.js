@@ -13,4 +13,15 @@ describe('fábricas del Mundo 6', () => {
       }
     })
   }
+  it('correctitud con rng determinista (rng=()=>0)', () => {
+    const casos = [
+      [pendienteDe, '-5'],           // m = NO_CERO[0] = -5
+      [corteEjeY, '(0, 1)'],         // m=-5, b=1 → corte (0, 1)
+      [verticeParabola, '(-4, -5)'], // h=-4, k=-5 → vértice (-4, -5)
+    ]
+    for (const [f, esperado] of casos) {
+      const q = f(() => 0)
+      expect(q.options[q.correctAnswer], f.name).toBe(esperado)
+    }
+  })
 })

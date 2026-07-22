@@ -23,4 +23,8 @@ describe('fábricas del Mundo 4', () => {
     const q = resolverLineal(() => 0) // a=3,c=1,x0=1,b=-9 → 3x-9 = x-7 → x=1
     expect(q.options[q.correctAnswer]).toBe('x = 1')
   })
+  it('mcdReparto: el MCD real (rng mínimo → d=3, par COPRIMOS [2,3] → 6 y 9 → MCD 3)', () => {
+    const q = mcdReparto(() => 0)
+    expect(q.options[q.correctAnswer]).toBe('3')
+  })
 })

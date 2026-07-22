@@ -76,4 +76,14 @@ describe('makeOptions', () => {
     expect(r.options).toHaveLength(4)
     expect(new Set(r.options).size).toBe(4)
   })
+  it('rellena con sufijos cuando el correcto es string y faltan distractores', () => {
+    // Correcto no numérico + distractores que colapsan al deduplicar → único
+    // camino que ejercita el respaldo no numérico `${correct} (${k})`.
+    const r = makeOptions('rojo', ['rojo', 'rojo'])
+    expect(r.options).toHaveLength(4)
+    expect(new Set(r.options).size).toBe(4)
+    expect(r.correctAnswer).toBe(0)
+    expect(r.options[0]).toBe('rojo')
+    expect(r.options.slice(1)).toEqual(['rojo (1)', 'rojo (2)', 'rojo (3)'])
+  })
 })
