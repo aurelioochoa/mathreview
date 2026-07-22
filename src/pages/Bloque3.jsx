@@ -1,5 +1,4 @@
-import { useState, useMemo } from 'react'
-import { Mafs, Coordinates, Line, Theme, Text as MafsText } from 'mafs'
+import { useState } from 'react'
 import TopicCard from '../components/TopicCard'
 import InteractiveBox from '../components/InteractiveBox'
 import MathTex from '../components/MathTex'
@@ -9,26 +8,10 @@ import CommonMistakes from '../components/CommonMistakes'
 import BlockProgress from '../components/BlockProgress'
 import ExpressSummary from '../components/ExpressSummary'
 import GlossaryTerm from '../components/GlossaryTerm'
+import SistemasGrafica from '../widgets/SistemasGrafica'
+import CramerCalculadora from '../widgets/CramerCalculadora'
 
 function MetodoGrafico() {
-  const [a1, setA1] = useState(1)
-  const [b1, setB1] = useState(-1)
-  const [c1, setC1] = useState(1)
-  const [a2, setA2] = useState(1)
-  const [b2, setB2] = useState(1)
-  const [c2, setC2] = useState(3)
-
-  const solucion = useMemo(() => {
-    const det = a1 * b2 - a2 * b1
-    if (Math.abs(det) < 1e-10) return null
-    const x = (c1 * b2 - c2 * b1) / det
-    const y = (a1 * c2 - a2 * c1) / det
-    return { x, y }
-  }, [a1, b1, c1, a2, b2, c2])
-
-  const getY1 = (x) => b1 !== 0 ? (c1 - a1 * x) / b1 : null
-  const getY2 = (x) => b2 !== 0 ? (c2 - a2 * x) / b2 : null
-
   return (
     <TopicCard title="Método Gráfico" icon="📊" color="bg-bloque3">
       <WhySection>
@@ -74,66 +57,7 @@ function MetodoGrafico() {
       </div>
 
       <InteractiveBox title="Gráfica interactiva — Mueve los coeficientes">
-        <div className="grid grid-cols-2 gap-4 mb-4">
-          <div className="space-y-2">
-            <p className="text-sm font-bold text-blue-600">Ecuación 1: <MathTex expr={`${a1}x + (${b1})y = ${c1}`} /></p>
-            <div className="flex gap-2">
-              <label className="text-xs">a₁<input type="number" value={a1} onChange={e => setA1(Number(e.target.value))} className="ml-1 border rounded px-2 py-1 w-16 font-mono text-sm" /></label>
-              <label className="text-xs">b₁<input type="number" value={b1} onChange={e => setB1(Number(e.target.value))} className="ml-1 border rounded px-2 py-1 w-16 font-mono text-sm" /></label>
-              <label className="text-xs">c₁<input type="number" value={c1} onChange={e => setC1(Number(e.target.value))} className="ml-1 border rounded px-2 py-1 w-16 font-mono text-sm" /></label>
-            </div>
-          </div>
-          <div className="space-y-2">
-            <p className="text-sm font-bold text-green-600">Ecuación 2: <MathTex expr={`${a2}x + (${b2})y = ${c2}`} /></p>
-            <div className="flex gap-2">
-              <label className="text-xs">a₂<input type="number" value={a2} onChange={e => setA2(Number(e.target.value))} className="ml-1 border rounded px-2 py-1 w-16 font-mono text-sm" /></label>
-              <label className="text-xs">b₂<input type="number" value={b2} onChange={e => setB2(Number(e.target.value))} className="ml-1 border rounded px-2 py-1 w-16 font-mono text-sm" /></label>
-              <label className="text-xs">c₂<input type="number" value={c2} onChange={e => setC2(Number(e.target.value))} className="ml-1 border rounded px-2 py-1 w-16 font-mono text-sm" /></label>
-            </div>
-          </div>
-        </div>
-
-        <div className="glass rounded-xl overflow-hidden border">
-          <Mafs viewBox={{ x: [-6, 6], y: [-6, 6] }} height={350}>
-            <Coordinates.Cartesian />
-            {b1 !== 0 && (
-              <Line.ThroughPoints
-                point1={[-5, getY1(-5)]}
-                point2={[5, getY1(5)]}
-                color={Theme.blue}
-              />
-            )}
-            {b2 !== 0 && (
-              <Line.ThroughPoints
-                point1={[-5, getY2(-5)]}
-                point2={[5, getY2(5)]}
-                color={Theme.green}
-              />
-            )}
-            {solucion && (
-              <MafsText
-                x={solucion.x}
-                y={solucion.y + 0.6}
-                attach="n"
-                size={14}
-              >
-                ({solucion.x.toFixed(1)}, {solucion.y.toFixed(1)})
-              </MafsText>
-            )}
-          </Mafs>
-        </div>
-
-        <div className="mt-3 text-center">
-          {solucion ? (
-            <p className="text-lg font-bold text-blue-700">
-              Solución: <MathTex expr={`x = ${solucion.x.toFixed(2)},\\quad y = ${solucion.y.toFixed(2)}`} />
-            </p>
-          ) : (
-            <p className="text-lg font-bold text-red-500">
-              Las rectas son paralelas o coincidentes (determinante = 0)
-            </p>
-          )}
-        </div>
+        <SistemasGrafica />
       </InteractiveBox>
 
       <MiniQuiz questions={[
@@ -256,17 +180,6 @@ function MetodoReduccion() {
 }
 
 function MetodoCramer() {
-  const [a1, setA1] = useState(2)
-  const [b1, setB1] = useState(3)
-  const [c1, setC1] = useState(12)
-  const [a2, setA2] = useState(4)
-  const [b2, setB2] = useState(-3)
-  const [c2, setC2] = useState(6)
-
-  const D = a1 * b2 - a2 * b1
-  const Dx = c1 * b2 - c2 * b1
-  const Dy = a1 * c2 - a2 * c1
-
   const quizQuestions = [
     {
       question: "Para el sistema {2x + 3y = 12, 4x - 3y = 6}, ¿cuánto vale D?",
@@ -327,42 +240,7 @@ function MetodoCramer() {
       </div>
 
       <InteractiveBox title="Calculadora de Cramer">
-        <div className="grid grid-cols-2 gap-4 mb-4">
-          <div>
-            <p className="text-sm font-bold mb-1">Ecuación 1:</p>
-            <div className="flex gap-1 items-center text-sm">
-              <input type="number" value={a1} onChange={e => setA1(Number(e.target.value))} className="border rounded px-2 py-1 w-14 font-mono text-center" />
-              <span>x +</span>
-              <input type="number" value={b1} onChange={e => setB1(Number(e.target.value))} className="border rounded px-2 py-1 w-14 font-mono text-center" />
-              <span>y =</span>
-              <input type="number" value={c1} onChange={e => setC1(Number(e.target.value))} className="border rounded px-2 py-1 w-14 font-mono text-center" />
-            </div>
-          </div>
-          <div>
-            <p className="text-sm font-bold mb-1">Ecuación 2:</p>
-            <div className="flex gap-1 items-center text-sm">
-              <input type="number" value={a2} onChange={e => setA2(Number(e.target.value))} className="border rounded px-2 py-1 w-14 font-mono text-center" />
-              <span>x +</span>
-              <input type="number" value={b2} onChange={e => setB2(Number(e.target.value))} className="border rounded px-2 py-1 w-14 font-mono text-center" />
-              <span>y =</span>
-              <input type="number" value={c2} onChange={e => setC2(Number(e.target.value))} className="border rounded px-2 py-1 w-14 font-mono text-center" />
-            </div>
-          </div>
-        </div>
-
-        <div className="glass rounded-xl p-4 space-y-2 text-center">
-          <p><MathTex expr={`D = (${a1})(${b2}) - (${a2})(${b1}) = ${a1*b2} - ${a2*b1} = ${D}`} /></p>
-          <p><MathTex expr={`D_x = (${c1})(${b2}) - (${c2})(${b1}) = ${c1*b2} - ${c2*b1} = ${Dx}`} /></p>
-          <p><MathTex expr={`D_y = (${a1})(${c2}) - (${a2})(${c1}) = ${a1*c2} - ${a2*c1} = ${Dy}`} /></p>
-          <hr className="my-3" />
-          {D !== 0 ? (
-            <div className="text-lg font-bold text-blue-700">
-              <MathTex expr={`x = \\frac{${Dx}}{${D}} = ${(Dx/D).toFixed(2)}, \\quad y = \\frac{${Dy}}{${D}} = ${(Dy/D).toFixed(2)}`} />
-            </div>
-          ) : (
-            <p className="text-lg font-bold text-red-500">D = 0 → El sistema no tiene solución única</p>
-          )}
-        </div>
+        <CramerCalculadora />
       </InteractiveBox>
 
       <MiniQuiz questions={quizQuestions} />
