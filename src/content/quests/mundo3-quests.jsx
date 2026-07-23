@@ -3,14 +3,16 @@ import { staticQuestion, randInt, makeOptions } from '../../engine/generators'
 // Quest 1 — el streamer que perdió sus stats (aproximación + potencias)
 function viewsAproximadas(rng = Math.random) {
   const millones = randInt(rng, 2, 9)
-  const miles = randInt(rng, 1, 9)
-  const reales = millones * 1_000_000 + miles * 100_000 + randInt(rng, 0, 99_999)
-  const aprox = `${millones}.${miles} millones`
+  const miles = randInt(rng, 1, 9)               // centenas de mil: decide el decimal
+  const resto = randInt(rng, 0, 99_999)
+  const reales = millones * 1_000_000 + miles * 100_000 + resto
+  const decimas = Math.round(reales / 100_000)   // redondeo REAL a 1 decimal (en décimas de millón)
+  const aprox = (d) => `${(d / 10).toFixed(1)} millones`
   return {
     question: `El stream de RayoGamer marcó ${reales.toLocaleString('es')} visitas. ¿Cuál es la aproximación correcta a 1 decimal en millones?`,
-    ...makeOptions(aprox, [`${millones}.${(miles + 1) % 10} millones`, `${millones + 1}.0 millones`, `${millones}.0 millones`]),
-    hint: `Mira el dígito de las centenas de mil: ${miles} → primer decimal de millones.`,
-    reminder: 'Para aproximar a millones con 1 decimal, el dígito de las centenas de mil es el decimal.',
+    ...makeOptions(aprox(decimas), [aprox(decimas - 1), aprox(decimas + 1), aprox(decimas + 10)]),
+    hint: `Mira el dígito de las centenas de mil (${miles}) y lo que le sigue: si el resto llega a la mitad (≥50 000), sube el decimal.`,
+    reminder: 'Aproximar a 1 decimal de millón = redondear: si el dígito siguiente es ≥5, sube el último decimal.',
   }
 }
 function danioPotenciado(rng = Math.random) {
@@ -42,7 +44,7 @@ function ladoBaseCuadrada(rng = Math.random) {
   const area = lado * lado
   return {
     question: `La base cuadrada del servidor ocupa ${area} bloques². ¿Cuánto mide cada lado?`,
-    ...makeOptions(lado, [area / 2, lado + 2, area]),
+    ...makeOptions(lado, [Math.floor(area / 2), lado + 2, area]),
     hint: `√${area} = ? Busca el número que al cuadrado da ${area}.`,
     reminder: '√(lado²) = lado.',
   }
