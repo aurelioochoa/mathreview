@@ -1,4 +1,5 @@
 import { migrate } from './persistence'
+import { defaultState } from './gameStore'
 
 // Código de traspaso de partida: MQ1.<base64url(gzip(JSON({c, s})))>
 //
@@ -73,6 +74,78 @@ export async function encodeSave(save) {
   return `${CODE_PREFIX}.${toBase64Url(empaquetado)}`
 }
 
+// Campos con forma variable (string o null), que no se pueden derivar del
+// valor por defecto: `defaultState()` los trae a `null`, y eso no dice si un
+// valor real sería un string. Se listan a mano; si se añade un campo nuevo de
+// esta misma forma a cosmetics/streak, hay que sumarlo aquí a mano también.
+function esStringONull(v) {
+  return v === null || typeof v === 'string'
+}
+
+// migrate() no sobrescribe cosmetics/streak entero: los combina con
+// `{...base, ...(data.campo ?? {})}`. Eso significa que si `data.cosmetics`
+// es, por ejemplo, el string 'trampa', el spread lo trata como iterable y
+// añade claves '0', '1', '2'... con sus caracteres, PERO deja intactos
+// owned/avatar/frame/title de la base -- el resultado pasaría una
+// comprobación que solo mire esos cuatro campos. Por eso aquí también se
+// exige que el objeto no tenga claves de más: es la señal de que lo que
+// llegó no era el objeto que decía ser.
+function mismasClaves(obj, esperadas) {
+  const propias = Object.keys(obj)
+  return propias.length === esperadas.length && esperadas.every(k => propias.includes(k))
+}
+
+function formaValidaCosmetics(c) {
+  return (
+    !!c && typeof c === 'object' && !Array.isArray(c) &&
+    mismasClaves(c, Object.keys(defaultState().cosmetics)) &&
+    Array.isArray(c.owned) &&
+    esStringONull(c.avatar) && esStringONull(c.frame) && esStringONull(c.title)
+  )
+}
+
+function formaValidaStreak(s) {
+  return (
+    !!s && typeof s === 'object' && !Array.isArray(s) &&
+    mismasClaves(s, Object.keys(defaultState().streak)) &&
+    Number.isFinite(s.count) && Number.isFinite(s.best) && esStringONull(s.lastDate)
+  )
+}
+
+// Un código de partida viene de fuera: puede estar fabricado a mano, o
+// simplemente corrupto de una forma que decodifica pero no cuadra con lo que
+// el resto del juego espera (p. ej. `achievements` como número en vez de
+// array). `migrate` no lo mira -- solo rellena defaults --, así que la forma
+// se valida aquí, después de migrar y antes de dar el guardado por bueno.
+//
+// Recorre defaultState() campo a campo y comprueba que los arrays sigan
+// siendo arrays y los numéricos sigan siendo números finitos: es deliberado
+// que sea genérico en esos dos casos, así que un campo array o numérico que
+// se añada mañana al estado queda cubierto solo con existir en
+// defaultState(), sin tocar esta función. `stars` (objeto, no lista fija de
+// campos) y `cosmetics`/`streak` (con campos que pueden ser string o null)
+// no encajan en ese patrón genérico y se comprueban explícitos.
+function formaValida(save) {
+  if (!save || typeof save !== 'object') return false
+
+  const defaults = defaultState()
+  for (const key of Object.keys(defaults)) {
+    const esperado = defaults[key]
+    const real = save[key]
+    if (Array.isArray(esperado)) {
+      if (!Array.isArray(real)) return false
+    } else if (typeof esperado === 'number') {
+      if (!Number.isFinite(real)) return false
+    }
+  }
+
+  if (!save.stars || typeof save.stars !== 'object' || Array.isArray(save.stars)) return false
+  if (!formaValidaCosmetics(save.cosmetics)) return false
+  if (!formaValidaStreak(save.streak)) return false
+
+  return true
+}
+
 export async function decodeSave(code) {
   const texto = String(code ?? '').trim()
   if (!texto.startsWith(`${CODE_PREFIX}.`)) return { ok: false, reason: 'formato' }
@@ -102,5 +175,13 @@ export async function decodeSave(code) {
   // de migración que el de localStorage, no por uno paralelo.
   const save = migrate(sobre.s)
   if (!save) return { ok: false, reason: 'incompatible' }
+
+  // El checksum solo dice que el JSON no se corrompió en el viaje; no dice
+  // que tenga la forma que el resto del juego espera. Un código fabricado a
+  // mano (o con un campo mal escrito) puede pasar migrate() -- que solo
+  // rellena defaults, no valida -- y reventar más tarde en el reducer o al
+  // arrancar. Se ataja aquí, antes de que ese guardado llegue a ninguna parte.
+  if (!formaValida(save)) return { ok: false, reason: 'corrupto' }
+
   return { ok: true, save }
 }

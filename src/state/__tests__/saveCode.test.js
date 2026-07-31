@@ -98,6 +98,53 @@ describe('saveCode — migración', () => {
   })
 })
 
+describe('saveCode — formas envenenadas (decodeSave valida de verdad)', () => {
+  // migrate() solo rellena defaults con spread; no mira tipos. Estos códigos
+  // decodifican bien y pasan el checksum (están fabricados con encodeSave,
+  // así que el envoltorio es legítimo), pero traen un campo con un tipo que
+  // el resto del juego no espera. decodeSave debe cazarlos antes de dar el
+  // guardado por bueno.
+  it('un array que en realidad es un número da corrupto', async () => {
+    const code = await encodeSave({ ...defaultState(), achievements: 5 })
+    expect(await decodeSave(code)).toEqual({ ok: false, reason: 'corrupto' })
+  })
+
+  it('un array que en realidad es null da corrupto', async () => {
+    const code = await encodeSave({ ...defaultState(), completedLevels: null })
+    expect(await decodeSave(code)).toEqual({ ok: false, reason: 'corrupto' })
+  })
+
+  it('cosmetics que en realidad es un string da corrupto', async () => {
+    const code = await encodeSave({ ...defaultState(), cosmetics: 'trampa' })
+    expect(await decodeSave(code)).toEqual({ ok: false, reason: 'corrupto' })
+  })
+
+  it('cosmetics.owned que no es un array da corrupto', async () => {
+    const code = await encodeSave({ ...defaultState(), cosmetics: { ...defaultState().cosmetics, owned: 'trampa' } })
+    expect(await decodeSave(code)).toEqual({ ok: false, reason: 'corrupto' })
+  })
+
+  it('un numérico que no es un número finito da corrupto', async () => {
+    // JSON no tiene NaN: al serializar se convierte en null (es lo que de
+    // verdad llegaría si alguien intentara colar NaN a mano), y null tampoco
+    // es un número finito.
+    const code = await encodeSave({ ...defaultState(), xp: NaN })
+    expect(await decodeSave(code)).toEqual({ ok: false, reason: 'corrupto' })
+  })
+
+  it('streak con un campo numérico que no es número da corrupto', async () => {
+    const code = await encodeSave({ ...defaultState(), streak: { count: 'mucho', best: 0, lastDate: null } })
+    expect(await decodeSave(code)).toEqual({ ok: false, reason: 'corrupto' })
+  })
+
+  it('una partida legítima sigue pasando la validación de forma', async () => {
+    const code = await encodeSave(defaultState())
+    const res = await decodeSave(code)
+    expect(res.ok).toBe(true)
+    expect(res.save).toEqual(defaultState())
+  })
+})
+
 describe('saveCode — tamaño', () => {
   it('el peor caso realista cabe en un QR', async () => {
     const code = await encodeSave(partidaPesada())
