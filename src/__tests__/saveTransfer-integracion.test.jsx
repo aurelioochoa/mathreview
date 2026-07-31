@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from 'vitest'
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
 import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import SaveTransfer from '../components/SaveTransfer'
 import { GameProvider } from '../state/GameProvider'
@@ -111,6 +111,43 @@ describe('integración: SaveTransfer — QR', () => {
     await screen.findByLabelText(/Tu código de partida/i)
     expect(await screen.findByText(/demasiado grande para un QR/i)).toBeTruthy()
     expect(screen.queryByRole('button', { name: /Mostrar QR/i })).toBeNull()
+  })
+})
+
+describe('integración: SaveTransfer — botón "Copiar" con reserva manual', () => {
+  beforeEach(() => localStorage.clear())
+
+  afterEach(() => {
+    Object.defineProperty(navigator, 'clipboard', { value: undefined, configurable: true })
+  })
+
+  it('con navigator.clipboard disponible, copiar confirma que funcionó', async () => {
+    const writeText = vi.fn().mockResolvedValue(undefined)
+    Object.defineProperty(navigator, 'clipboard', { value: { writeText }, configurable: true })
+
+    montar({ xp: 100 })
+    const copiarBtn = await screen.findByRole('button', { name: /^Copiar$/i })
+    await waitFor(() => expect(copiarBtn.disabled).toBe(false))
+
+    fireEvent.click(copiarBtn)
+
+    expect(await screen.findByText(/copiado/i)).toBeTruthy()
+    expect(writeText).toHaveBeenCalledWith(expect.stringMatching(/^MQ1\./))
+  })
+
+  it('sin navigator.clipboard, selecciona el texto a mano y lo dice', async () => {
+    Object.defineProperty(navigator, 'clipboard', { value: undefined, configurable: true })
+
+    montar({ xp: 100 })
+    const salida = await screen.findByLabelText(/Tu código de partida/i)
+    const copiarBtn = screen.getByRole('button', { name: /^Copiar$/i })
+    await waitFor(() => expect(copiarBtn.disabled).toBe(false))
+
+    fireEvent.click(copiarBtn)
+
+    expect(await screen.findByText(/ya dejamos el texto seleccionado/i)).toBeTruthy()
+    expect(salida.selectionStart).toBe(0)
+    expect(salida.selectionEnd).toBe(salida.value.length)
   })
 })
 

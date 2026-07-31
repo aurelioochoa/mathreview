@@ -40,8 +40,10 @@ export default function SaveTransfer() {
   const [escaneando, setEscaneando] = useState(false)
   const [hayInstantanea, setHayInstantanea] = useState(() => loadPreImportSnapshot() !== null)
   const [errorExportar, setErrorExportar] = useState(null)
+  const [avisoCopiar, setAvisoCopiar] = useState(null)
   const cabeEnQr = codigo.length > 0 && codigo.length <= QR_MAX_BYTES
   const botonCargarRef = useRef(null)
+  const salidaRef = useRef(null)
 
   useEffect(() => {
     let vivo = true
@@ -65,6 +67,14 @@ export default function SaveTransfer() {
     if (pendiente) botonCargarRef.current?.focus()
   }, [pendiente])
 
+  // El aviso de "copiado" (o de reserva manual) es informativo, no un error:
+  // se retira solo al cabo de un rato para no dejarlo pegado en pantalla.
+  useEffect(() => {
+    if (!avisoCopiar) return
+    const t = setTimeout(() => setAvisoCopiar(null), 3000)
+    return () => clearTimeout(t)
+  }, [avisoCopiar])
+
   const revisar = useCallback(async (texto) => {
     setError(null)
     setPendiente(null)
@@ -78,7 +88,24 @@ export default function SaveTransfer() {
     await revisar(texto)
   }, [revisar])
 
-  const copiar = () => navigator.clipboard?.writeText(codigo)
+  // El spec pedía "selección manual de reserva": si no hay navigator.clipboard
+  // (contexto no seguro, navegador viejo) o si writeText falla, se selecciona
+  // el texto del textarea para que el jugador pueda copiarlo a mano con
+  // Ctrl+C, y se le dice. También se confirma cuando la copia SÍ funciona
+  // sola: hasta ahora no había ninguna señal de que hubiera pasado algo.
+  const copiar = async () => {
+    if (navigator.clipboard?.writeText) {
+      try {
+        await navigator.clipboard.writeText(codigo)
+        setAvisoCopiar('¡Código copiado!')
+        return
+      } catch {
+        // sigue abajo, a la reserva manual
+      }
+    }
+    salidaRef.current?.select()
+    setAvisoCopiar('Este navegador no copia solo: ya dejamos el texto seleccionado, usa Ctrl+C (o mantén pulsado y elige "Copiar").')
+  }
 
   const descargar = () => {
     const url = URL.createObjectURL(new Blob([codigo], { type: 'text/plain' }))
@@ -135,7 +162,7 @@ export default function SaveTransfer() {
       <div className="glass rounded-2xl p-4 mb-3">
         <label htmlFor="codigo-salida" className="text-xs text-gray-500 block mb-1">Tu código de partida</label>
         <textarea
-          id="codigo-salida" readOnly value={codigo} rows={3}
+          id="codigo-salida" ref={salidaRef} readOnly value={codigo} rows={3}
           className="w-full text-xs font-mono border border-gray-200 rounded-lg p-2 bg-white break-all"
         />
         <div className="flex flex-wrap gap-2 mt-2">
@@ -147,6 +174,7 @@ export default function SaveTransfer() {
             </button>
           )}
         </div>
+        {avisoCopiar && <p role="status" className="text-xs text-gray-600 mt-2">{avisoCopiar}</p>}
         {errorExportar && <p role="alert" className="text-sm text-red-600 mt-2">{errorExportar}</p>}
         {codigo.length > QR_MAX_BYTES && (
           <p className="text-xs text-gray-500 mt-2">
