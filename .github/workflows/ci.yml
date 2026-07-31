@@ -1,0 +1,30 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  verificar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # Node 20 para que coincida con el Dockerfile (node:20-slim): la CI debe
+      # verificar lo que de verdad se despliega, no otra versión que
+      # casualmente también pase.
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - run: npm ci
+
+      - run: npm run lint
+
+      # La validación de contenido no lleva paso propio: validateContent.test.js
+      # ya la ejecuta dentro de la suite, sobre los ocho mundos y sus quests.
+      - run: npm test
+
+      - run: npm run build
