@@ -1,3 +1,6 @@
+import RectaNumerica from './RectaNumerica'
+import DivisoresExplorer from './DivisoresExplorer'
+import JerarquiaPasos from './JerarquiaPasos'
 import AproximacionExplorer from './AproximacionExplorer'
 import PotenciaCalculadora from './PotenciaCalculadora'
 import NotacionConversor from './NotacionConversor'
@@ -19,6 +22,9 @@ import CombinacionesCalculadora from './CombinacionesCalculadora'
 import AtuendosEjemplo from './AtuendosEjemplo'
 
 export const widgets = {
+  'recta-numerica': RectaNumerica,
+  'divisores-explorer': DivisoresExplorer,
+  'jerarquia-pasos': JerarquiaPasos,
   'aproximacion-explorer': AproximacionExplorer,
   'potencia-calculadora': PotenciaCalculadora,
   'notacion-conversor': NotacionConversor,
