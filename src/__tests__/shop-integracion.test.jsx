@@ -5,11 +5,14 @@ import { GameProvider } from '../state/GameProvider'
 import Shop from '../pages/Shop'
 import { defaultState } from '../state/gameStore'
 import { SAVE_KEY } from '../state/persistence'
+import { todayStr } from '../state/streak'
 
 // El estado arranca desde localStorage, así que sembrar un save es la forma
-// de entrar a la tienda con monedas.
+// de entrar a la tienda con monedas. La racha se siembra con la fecha de hoy
+// para que el bono diario no altere el saldo bajo prueba.
 function renderShop(extra = {}) {
-  localStorage.setItem(SAVE_KEY, JSON.stringify({ ...defaultState(), ...extra }))
+  const save = { ...defaultState(), streak: { count: 1, best: 1, lastDate: todayStr() }, ...extra }
+  localStorage.setItem(SAVE_KEY, JSON.stringify(save))
   return render(<GameProvider><MemoryRouter><Shop /></MemoryRouter></GameProvider>)
 }
 

@@ -1853,7 +1853,7 @@ git commit -m "feat: logros en vivo (toast + /logros) enganchados al dispatch"
   - `dailyBonus(count) → number` (5→20 escalado, topado).
   - `todayStr(date=new Date()) → 'YYYY-MM-DD'` (fecha local).
 
-- [ ] **Step 1: Tests (fallan)**
+- [x] **Step 1: Tests (fallan)**
 
 Create `src/state/__tests__/streak.test.js`:
 ```js
@@ -1893,9 +1893,9 @@ describe('todayStr', () => {
 })
 ```
 
-- [ ] **Step 2: Ejecutar — falla.** Run: `npm test -- streak` → FAIL.
+- [x] **Step 2: Ejecutar — falla.** Run: `npm test -- streak` → FAIL.
 
-- [ ] **Step 3: Implementar `src/state/streak.js`**
+- [x] **Step 3: Implementar `src/state/streak.js`**
 ```js
 // Fecha local en 'YYYY-MM-DD' (sin depender de UTC).
 export function todayStr(date = new Date()) {
@@ -1926,7 +1926,7 @@ export function dailyBonus(count) {
 }
 ```
 
-- [ ] **Step 4: Disparo diario en `GameProvider`** — añadir un `useEffect` de montaje que, si `today !== state.streak.lastDate`, calcula la racha y despacha `TICK_STREAK`. Añadir dentro de `GameProvider` (usa `dispatch` envuelto para que los logros de racha se evalúen):
+- [x] **Step 4: Disparo diario en `GameProvider`** — añadir un `useEffect` de montaje que, si `today !== state.streak.lastDate`, calcula la racha y despacha `TICK_STREAK`. Añadir dentro de `GameProvider` (usa `dispatch` envuelto para que los logros de racha se evalúen):
 ```jsx
 import { nextStreak, dailyBonus, todayStr } from './streak'
 // … dentro del componente, tras definir dispatch:
@@ -1941,7 +1941,7 @@ import { nextStreak, dailyBonus, todayStr } from './streak'
 ```
 > Idempotente por día: al aplicarse, `lastDate` pasa a `today`, así que reabrir no vuelve a sumar. El `hour` alimenta el logro secreto "Búho nocturno".
 
-- [ ] **Step 5: Indicador 🔥 en `Hud.jsx`** — mostrar la racha junto a las monedas cuando `state.streak.count > 0`:
+- [x] **Step 5: Indicador 🔥 en `Hud.jsx`** — mostrar la racha junto a las monedas cuando `state.streak.count > 0`:
 ```jsx
       {state.streak?.count > 0 && (
         <div className="flex items-center gap-1 font-display font-bold text-orange-500 glass rounded-full px-3 py-1 shrink-0">
@@ -1951,9 +1951,9 @@ import { nextStreak, dailyBonus, todayStr } from './streak'
 ```
 (colócalo antes del bloque de monedas; usar `state` de `useGame`, ya disponible en `Hud`).
 
-- [ ] **Step 6: Ejecutar — pasa; build.** `npm test` → PASS. `npm run build`.
+- [x] **Step 6: Ejecutar — pasa; build.** `npm test` → PASS. `npm run build`.
 
-- [ ] **Step 7: Commit**
+- [x] **Step 7: Commit**
 ```bash
 git add src/state/streak.js src/state/GameProvider.jsx src/components/Hud.jsx src/state/__tests__/streak.test.js
 git commit -m "feat: racha diaria (streak + bono) con indicador 🔥 en el HUD"

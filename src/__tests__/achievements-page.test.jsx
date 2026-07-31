@@ -6,9 +6,13 @@ import Achievements from '../pages/Achievements'
 import { ACHIEVEMENTS } from '../content/achievements'
 import { defaultState } from '../state/gameStore'
 import { SAVE_KEY } from '../state/persistence'
+import { todayStr } from '../state/streak'
 
 function renderPage(extra = {}) {
-  localStorage.setItem(SAVE_KEY, JSON.stringify({ ...defaultState(), ...extra }))
+  // lastDate de hoy: así el bono/racha diaria no desbloquea logros de racha
+  // que este test no está probando.
+  const save = { ...defaultState(), streak: { count: 1, best: 1, lastDate: todayStr() }, ...extra }
+  localStorage.setItem(SAVE_KEY, JSON.stringify(save))
   return render(<GameProvider><MemoryRouter><Achievements /></MemoryRouter></GameProvider>)
 }
 

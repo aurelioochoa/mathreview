@@ -48,6 +48,13 @@ export default function Hud() {
         <span className="tabular-nums">{s.totalStars}</span>
       </motion.div>
 
+      {/* Racha diaria */}
+      {state.streak?.count > 0 && (
+        <div className="flex items-center gap-1 font-display font-bold text-orange-500 glass rounded-full px-3 py-1 shrink-0" title={`Racha de ${state.streak.count} días`}>
+          🔥<span className="tabular-nums">{state.streak.count}</span>
+        </div>
+      )}
+
       {/* Monedas con pop al cambiar */}
       <motion.div
         key={s.coins}

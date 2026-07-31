@@ -2,6 +2,7 @@ import { useCallback, useEffect, useReducer, useRef, useState } from 'react'
 import { loadSave, persistSave } from './persistence'
 import { GameContext, gameReducer, initialState } from './gameStore'
 import { evaluateAchievements } from './achievements'
+import { nextStreak, dailyBonus, todayStr } from './streak'
 import { findAchievement } from '../content/achievements'
 import Toast from '../components/Toast'
 
@@ -46,6 +47,18 @@ export function GameProvider({ children }) {
     const first = findAchievement(nuevos[0])
     if (first) setToast({ emoji: first.emoji, name: first.name })
   }, [state])
+
+  // Racha diaria: se comprueba una vez al abrir la app. Es idempotente por día
+  // porque al aplicarla `lastDate` pasa a hoy, así que reabrir no vuelve a pagar.
+  // La `hour` alimenta el logro secreto "Búho nocturno".
+  useEffect(() => {
+    const today = todayStr()
+    if (state.streak.lastDate === today) return
+    const streak = nextStreak(state.streak, today)
+    dispatch({ type: 'TICK_STREAK', streak, bonus: dailyBonus(streak.count), hour: new Date().getHours() })
+    // Solo al montar: la racha es un evento de sesión, no de cada cambio de estado.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const dismissToast = useCallback(() => setToast(null), [])
 
