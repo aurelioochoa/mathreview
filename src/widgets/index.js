@@ -1,4 +1,6 @@
 import RectaNumerica from './RectaNumerica'
+import PizzaFracciones from './PizzaFracciones'
+import PorcentajeBarra from './PorcentajeBarra'
 import DivisoresExplorer from './DivisoresExplorer'
 import JerarquiaPasos from './JerarquiaPasos'
 import AproximacionExplorer from './AproximacionExplorer'
@@ -23,6 +25,8 @@ import AtuendosEjemplo from './AtuendosEjemplo'
 
 export const widgets = {
   'recta-numerica': RectaNumerica,
+  'pizza-fracciones': PizzaFracciones,
+  'porcentaje-barra': PorcentajeBarra,
   'divisores-explorer': DivisoresExplorer,
   'jerarquia-pasos': JerarquiaPasos,
   'aproximacion-explorer': AproximacionExplorer,
