@@ -68,6 +68,7 @@ export default function QrScanner({ onCode, onCancel }) {
       if (!video) return
       video.srcObject = stream
       await video.play().catch(() => {})
+      if (!vivo) return
 
       const detector = 'BarcodeDetector' in window
         ? new window.BarcodeDetector({ formats: ['qr_code'] })
