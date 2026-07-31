@@ -32,7 +32,7 @@
 | C | 6 · Widgets del Mundo 2 (`pizza-fracciones`, `porcentaje-barra`) | ✅ |
 | C | 7 · Contenido del Mundo 2 🍕 (4 niveles + jefe) | ✅ |
 | C | 8 · Sidequests del Mundo 2 (2) | ✅ |
-| C | 9 · Activar `reino-fracciones` en el mapa | ⬜ |
+| C | 9 · Activar `reino-fracciones` en el mapa | ✅ |
 | D | 10 · Estado v3 + regla de desbloqueo (pura) | ⬜ |
 | D | 11 · `PortalTrial` + ruta + UI de bloqueo en el mapa | ⬜ |
 | E | 12 · Verificación final + cierre en `TODO.md` / `README.md` | ⬜ |

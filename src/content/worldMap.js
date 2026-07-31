@@ -2,8 +2,9 @@
 // fallback 2D accesible y la navegación. Sin dependencias de React/DOM: puro.
 //
 // La identidad de mundos sigue el spec base (2026-07-18-math-quest-design):
-// los 6 bloques existentes se presentan como mundos; los 2 primeros mundos
-// del roadmap aparecen como teasers "Próximamente".
+// los 6 bloques originales se presentan como mundos 3-8, y los mundos 1-2
+// (contenido nuevo de Fase 4) completan la escalera 8-15 años. El estado
+// 'coming-soon' se conserva para futuros teasers, aunque hoy no lo use nadie.
 
 // Niveles del Mundo 3 (para calcular estado 'completed'). Deben coincidir con
 // los ids de src/content/worlds/mundo3-potencias.jsx.
@@ -21,9 +22,10 @@ export const worldMapNodes = [
   },
   {
     id: 'reino-fracciones', world: 'Reino de las Fracciones', emoji: '🍕',
-    title: 'Reino de las Fracciones', subtitle: 'Próximamente',
+    title: 'Reino de las Fracciones', subtitle: 'Fracciones, decimales y porcentajes',
     theme: 'world-reino', shape: 'pizza', position: [-4.9, 0, 2.4],
-    target: null, mode: 'none', status: 'coming-soon',
+    target: '/mundo/reino-fracciones', mode: 'game', status: 'active',
+    levelKeys: ['mundo2/fracciones', 'mundo2/operar-fracciones', 'mundo2/decimales', 'mundo2/porcentajes'],
   },
   // — Mundos jugables/estudiables (contenido actual) —
   {
@@ -78,12 +80,9 @@ export const worldMapNodes = [
 
 // Orden del camino principal entre mundos activos (serpiente por el mapa).
 export const pathOrder = [
-  'isla-numerica', 'volcan-potencias', 'castillo-algebra', 'laberinto-sistemas',
+  'isla-numerica', 'reino-fracciones', 'volcan-potencias', 'castillo-algebra', 'laberinto-sistemas',
   'estacion-funciones', 'montanas-geometria', 'feria-datos',
 ]
-
-// Ramal bloqueado hacia los teasers que quedan (parte del último mundo activo).
-export const teaserBranch = ['feria-datos', 'reino-fracciones']
 
 // Ruta del modo estudio de un mundo, o null si no tiene (los Mundos 1-2 son
 // contenido nuevo, no vienen de ninguna página de Bloque). Puro.
@@ -92,7 +91,7 @@ export function studyTargetFor(slug) {
 }
 
 // Progreso real de un mundo jugable: estrellas ganadas y niveles completados.
-// Devuelve null para nodos sin niveles (páginas de estudio y teasers). Puro.
+// Devuelve null para nodos sin niveles (teasers o páginas sueltas). Puro.
 export function worldProgress(node, gameState) {
   if (node.mode !== 'game' || !Array.isArray(node.levelKeys)) return null
   const done = new Set(gameState?.completedLevels ?? [])
