@@ -1,18 +1,19 @@
 import { describe, it, expect } from 'vitest'
 import {
   worldMapNodes, nodeState, blockRoutes, adjacentBlock,
-  pathOrder, teaserBranch, worldProgress,
+  pathOrder, teaserBranch, worldProgress, studyTargetFor,
 } from '../worldMap'
 
 describe('worldMap: modelo de nodos', () => {
-  it('tiene 8 nodos: 2 teasers (coming-soon) + 6 mundos activos', () => {
+  it('tiene 8 nodos: 1 teaser (coming-soon) + 7 mundos activos', () => {
     expect(worldMapNodes).toHaveLength(8)
-    expect(worldMapNodes.filter(n => n.status === 'coming-soon')).toHaveLength(2)
-    expect(worldMapNodes.filter(n => n.status === 'active')).toHaveLength(6)
+    expect(worldMapNodes.filter(n => n.status === 'coming-soon')).toHaveLength(1)
+    expect(worldMapNodes.filter(n => n.status === 'active')).toHaveLength(7)
   })
 
   it('cada nodo activo apunta a una ruta válida conocida', () => {
     const validTargets = new Set([
+      '/mundo/isla-numerica',
       '/mundo/volcan-potencias', '/mundo/castillo-algebra', '/mundo/laberinto-sistemas',
       '/mundo/estacion-funciones', '/mundo/montanas-geometria', '/mundo/feria-datos',
     ])
@@ -21,12 +22,19 @@ describe('worldMap: modelo de nodos', () => {
     }
   })
 
-  it('los 6 mundos activos son de modo juego con levelKeys y studyTarget', () => {
+  it('los mundos activos son de modo juego con levelKeys', () => {
     for (const n of worldMapNodes.filter(n => n.status === 'active')) {
       expect(n.mode, n.id).toBe('game')
       expect(Array.isArray(n.levelKeys) && n.levelKeys.length > 0, n.id).toBe(true)
-      expect(n.studyTarget, n.id).toMatch(/^\/mundo\/.+\/estudio$/)
     }
+  })
+
+  // El modo estudio son las páginas de Bloque originales: los mundos nuevos
+  // (contenido escrito de cero) no tienen, y su enlace no debe renderizarse.
+  it('studyTargetFor da la ruta de estudio de los mundos migrados y null en los nuevos', () => {
+    expect(studyTargetFor('volcan-potencias')).toMatch(/^\/mundo\/.+\/estudio$/)
+    expect(studyTargetFor('isla-numerica')).toBe(null)
+    expect(studyTargetFor('no-existe')).toBe(null)
   })
 
   it('cada nodo tiene emoji, título, tema (color) y posición 3D', () => {
@@ -51,14 +59,18 @@ describe('worldMap: modelo de nodos', () => {
 })
 
 describe('worldMap: caminos', () => {
-  it('pathOrder recorre los 6 mundos activos, sin repetir', () => {
-    const activeIds = new Set(worldMapNodes.filter(n => n.status === 'active').map(n => n.id))
-    expect(pathOrder).toHaveLength(6)
-    expect(new Set(pathOrder).size).toBe(6)
-    for (const id of pathOrder) expect(activeIds.has(id), id).toBe(true)
+  it('pathOrder recorre todos los mundos activos, sin repetir', () => {
+    const activeIds = [...new Set(worldMapNodes.filter(n => n.status === 'active').map(n => n.id))]
+    expect(pathOrder).toHaveLength(activeIds.length)
+    expect(new Set(pathOrder).size).toBe(pathOrder.length)
+    for (const id of pathOrder) expect(activeIds).toContain(id)
   })
 
-  it('teaserBranch arranca en un mundo activo y termina en los 2 teasers', () => {
+  it('el camino empieza por el mundo inicial (el más fácil)', () => {
+    expect(pathOrder[0]).toBe('isla-numerica')
+  })
+
+  it('teaserBranch arranca en un mundo activo y sigue con teasers', () => {
     const byId = Object.fromEntries(worldMapNodes.map(n => [n.id, n]))
     expect(byId[teaserBranch[0]].status).toBe('active')
     for (const id of teaserBranch.slice(1)) {
@@ -70,10 +82,10 @@ describe('worldMap: caminos', () => {
 describe('worldMap: worldProgress', () => {
   const volcan = worldMapNodes.find(n => n.id === 'volcan-potencias')
   const castillo = worldMapNodes.find(n => n.id === 'castillo-algebra')
-  const isla = worldMapNodes.find(n => n.id === 'isla-numerica')
 
   it('teaser (coming-soon) -> null (sin progreso falso)', () => {
-    expect(worldProgress(isla, { completedLevels: [] })).toBeNull()
+    const teaser = worldMapNodes.find(n => n.status === 'coming-soon')
+    expect(worldProgress(teaser, { completedLevels: [] })).toBeNull()
   })
 
   it('mundo jugable sin avance: 0 estrellas, 0%', () => {
@@ -112,7 +124,13 @@ describe('worldMap: nodeState', () => {
   const isla = worldMapNodes.find(n => n.id === 'isla-numerica')
 
   it('teaser -> coming-soon sin importar el estado', () => {
-    expect(nodeState(isla, { completedLevels: [] })).toBe('coming-soon')
+    const teaser = worldMapNodes.find(n => n.status === 'coming-soon')
+    expect(nodeState(teaser, { completedLevels: [] })).toBe('coming-soon')
+  })
+
+  it('la Isla Numérica ya es jugable y no un teaser', () => {
+    expect(isla.mode).toBe('game')
+    expect(nodeState(isla, { completedLevels: [] })).toBe('available')
   })
 
   it('mundo jugable -> available si no está completo', () => {

@@ -28,7 +28,7 @@
 | B | 2 · Widgets del Mundo 1 (`recta-numerica`, `divisores-explorer`, `jerarquia-pasos`) | ✅ |
 | B | 3 · Contenido del Mundo 1 🏝️ (4 niveles + jefe) | ✅ |
 | B | 4 · Sidequests del Mundo 1 (2) | ✅ |
-| B | 5 · Activar `isla-numerica` en el mapa + ocultar modo estudio | ⬜ |
+| B | 5 · Activar `isla-numerica` en el mapa + ocultar modo estudio | ✅ |
 | C | 6 · Widgets del Mundo 2 (`pizza-fracciones`, `porcentaje-barra`) | ⬜ |
 | C | 7 · Contenido del Mundo 2 🍕 (4 niveles + jefe) | ⬜ |
 | C | 8 · Sidequests del Mundo 2 (2) | ⬜ |

@@ -1,6 +1,7 @@
 import { Link, useParams } from 'react-router-dom'
 import { findWorld } from '../content/worlds'
 import { questsForWorld } from '../content/quests'
+import { studyTargetFor } from '../content/worldMap'
 import { useGame } from '../state/gameStore'
 import { levelForXp, titleForLevel } from '../state/xpCurve'
 
@@ -28,11 +29,14 @@ export default function WorldView() {
         </div>
       </div>
 
-      <div className="mb-4">
-        <Link to={`/mundo/${world.slug}/estudio`} className="inline-flex items-center gap-1 text-sm font-semibold text-primary glass rounded-full px-3 py-1.5 hover:shadow-md transition">
-          📖 Modo estudio
-        </Link>
-      </div>
+      {/* Solo los mundos migrados de un Bloque tienen modo estudio. */}
+      {studyTargetFor(world.slug) && (
+        <div className="mb-4">
+          <Link to={`/mundo/${world.slug}/estudio`} className="inline-flex items-center gap-1 text-sm font-semibold text-primary glass rounded-full px-3 py-1.5 hover:shadow-md transition">
+            📖 Modo estudio
+          </Link>
+        </div>
+      )}
 
       <div className="space-y-3">
         {world.levels.map((level, i) => {

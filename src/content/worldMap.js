@@ -10,12 +10,14 @@
 const MUNDO3_LEVELS = ['aproximacion', 'potenciacion', 'notacion', 'radicacion']
 
 export const worldMapNodes = [
-  // — Teasers (roadmap Fase 4), bloqueados —
+  // — Mundos iniciales (Fase 4). Sin studyTarget: no vienen de ningún Bloque,
+  //   así que no tienen página de estudio —
   {
     id: 'isla-numerica', world: 'Isla Numérica', emoji: '🏝️',
-    title: 'Isla Numérica', subtitle: 'Próximamente',
+    title: 'Isla Numérica', subtitle: 'Operaciones, orden, múltiplos y divisores',
     theme: 'world-isla', shape: 'island', position: [-6.2, 0, 0.2],
-    target: null, mode: 'none', status: 'coming-soon',
+    target: '/mundo/isla-numerica', mode: 'game', status: 'active',
+    levelKeys: ['mundo1/operaciones', 'mundo1/orden', 'mundo1/multiplos-divisores', 'mundo1/jerarquia'],
   },
   {
     id: 'reino-fracciones', world: 'Reino de las Fracciones', emoji: '🍕',
@@ -76,12 +78,18 @@ export const worldMapNodes = [
 
 // Orden del camino principal entre mundos activos (serpiente por el mapa).
 export const pathOrder = [
-  'volcan-potencias', 'castillo-algebra', 'laberinto-sistemas',
+  'isla-numerica', 'volcan-potencias', 'castillo-algebra', 'laberinto-sistemas',
   'estacion-funciones', 'montanas-geometria', 'feria-datos',
 ]
 
-// Ramal bloqueado hacia los teasers (parte del último mundo activo).
-export const teaserBranch = ['feria-datos', 'reino-fracciones', 'isla-numerica']
+// Ramal bloqueado hacia los teasers que quedan (parte del último mundo activo).
+export const teaserBranch = ['feria-datos', 'reino-fracciones']
+
+// Ruta del modo estudio de un mundo, o null si no tiene (los Mundos 1-2 son
+// contenido nuevo, no vienen de ninguna página de Bloque). Puro.
+export function studyTargetFor(slug) {
+  return worldMapNodes.find(n => n.id === slug)?.studyTarget ?? null
+}
 
 // Progreso real de un mundo jugable: estrellas ganadas y niveles completados.
 // Devuelve null para nodos sin niveles (páginas de estudio y teasers). Puro.
