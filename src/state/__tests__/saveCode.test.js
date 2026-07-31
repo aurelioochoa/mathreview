@@ -145,6 +145,45 @@ describe('saveCode — formas envenenadas (decodeSave valida de verdad)', () => 
   })
 })
 
+// Repite a mano el empaquetado de saveCode.js (gzip + base64url) para poder
+// fabricar un sobre con un checksum equivocado a propósito. No se reutilizan
+// las funciones internas del módulo (no se exportan, y no deberían): el test
+// comprueba el comportamiento observable de decodeSave, no su implementación.
+async function empaquetarSobre(sobre) {
+  const bytes = new TextEncoder().encode(JSON.stringify(sobre))
+  const stream = new ReadableStream({ start(c) { c.enqueue(bytes); c.close() } })
+  const comprimido = stream.pipeThrough(new CompressionStream('gzip'))
+  const reader = comprimido.getReader()
+  const trozos = []
+  for (;;) {
+    const { done, value } = await reader.read()
+    if (done) break
+    trozos.push(value)
+  }
+  let n = 0
+  for (const t of trozos) n += t.length
+  const salida = new Uint8Array(n)
+  let o = 0
+  for (const t of trozos) { salida.set(t, o); o += t.length }
+  let bin = ''
+  for (let i = 0; i < salida.length; i++) bin += String.fromCharCode(salida[i])
+  const b64url = btoa(bin).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '')
+  return `${CODE_PREFIX}.${b64url}`
+}
+
+describe('saveCode — la rama del checksum FNV, no solo el CRC32 del gzip', () => {
+  it('un sobre gzip válido (descomprime y da JSON bien formado) con el checksum equivocado da corrupto', async () => {
+    // Los tests de "código corrupto" de más arriba los caza el CRC32 del
+    // gzip antes de llegar aquí: tocar un carácter del código rompe la
+    // integridad del gzip, no el JSON de dentro. Este sobre es gzip válido
+    // de principio a fin -- lo único mal es el campo `c`, que no tiene
+    // relación con el guardado real -- así que es el único que ejercita la
+    // comparación FNV.
+    const code = await empaquetarSobre({ c: 'deadbeef', s: defaultState() })
+    expect((await decodeSave(code)).reason).toBe('corrupto')
+  })
+})
+
 describe('saveCode — sin soporte de descompresión en el navegador', () => {
   it('si falta DecompressionStream, lo distingue de un código corrupto', async () => {
     const code = await encodeSave(defaultState())

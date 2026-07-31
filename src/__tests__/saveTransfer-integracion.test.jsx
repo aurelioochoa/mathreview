@@ -91,6 +91,36 @@ describe('integración: SaveTransfer', () => {
     const input = await screen.findByLabelText(/Abrir fichero/i)
     expect(input.className).not.toMatch(/\bhidden\b/)
   })
+
+  it('editar el texto pegado mientras decodeSave sigue en vuelo no resucita un resultado viejo', async () => {
+    montar({ xp: 10 })
+    const codigoA = await encodeSave({ ...defaultState(), xp: 9000, coins: 777 })
+
+    fireEvent.change(screen.getByLabelText(/Pega aquí un código/i), { target: { value: codigoA } })
+    fireEvent.click(screen.getByRole('button', { name: /Revisar código/i }))
+    // Sin esperar a que decodeSave resuelva, el jugador cambia de idea y
+    // borra lo que había pegado.
+    fireEvent.change(screen.getByLabelText(/Pega aquí un código/i), { target: { value: 'cambié de idea' } })
+
+    // Da tiempo de sobra a que la petición vieja, si no se descartara,
+    // resolviera y aplicara su resultado por encima del cambio.
+    await new Promise(resolve => setTimeout(resolve, 50))
+
+    expect(screen.queryByRole('button', { name: /Cargar esta partida/i })).toBeNull()
+    expect(screen.queryByText(/777 monedas/)).toBeNull()
+  })
+
+  it('"Abrir fichero" también actualiza el textarea de pegar con el contenido del fichero', async () => {
+    montar()
+    const codigo = await encodeSave({ ...defaultState(), xp: 5, coins: 42 })
+    const fichero = new File([codigo], 'partida.mathquest', { type: 'text/plain' })
+
+    const input = await screen.findByLabelText(/Abrir fichero/i)
+    fireEvent.change(input, { target: { files: [fichero] } })
+
+    await screen.findByRole('button', { name: /Cargar esta partida/i })
+    expect(screen.getByLabelText(/Pega aquí un código/i).value).toBe(codigo)
+  })
 })
 
 describe('integración: SaveTransfer — QR', () => {

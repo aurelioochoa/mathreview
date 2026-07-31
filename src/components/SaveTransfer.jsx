@@ -44,6 +44,11 @@ export default function SaveTransfer() {
   const cabeEnQr = codigo.length > 0 && codigo.length <= QR_MAX_BYTES
   const botonCargarRef = useRef(null)
   const salidaRef = useRef(null)
+  // Id incremental de la última petición de "revisar" en curso. decodeSave es
+  // asíncrono: si el jugador edita el texto (o lanza otra revisión) mientras
+  // una petición vieja sigue en vuelo, esa petición ya no debe poder aplicar
+  // su resultado cuando por fin resuelva.
+  const peticionRef = useRef(0)
 
   useEffect(() => {
     let vivo = true
@@ -76,9 +81,15 @@ export default function SaveTransfer() {
   }, [avisoCopiar])
 
   const revisar = useCallback(async (texto) => {
+    const id = ++peticionRef.current
     setError(null)
     setPendiente(null)
     const res = await decodeSave(texto)
+    // Si mientras tanto se lanzó otra revisión (o el texto cambió e
+    // invalidó esta petición desde el onChange), el id ya no coincide:
+    // aplicar este resultado ahora resucitaría el panel de confirmación de
+    // una partida que ya no es la que el jugador está mirando.
+    if (id !== peticionRef.current) return
     if (res.ok) setPendiente(res.save)
     else setError(MENSAJES[res.reason])
   }, [])
@@ -118,7 +129,14 @@ export default function SaveTransfer() {
 
   const subir = async (e) => {
     const fichero = e.target.files?.[0]
-    if (fichero) await revisar(await fichero.text())
+    if (fichero) {
+      const texto = await fichero.text()
+      // Sin esto, el textarea seguía mostrando lo que hubiera antes mientras
+      // `pendiente` ya reflejaba el fichero: el resumen no correspondía a lo
+      // que el jugador veía escrito.
+      setPegado(texto)
+      await revisar(texto)
+    }
     e.target.value = ''
   }
 
@@ -196,6 +214,10 @@ export default function SaveTransfer() {
             // podrían aplicar una partida que ya no coincide con lo que ve.
             setPendiente(null)
             setError(null)
+            // Invalida también cualquier revisar() todavía en vuelo: si
+            // decodeSave resuelve después de este cambio, ya no debe poder
+            // aplicar su resultado (ver el id en revisar()).
+            peticionRef.current++
           }}
           className="w-full text-xs font-mono border border-gray-200 rounded-lg p-2 bg-white break-all"
         />
