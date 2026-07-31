@@ -27,6 +27,7 @@ function BossArenaView() {
   const [hits, setHits] = useState(0)           // golpes acertados (vida del jefe)
   const [selected, setSelected] = useState(null)
   const [cofre, setCofre] = useState(false)   // solo en la primera victoria del mundo
+  const [hintShown, setHintShown] = useState(false)  // pista comprada en el golpe actual
   const { use3D } = useDeviceTier()
 
   const questions = useMemo(
@@ -56,6 +57,7 @@ function BossArenaView() {
 
   const next = () => {
     setSelected(null)
+    setHintShown(false)
     if (qIndex + 1 < questions.length) {
       setQIndex(qIndex + 1)
     } else {
@@ -69,7 +71,7 @@ function BossArenaView() {
 
   const retry = () => {
     setAttempt(a => a + 1)
-    setQIndex(0); setLives(BOSS_LIVES); setHits(0); setSelected(null); setPhase('pelea')
+    setQIndex(0); setLives(BOSS_LIVES); setHits(0); setSelected(null); setHintShown(false); setPhase('pelea')
   }
 
   return (
@@ -105,6 +107,17 @@ function BossArenaView() {
           </div>
           <p className="text-xs text-gray-400 mb-2">Golpe {qIndex + 1} / {questions.length}</p>
           <p className="font-medium text-gray-800 mb-3">{q.question}</p>
+          {selected === null && !hintShown && (
+            state.hints > 0
+              ? <button onClick={() => { dispatch({ type: 'USE_HINT' }); setHintShown(true) }}
+                  className="mb-3 px-3 py-1.5 rounded-lg bg-yellow-100 border border-yellow-300 text-xs font-bold text-yellow-700">
+                  💡 Pedir pista ({state.hints} {state.hints === 1 ? 'token' : 'tokens'})
+                </button>
+              : <p className="mb-3"><Link to="/tienda" className="text-xs text-primary underline">Consigue pistas en la tienda</Link></p>
+          )}
+          {hintShown && selected === null && (
+            <div className="mb-3 p-3 rounded-lg bg-yellow-50 border border-yellow-200 text-sm">💡 {q.hint}</div>
+          )}
           <div className="space-y-2">
             {q.options.map((opt, i) => {
               const isCorrect = selected !== null && i === q.correctAnswer

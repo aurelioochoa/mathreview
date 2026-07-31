@@ -1447,7 +1447,7 @@ git commit -m "feat: cofres sorpresa (rollChest + Chest) en niveles y jefes"
 - Consumes: `SHOP_ITEMS` (shop), `useGame`, acción `BUY_ITEM`.
 - Produces: página `Shop` (ruta `/tienda`).
 
-- [ ] **Step 1: Test de integración (falla)**
+- [x] **Step 1: Test de integración (falla)**
 
 Create `src/__tests__/shop-integracion.test.jsx`:
 ```jsx
@@ -1466,9 +1466,9 @@ describe('integración: Shop', () => {
 })
 ```
 
-- [ ] **Step 2: Ejecutar — falla.** Run: `npm test -- shop-integracion` → FAIL.
+- [x] **Step 2: Ejecutar — falla.** Run: `npm test -- shop-integracion` → FAIL.
 
-- [ ] **Step 3: Implementar `src/pages/Shop.jsx`**
+- [x] **Step 3: Implementar `src/pages/Shop.jsx`**
 ```jsx
 import { Link } from 'react-router-dom'
 import { useGame } from '../state/gameStore'
@@ -1517,11 +1517,11 @@ export default function Shop() {
 }
 ```
 
-- [ ] **Step 4: Ruta.** En `src/App.jsx`: `import Shop from './pages/Shop'` y `<Route path="/tienda" element={<Shop />} />`.
+- [x] **Step 4: Ruta.** En `src/App.jsx`: `import Shop from './pages/Shop'` y `<Route path="/tienda" element={<Shop />} />`.
 
-- [ ] **Step 5: Ejecutar — pasa; build.** `npm test -- shop-integracion` → PASS. `npm run build`.
+- [x] **Step 5: Ejecutar — pasa; build.** `npm test -- shop-integracion` → PASS. `npm run build`.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 ```bash
 git add src/pages/Shop.jsx src/App.jsx src/__tests__/shop-integracion.test.jsx
 git commit -m "feat: tienda /tienda (compra de cosméticos y tokens de pista)"
@@ -1538,7 +1538,7 @@ git commit -m "feat: tienda /tienda (compra de cosméticos y tokens de pista)"
 - Consumes: `state.hints`, acción `USE_HINT`.
 - Produces: botón "💡 Pedir pista (1 token)" antes de responder que revela `q.hint` gastando un token.
 
-- [ ] **Step 1: Añadir estado local y botón en `LevelPlayer` (fase reto)**
+- [x] **Step 1: Añadir estado local y botón en `LevelPlayer` (fase reto)**
 
 En `LevelPlayerView`, añadir `const [hintShown, setHintShown] = useState(false)` y resetearlo en `nextQuestion`/`retry` (`setHintShown(false)`). En el bloque `phase === 'reto'`, encima de la lista de opciones, añadir:
 ```jsx
@@ -1554,13 +1554,13 @@ En `LevelPlayerView`, añadir `const [hintShown, setHintShown] = useState(false)
 ```
 Enlazar a la tienda cuando no hay tokens (texto pequeño): `{state.hints === 0 && <Link to="/tienda" className="text-xs text-primary underline">Consigue pistas en la tienda</Link>}` (importar `Link` si no está).
 
-- [ ] **Step 2: Repetir el patrón en `BossArena` (fase pelea)** con el mismo bloque (usa el mismo `state.hints` / `USE_HINT` / `hintShown`).
+- [x] **Step 2: Repetir el patrón en `BossArena` (fase pelea)** con el mismo bloque (usa el mismo `state.hints` / `USE_HINT` / `hintShown`).
 
-- [ ] **Step 3: Verificar y build**
+- [x] **Step 3: Verificar y build**
 
 Run: `npm test` (nada debe romperse; no hay test nuevo — es UI). `npm run build`.
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 ```bash
 git add src/engine/LevelPlayer.jsx src/engine/BossArena.jsx
 git commit -m "feat: pistas compradas (token) en retos y jefes"

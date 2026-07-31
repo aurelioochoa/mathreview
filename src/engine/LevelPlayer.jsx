@@ -44,7 +44,8 @@ function LevelPlayerView() {
   const [firstTryHits, setFirstTryHits] = useState(0)
   const [selected, setSelected] = useState(null)   // índice elegido en la pregunta actual
   const [failedThis, setFailedThis] = useState(false)
-  const [result, setResult] = useState(null)   // { stars, coins } de esta partida
+  const [hintShown, setHintShown] = useState(false)  // pista comprada en la pregunta actual
+  const [result, setResult] = useState(null)   // { stars, coins, primeraVez } de esta partida
 
   const questions = useMemo(
     () => (level ? buildReto(level.reto.factories, level.reto.pick) : []),
@@ -77,6 +78,7 @@ function LevelPlayerView() {
   const nextQuestion = () => {
     setSelected(null)
     setFailedThis(false)
+    setHintShown(false)
     if (qIndex + 1 < questions.length) {
       setQIndex(qIndex + 1)
     } else {
@@ -93,7 +95,7 @@ function LevelPlayerView() {
 
   const retry = () => {
     setAttempt(a => a + 1)
-    setQIndex(0); setLives(3); setFirstTryHits(0); setSelected(null); setFailedThis(false)
+    setQIndex(0); setLives(3); setFirstTryHits(0); setSelected(null); setFailedThis(false); setHintShown(false)
     setPhase('reto')
   }
 
@@ -124,6 +126,17 @@ function LevelPlayerView() {
             <span>{'❤️'.repeat(lives)}{'🖤'.repeat(3 - lives)}</span>
           </div>
           <p className="font-medium text-gray-800 mb-3">{q.question}</p>
+          {selected === null && !hintShown && (
+            state.hints > 0
+              ? <button onClick={() => { dispatch({ type: 'USE_HINT' }); setHintShown(true) }}
+                  className="mb-3 px-3 py-1.5 rounded-lg bg-yellow-100 border border-yellow-300 text-xs font-bold text-yellow-700">
+                  💡 Pedir pista ({state.hints} {state.hints === 1 ? 'token' : 'tokens'})
+                </button>
+              : <p className="mb-3"><Link to="/tienda" className="text-xs text-primary underline">Consigue pistas en la tienda</Link></p>
+          )}
+          {hintShown && selected === null && (
+            <div className="mb-3 p-3 rounded-lg bg-yellow-50 border border-yellow-200 text-sm">💡 {q.hint}</div>
+          )}
           <div className="space-y-2">
             {q.options.map((opt, i) => {
               const isCorrect = selected !== null && i === q.correctAnswer
