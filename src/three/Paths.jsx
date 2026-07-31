@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
 import * as THREE from 'three'
 import { Html } from '@react-three/drei'
-import { worldMapNodes, pathOrder, teaserBranch } from '../content/worldMap'
+import { worldMapNodes, pathOrder } from '../content/worldMap'
 
 // Caminos punteados entre islas (piedritas sobre el agua), con waypoints de
 // estrella dorada entre mundos y candado en el ramal a los teasers.
@@ -74,16 +74,10 @@ function Waypoint({ position, locked = false, starGeo }) {
 }
 
 export default function Paths() {
-  const { mainDots, teaserDots, waypoints, lockPos, starGeo } = useMemo(() => {
+  // Ya no hay ramal bloqueado: los ocho mundos están en el camino principal.
+  const { mainDots, waypoints, starGeo } = useMemo(() => {
     const wps = midpoints(pathOrder)
-    const lock = midpoints(teaserBranch.slice(0, 2))[0]
-    return {
-      mainDots: dotsFor(pathOrder, [...wps]),
-      teaserDots: dotsFor(teaserBranch, [lock]),
-      waypoints: wps,
-      lockPos: lock,
-      starGeo: starGeometry(),
-    }
+    return { mainDots: dotsFor(pathOrder, [...wps]), waypoints: wps, starGeo: starGeometry() }
   }, [])
 
   return (
@@ -94,14 +88,7 @@ export default function Paths() {
           <meshStandardMaterial color="#ffffff" roughness={0.4} />
         </mesh>
       ))}
-      {teaserDots.map((p, i) => (
-        <mesh key={`t${i}`} position={p}>
-          <cylinderGeometry args={[0.08, 0.08, 0.05, 10]} />
-          <meshStandardMaterial color="#cbd5e1" roughness={0.6} />
-        </mesh>
-      ))}
       {waypoints.map((p, i) => <Waypoint key={`w${i}`} position={p} starGeo={starGeo} />)}
-      <Waypoint position={lockPos} locked starGeo={starGeo} />
     </group>
   )
 }

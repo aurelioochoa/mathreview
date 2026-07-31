@@ -12,12 +12,13 @@ export const XP_QUEST = 40
 // Fuente única de defaults del estado v2. La migración de persistencia reusa esto.
 export function defaultState() {
   return {
-    version: 2,
+    version: 3,
     xp: 0,
     coins: 0,
     stars: {},            // levelKey -> 1..3 (mejor marca)
     completedLevels: [],  // levelKey[]
     bossDefeats: [],      // worldId[]
+    portalPasses: [],     // worldId[] superados por la prueba del portal
     questsCompleted: [],  // questKey[]
     achievements: [],     // achievementId[]
     hints: 0,             // tokens de pista
@@ -65,6 +66,12 @@ export function gameReducer(state, action) {
           : [...state.bossDefeats, action.worldId],
       }
 
+    case 'PORTAL_PASSED':
+      // Abre paso al siguiente mundo, sin estrellas ni maestría: el jugador
+      // puede volver luego a por ellas.
+      if (state.portalPasses.includes(action.worldId)) return state
+      return { ...state, portalPasses: [...state.portalPasses, action.worldId] }
+
     case 'QUEST_COMPLETED':
       if (state.questsCompleted.includes(action.questKey)) return state
       return {
@@ -110,6 +117,10 @@ export function gameReducer(state, action) {
       return { ...state, hints: Math.max(0, state.hints - 1) }
 
     case 'TICK_STREAK':
+      // Idempotente por día: si ya se cobró el bono de esa fecha, no se repite.
+      // Sin esto, el doble montaje de React.StrictMode en desarrollo pagaba el
+      // bono dos veces (el efecto se reejecuta con el mismo state capturado).
+      if (state.streak.lastDate === action.streak?.lastDate) return state
       return { ...state, streak: action.streak, coins: state.coins + (action.bonus ?? 0) }
 
     case 'UNLOCK_ACHIEVEMENTS': {

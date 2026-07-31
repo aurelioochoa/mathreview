@@ -8,13 +8,15 @@ export const BACKUP_KEY = 'mathquest-save-v1-backup'
 function migrate(data) {
   if (!data || typeof data !== 'object') return null
   const base = defaultState()
-  if (data.version === 2) {
+  // v2 y v3 comparten forma: los campos que faltan se rellenan con los defaults,
+  // así que subir de versión no necesita un paso propio por cada una.
+  if (data.version === 2 || data.version === 3) {
     return {
       ...base,
       ...data,
       cosmetics: { ...base.cosmetics, ...(data.cosmetics ?? {}) },
       streak: { ...base.streak, ...(data.streak ?? {}) },
-      version: 2,
+      version: 3,
     }
   }
   if (data.version === 1) {
@@ -24,7 +26,7 @@ function migrate(data) {
       coins: data.coins ?? 0,
       stars: data.stars ?? {},
       completedLevels: data.completedLevels ?? [],
-      version: 2,
+      version: 3,
     }
   }
   return null

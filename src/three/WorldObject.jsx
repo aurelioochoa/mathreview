@@ -45,7 +45,8 @@ function InfoCard({ node, state, progress, hovered, locked }) {
       <div className={`font-display font-bold text-sm leading-tight ${locked ? 'text-gray-500' : 'text-gray-800'}`}>
         {node.emoji} {node.title}
       </div>
-      {locked && <div className="text-[11px] font-semibold text-gray-400 mt-0.5">🔒 Próximamente</div>}
+      {state === 'coming-soon' && <div className="text-[11px] font-semibold text-gray-400 mt-0.5">🔒 Próximamente</div>}
+      {state === 'locked' && <div className="text-[11px] font-semibold text-gray-400 mt-0.5">🔒 Derrota al jefe anterior</div>}
       {state === 'completed' && <div className="text-[11px] font-bold text-emerald-600 mt-0.5">✔ Completado</div>}
       {progress && (
         <div className="mt-1">
@@ -69,7 +70,11 @@ export default function WorldObject({ node, state, progress, spin }) {
   const navigate = useNavigate()
   const [hovered, setHovered] = useState(false)
   const groupRef = useRef()
-  const locked = state === 'coming-soon'
+  // 'coming-soon' es un mundo que aún no existe; 'locked' existe pero pide el
+  // jefe anterior. Los dos se ven apagados, pero al cerrado sí se puede entrar:
+  // WorldView explica la puerta y ofrece el portal.
+  const proximamente = state === 'coming-soon'
+  const locked = proximamente || state === 'locked'
   useCursor(hovered && !locked)
   const color = THEME_HEX[node.theme] ?? '#6366f1'
 
@@ -77,7 +82,7 @@ export default function WorldObject({ node, state, progress, spin }) {
     if (spin && !locked && groupRef.current) groupRef.current.rotation.y += delta * 0.35
   })
 
-  const go = () => { if (!locked && node.target) navigate(node.target) }
+  const go = () => { if (!proximamente && node.target) navigate(node.target) }
 
   return (
     <group position={node.position}>

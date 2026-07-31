@@ -27,7 +27,9 @@ export const ACHIEVEMENTS = [
   { id: 'racha-3', name: 'Racha de 3', emoji: '🔥', description: 'Juega 3 días seguidos.', check: (s) => s.streak.best >= 3 },
   { id: 'racha-7', name: 'Racha de 7', emoji: '🔥', description: 'Juega 7 días seguidos.', check: (s) => s.streak.best >= 7 },
   { id: 'racha-30', name: 'Racha de 30', emoji: '🔥', description: 'Juega 30 días seguidos.', check: (s) => s.streak.best >= 30 },
-  { id: 'primera-compra', name: 'Primera compra', emoji: '🛍️', description: 'Consigue tu primer cosmético.', check: (s) => s.cosmetics.owned.length > 1 },
+  // No es solo de la tienda: los cofres también sueltan cosméticos, y el aviso
+  // decía "Primera compra" al abrir uno.
+  { id: 'primera-compra', name: 'Primer cosmético', emoji: '🛍️', description: 'Consigue tu primer cosmético, comprado o sacado de un cofre.', check: (s) => s.cosmetics.owned.length > 1 },
   { id: 'coleccionista', name: 'Coleccionista', emoji: '🎨', description: 'Posee 5 cosméticos.', check: (s) => s.cosmetics.owned.length >= 5 },
   { id: 'nivel-5', name: 'Explorador experto', emoji: '🧭', description: 'Alcanza el nivel 5 de jugador.', check: (s) => levelForXp(s.xp) >= 5 },
   { id: 'nivel-10', name: 'Veterano', emoji: '🎖️', description: 'Alcanza el nivel 10 de jugador.', check: (s) => levelForXp(s.xp) >= 10 },

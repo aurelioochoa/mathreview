@@ -33,7 +33,7 @@ describe('GameProvider + useGame', () => {
     const { result } = renderHook(() => useGame(), { wrapper: GameProvider })
     expect(typeof result.current.dispatch).toBe('function')
     expect(result.current.state).toMatchObject({
-      version: 2, xp: 0, coins: 0, stars: {}, completedLevels: [],
+      version: 3, xp: 0, coins: 0, stars: {}, completedLevels: [],
     })
   })
 
