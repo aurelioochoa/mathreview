@@ -92,3 +92,24 @@ describe('integración: SaveTransfer', () => {
     expect(input.className).not.toMatch(/\bhidden\b/)
   })
 })
+
+describe('integración: SaveTransfer — QR', () => {
+  beforeEach(() => localStorage.clear())
+
+  it('ofrece mostrar el QR cuando el código cabe', async () => {
+    montar({ xp: 100 })
+    await screen.findByLabelText(/Tu código de partida/i)
+    expect(await screen.findByRole('button', { name: /Mostrar QR/i })).toBeTruthy()
+  })
+
+  it('si el código no cabe en un QR lo dice en vez de ofrecerlo', async () => {
+    // Una partida con basura suficiente para pasarse del tope, para probar la
+    // guarda. No es un caso real: el peor caso realista son ~800 B.
+    const relleno = {}
+    for (let i = 0; i < 4000; i++) relleno[`nivel-de-relleno-numero-${i}`] = 3
+    montar({ stars: relleno })
+    await screen.findByLabelText(/Tu código de partida/i)
+    expect(await screen.findByText(/demasiado grande para un QR/i)).toBeTruthy()
+    expect(screen.queryByRole('button', { name: /Mostrar QR/i })).toBeNull()
+  })
+})

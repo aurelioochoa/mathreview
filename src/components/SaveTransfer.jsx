@@ -1,7 +1,10 @@
-import { useCallback, useEffect, useState } from 'react'
+import { lazy, Suspense, useCallback, useEffect, useState } from 'react'
 import { useGame } from '../state/gameStore'
 import { hudStats } from '../state/hudStats'
-import { encodeSave, decodeSave } from '../state/saveCode'
+import { encodeSave, decodeSave, QR_MAX_BYTES } from '../state/saveCode'
+
+// Va aparte y en lazy: `qrcode` no puede acabar en el bundle inicial.
+const QrPanel = lazy(() => import('./QrPanel'))
 
 const MENSAJES = {
   formato: 'Esto no parece un código de Math Quest.',
@@ -26,6 +29,8 @@ export default function SaveTransfer() {
   const [pegado, setPegado] = useState('')
   const [pendiente, setPendiente] = useState(null)
   const [error, setError] = useState(null)
+  const [verQr, setVerQr] = useState(false)
+  const cabeEnQr = codigo.length > 0 && codigo.length <= QR_MAX_BYTES
 
   useEffect(() => {
     let vivo = true
@@ -80,7 +85,18 @@ export default function SaveTransfer() {
         <div className="flex flex-wrap gap-2 mt-2">
           <button onClick={copiar} className={`${boton} bg-primary text-white`}>Copiar</button>
           <button onClick={descargar} className={`${boton} bg-white border border-gray-200`}>Descargar fichero</button>
+          {cabeEnQr && (
+            <button onClick={() => setVerQr(v => !v)} className={`${boton} bg-white border border-gray-200`}>
+              {verQr ? 'Ocultar QR' : 'Mostrar QR'}
+            </button>
+          )}
         </div>
+        {codigo.length > QR_MAX_BYTES && (
+          <p className="text-xs text-gray-500 mt-2">
+            Tu partida es demasiado grande para un QR. Usa el código o el fichero.
+          </p>
+        )}
+        {verQr && <Suspense fallback={null}><QrPanel code={codigo} /></Suspense>}
       </div>
 
       <div className="glass rounded-2xl p-4">
