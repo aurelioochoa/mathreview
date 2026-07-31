@@ -20,6 +20,33 @@
 - Spec de referencia: `docs/superpowers/specs/2026-07-22-fase3-gamificacion-design.md`.
 - **Economía (regla acordada):** al completar un nivel, monedas = `(estrellas_nuevas − mejor_previa)×COINS_PER_STAR` si es positivo, más `BASE_FIRST_CLEAR` solo la primera vez. Rejugar sin mejorar la marca paga 0. Jefes/quests/cofres son las fuentes principales.
 
+## Progreso (actualizado 2026-07-30)
+
+**7 de 18 tasks completas.** Capas A y B cerradas; Capa C a mitad. Suite en verde: 26 archivos, 161 tests.
+
+| Capa | Task | Estado | Commit |
+|---|---|---|---|
+| A | 1 · Estado v2 + economía por estrellas nuevas | ✅ | `555b31e` |
+| A | 2 · Migración de guardado v1 → v2 | ✅ | `8d4a777` |
+| B | 3 · `buildBossPool` + campo `boss` + validación | ✅ | `57be2dc` |
+| B | 4 · `BossArena` + ruta + maestría en `WorldView` | ✅ | `8d46668` (+ fix `d479404`) |
+| C | 5 · `QuestPlayer` + índice + sidequests Mundo 3 | ✅ | `feee1f9` (+ fix `fa0fe98`) |
+| C | 6 · Sidequests Mundo 4 🏰 | ✅ | `6c96add` |
+| C | 7 · Sidequests Mundo 5 🌀 | ✅ | `eb95248` |
+| C | 8 · Sidequests Mundo 6 🚀 | ⬜ | — |
+| C | 9 · Sidequests Mundo 7 ⛰️ | ⬜ | — |
+| C | 10 · Sidequests Mundo 8 🎡 + validación de quests | ⬜ | — |
+| D | 11 · Cofres (`rollChest` + `Chest` + `shop.js`) | ⬜ | — |
+| D | 12 · Tienda `/tienda` | ⬜ | — |
+| D | 13 · Pistas compradas en reto y jefe | ⬜ | — |
+| E | 14 · Definiciones de logros + `evaluateAchievements` | ⬜ | — |
+| E | 15 · Toast + wiring en `GameProvider` + `/logros` | ⬜ | — |
+| F | 16 · Racha diaria + 🔥 en el HUD | ⬜ | — |
+| F | 17 · Perfil `/perfil` + accesos en el HUD | ⬜ | — |
+| — | 18 · Verificación final + cierre en `TODO.md` | ⬜ | — |
+
+> **Siguiente:** Task 8 (Mundo 6 🚀). Alternativa si se quiere impacto jugable antes que contenido: saltar a la Capa D (Tasks 11-13) — no depende de las Tasks 8-10 salvo por el paso de validación de quests de la Task 10.
+
 ---
 
 # CAPA A — Base de estado (v2 + migración + economía)
@@ -41,7 +68,7 @@
   - `gameReducer(state, action)` con las acciones nuevas: `BOSS_DEFEATED`, `QUEST_COMPLETED`, `OPEN_CHEST`, `BUY_ITEM`, `EQUIP_COSMETIC`, `USE_HINT`, `TICK_STREAK`, `UNLOCK_ACHIEVEMENTS` (más `ANSWER_CORRECT`, `LEVEL_COMPLETED` existentes).
 - Consumes: nada nuevo.
 
-- [ ] **Step 1: Escribir los tests que fallan (economía nueva + acciones nuevas)**
+- [x] **Step 1: Escribir los tests que fallan (economía nueva + acciones nuevas)**
 
 Reemplazar el contenido de `src/state/__tests__/gameStore.test.js` por:
 ```js
@@ -157,12 +184,12 @@ describe('acciones nuevas del reducer', () => {
 })
 ```
 
-- [ ] **Step 2: Ejecutar para ver que falla**
+- [x] **Step 2: Ejecutar para ver que falla**
 
 Run: `npm test -- gameStore`
 Expected: FAIL (`defaultState`/`coinsForCompletion` no existen; economía nueva no implementada).
 
-- [ ] **Step 3: Reescribir `src/state/gameStore.js`**
+- [x] **Step 3: Reescribir `src/state/gameStore.js`**
 
 ```js
 import { createContext, useContext } from 'react'
@@ -299,7 +326,7 @@ export function useGame() {
 }
 ```
 
-- [ ] **Step 4: Actualizar `LevelPlayer.jsx` para mostrar las monedas reales**
+- [x] **Step 4: Actualizar `LevelPlayer.jsx` para mostrar las monedas reales**
 
 En `src/engine/LevelPlayer.jsx`, importar el helper y usarlo para el display (el reducer recalcula lo mismo; se pasa `previa` desde el estado actual). Reemplazar el bloque `nextQuestion` (L76-89) por:
 ```jsx
@@ -328,7 +355,7 @@ Y en `LevelPlayerView` obtener `state` del hook (L34):
 ```
 (La línea 169 que muestra `+{result?.coins ?? 0} 🪙` ya funciona con el nuevo `result.coins`. `COINS_PER_STAR` deja de importarse si no se usa en otro sitio del archivo — quitarlo del import si ESLint marca no-usado.)
 
-- [ ] **Step 5: Arreglar la aserción de monedas en los 6 tests de integración**
+- [x] **Step 5: Arreglar la aserción de monedas en los 6 tests de integración**
 
 En cada `src/__tests__/mundo{3,4,5,6,7,8}-integracion.test.jsx`, línea 74, reemplazar:
 ```js
@@ -340,12 +367,12 @@ por:
 ```
 (Las líneas 67/81/84 que pasan `coins: 30/10` son ahora ignoradas por el reducer; se pueden dejar. El test de "rejugar peor" sigue verde porque no asertaba monedas.)
 
-- [ ] **Step 6: Ejecutar toda la suite — pasa**
+- [x] **Step 6: Ejecutar toda la suite — pasa**
 
 Run: `npm test`
 Expected: PASS (gameStore nuevos + integración con 45 + resto sin cambios).
 
-- [ ] **Step 7: Commit**
+- [x] **Step 7: Commit**
 ```bash
 git add src/state/gameStore.js src/state/__tests__/gameStore.test.js src/engine/LevelPlayer.jsx src/__tests__/mundo*-integracion.test.jsx
 git commit -m "feat: estado v2 del juego + regla de monedas por estrellas nuevas"
@@ -363,7 +390,7 @@ git commit -m "feat: estado v2 del juego + regla de monedas por estrellas nuevas
 - Consumes: `defaultState` (gameStore).
 - Produces: `loadSave()` acepta saves v1 (migrando a v2) y v2 (completando defaults ausentes); `persistSave` sin cambios de contrato. Migración interna `migrate(data) → stateV2 | null`.
 
-- [ ] **Step 1: Escribir los tests de migración (fallan)**
+- [x] **Step 1: Escribir los tests de migración (fallan)**
 
 Añadir a `src/state/__tests__/persistence.test.js` (nuevo `describe`, sin borrar lo existente). Importar lo necesario arriba: `import { defaultState } from '../gameStore'`.
 ```js
@@ -404,12 +431,12 @@ describe('migración v1 → v2', () => {
 ```
 (Asegurar que `loadSave`, `persistSave` ya están importados en el archivo; si no, añadir `beforeEach` import de vitest.)
 
-- [ ] **Step 2: Ejecutar — falla**
+- [x] **Step 2: Ejecutar — falla**
 
 Run: `npm test -- persistence`
 Expected: FAIL (v1 devuelve version 1, sin campos nuevos).
 
-- [ ] **Step 3: Reescribir `src/state/persistence.js`**
+- [x] **Step 3: Reescribir `src/state/persistence.js`**
 ```js
 import { defaultState } from './gameStore'
 
@@ -468,12 +495,12 @@ export function persistSave(data) {
 }
 ```
 
-- [ ] **Step 4: Ejecutar — pasa**
+- [x] **Step 4: Ejecutar — pasa**
 
 Run: `npm test -- persistence`
 Expected: PASS (migración + tests existentes).
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 ```bash
 git add src/state/persistence.js src/state/__tests__/persistence.test.js
 git commit -m "feat: migración de guardado v1 → v2 (rellena campos de gamificación)"
@@ -496,7 +523,7 @@ git commit -m "feat: migración de guardado v1 → v2 (rellena campos de gamific
 - Consumes: `buildReto` (generators), `worlds`.
 - Produces: `buildBossPool(world, pick, rng=Math.random) → question[]` (aplana `reto.factories` de todos los niveles del mundo y baraja `pick`). Cada `world.boss = { name, emoji, intro }`.
 
-- [ ] **Step 1: Escribir el test de `buildBossPool` (falla)**
+- [x] **Step 1: Escribir el test de `buildBossPool` (falla)**
 
 Añadir a `src/engine/__tests__/generators.test.js`:
 ```js
@@ -524,12 +551,12 @@ describe('buildBossPool', () => {
 })
 ```
 
-- [ ] **Step 2: Ejecutar — falla**
+- [x] **Step 2: Ejecutar — falla**
 
 Run: `npm test -- generators`
 Expected: FAIL (`buildBossPool` no existe).
 
-- [ ] **Step 3: Implementar `buildBossPool`**
+- [x] **Step 3: Implementar `buildBossPool`**
 
 Añadir al final de `src/engine/generators.js`:
 ```js
@@ -541,7 +568,7 @@ export function buildBossPool(world, pick, rng = Math.random) {
 }
 ```
 
-- [ ] **Step 4: Añadir el campo `boss` a cada mundo**
+- [x] **Step 4: Añadir el campo `boss` a cada mundo**
 
 En cada archivo de mundo, añadir la propiedad `boss` al objeto exportado (junto a `description`, antes de `levels`). Valores (español, tono acorde a cada mundo):
 - `mundo3-potencias.jsx`: `boss: { name: 'Ígneo, Señor del Magma', emoji: '🐲', intro: 'El volcán ruge: Ígneo pondrá a prueba todo lo que aprendiste sobre potencias y raíces.' },`
@@ -551,7 +578,7 @@ En cada archivo de mundo, añadir la propiedad `boss` al objeto exportado (junto
 - `mundo7-geometria.jsx`: `boss: { name: 'El Coloso de la Cima', emoji: '🗿', intro: 'En la cumbre, el Coloso mide cada ángulo y cada lado de tu conocimiento.' },`
 - `mundo8-datos.jsx`: `boss: { name: 'El Croupier del Azar', emoji: '🎩', intro: 'En la feria, el Croupier apuesta a que fallas una probabilidad. Demuéstrale que no.' },`
 
-- [ ] **Step 5: Extender `validateContent` para exigir `boss`**
+- [x] **Step 5: Extender `validateContent` para exigir `boss`**
 
 En `src/content/validateContent.js`, dentro del bucle `for (const w of worlds)`, tras validar `w.slug` (antes del bucle de niveles), añadir:
 ```js
@@ -559,12 +586,12 @@ En `src/content/validateContent.js`, dentro del bucle `for (const w of worlds)`,
       problems.push(`mundo ${w.id}: falta boss bien formado { name, emoji, intro }`)
 ```
 
-- [ ] **Step 6: Ejecutar — pasa**
+- [x] **Step 6: Ejecutar — pasa**
 
 Run: `npm test -- generators validateContent`
 Expected: PASS (buildBossPool verde; validación real vacía con los 6 bosses).
 
-- [ ] **Step 7: Commit**
+- [x] **Step 7: Commit**
 ```bash
 git add src/engine/generators.js src/engine/__tests__/generators.test.js src/content/worlds/ src/content/validateContent.js
 git commit -m "feat: jefes en los 6 mundos (campo boss) + buildBossPool + validación"
@@ -584,7 +611,7 @@ git commit -m "feat: jefes en los 6 mundos (campo boss) + buildBossPool + valida
 - Consumes: `findWorld`, `buildBossPool`, `useGame`, constantes `COINS_BOSS`/`XP_BOSS`, `useDeviceTier`, `Celebration` (lazy).
 - Produces: componente `BossArena` (ruta `/mundo/:slug/jefe`). Al ganar: `dispatch({ type: 'BOSS_DEFEATED', worldId, coins: COINS_BOSS, xp: XP_BOSS })` y (Capa D) un cofre.
 
-- [ ] **Step 1: Escribir el test de integración (falla)**
+- [x] **Step 1: Escribir el test de integración (falla)**
 
 Create `src/__tests__/bossArena-integracion.test.jsx`:
 ```jsx
@@ -617,12 +644,12 @@ describe('integración: BossArena', () => {
 })
 ```
 
-- [ ] **Step 2: Ejecutar — falla**
+- [x] **Step 2: Ejecutar — falla**
 
 Run: `npm test -- bossArena`
 Expected: FAIL (`BossArena` no existe).
 
-- [ ] **Step 3: Implementar `src/engine/BossArena.jsx`**
+- [x] **Step 3: Implementar `src/engine/BossArena.jsx`**
 ```jsx
 import { lazy, Suspense, useMemo, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
@@ -777,14 +804,14 @@ function BossArenaView() {
 ```
 > Nota: el cofre por derrotar al jefe se engancha en la **Capa D** (Task 11). Aquí basta con `BOSS_DEFEATED`.
 
-- [ ] **Step 4: Añadir la ruta en `App.jsx`**
+- [x] **Step 4: Añadir la ruta en `App.jsx`**
 
 En `src/App.jsx`, importar `import BossArena from './engine/BossArena'` y añadir dentro de `<Route element={<Layout />}>`:
 ```jsx
         <Route path="/mundo/:slug/jefe" element={<BossArena />} />
 ```
 
-- [ ] **Step 5: Acceso al jefe + estrella de maestría en `WorldView`**
+- [x] **Step 5: Acceso al jefe + estrella de maestría en `WorldView`**
 
 En `src/engine/WorldView.jsx`, tras el `<div className="space-y-3">…</div>` de niveles (antes del cierre del contenedor), añadir la sección de jefe. Calcular `allDone` y `mastered` con el estado:
 ```jsx
@@ -814,12 +841,12 @@ En `src/engine/WorldView.jsx`, tras el `<div className="space-y-3">…</div>` de
 ```
 Y en la cabecera de estrellas del mundo (opcional pero recomendado), mostrar la ⭐ de maestría junto al título si `mastered`.
 
-- [ ] **Step 6: Ejecutar — pasa**
+- [x] **Step 6: Ejecutar — pasa**
 
 Run: `npm test -- bossArena`
 Expected: PASS. Luego `npm run build` sin errores.
 
-- [ ] **Step 7: Commit**
+- [x] **Step 7: Commit**
 ```bash
 git add src/engine/BossArena.jsx src/App.jsx src/engine/WorldView.jsx src/__tests__/bossArena-integracion.test.jsx
 git commit -m "feat: BossArena (jefes con barra de vida) + acceso y maestría en WorldView"
@@ -845,7 +872,7 @@ git commit -m "feat: BossArena (jefes con barra de vida) + acceso y maestría en
   - `questsForWorld(worldId) → quest[]`, `findQuest(worldId, questId) → quest | null` (quests/index.js).
   - `QuestPlayer` (ruta `/mundo/:slug/quest/:questId`). Al terminar: `dispatch({ type: 'QUEST_COMPLETED', questKey: 'mundoN/<id>', coins: COINS_QUEST, xp: XP_QUEST })`.
 
-- [ ] **Step 1: Escribir los tests de fábricas y de integración (fallan)**
+- [x] **Step 1: Escribir los tests de fábricas y de integración (fallan)**
 
 Create `src/content/quests/__tests__/mundo3-quests.test.js`:
 ```js
@@ -903,12 +930,12 @@ describe('integración: QuestPlayer', () => {
 })
 ```
 
-- [ ] **Step 2: Ejecutar — falla**
+- [x] **Step 2: Ejecutar — falla**
 
 Run: `npm test -- mundo3-quests questPlayer`
 Expected: FAIL (módulos no existen).
 
-- [ ] **Step 3: Escribir las sidequests del Mundo 3 (bespoke)**
+- [x] **Step 3: Escribir las sidequests del Mundo 3 (bespoke)**
 
 Create `src/content/quests/mundo3-quests.jsx`. Fábricas bespoke con narrativa gamer (temas del Volcán: aproximación, potencias, notación científica, radicales). **Contenido completo:**
 ```jsx
@@ -992,7 +1019,7 @@ export const mundo3Quests = [
 ]
 ```
 
-- [ ] **Step 4: Crear el índice de quests**
+- [x] **Step 4: Crear el índice de quests**
 
 Create `src/content/quests/index.js`:
 ```js
@@ -1012,7 +1039,7 @@ export function findQuest(worldId, questId) {
 }
 ```
 
-- [ ] **Step 5: Implementar `src/engine/QuestPlayer.jsx`**
+- [x] **Step 5: Implementar `src/engine/QuestPlayer.jsx`**
 ```jsx
 import { useMemo, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
@@ -1118,7 +1145,7 @@ function QuestPlayerView() {
 }
 ```
 
-- [ ] **Step 6: Ruta + acceso en `WorldView`**
+- [x] **Step 6: Ruta + acceso en `WorldView`**
 
 En `src/App.jsx`: `import QuestPlayer from './engine/QuestPlayer'` y
 ```jsx
@@ -1146,11 +1173,11 @@ En `src/engine/WorldView.jsx`, importar `import { questsForWorld } from '../cont
       )}
 ```
 
-- [ ] **Step 7: Ejecutar — pasa; build**
+- [x] **Step 7: Ejecutar — pasa; build**
 
 Run: `npm test -- mundo3-quests questPlayer` → PASS. Luego `npm run build`.
 
-- [ ] **Step 8: Commit**
+- [x] **Step 8: Commit**
 ```bash
 git add src/content/quests/ src/engine/QuestPlayer.jsx src/App.jsx src/engine/WorldView.jsx src/__tests__/questPlayer-integracion.test.jsx
 git commit -m "feat: QuestPlayer + sidequests del Mundo 3 (bespoke) + acceso en WorldView"
@@ -1163,6 +1190,7 @@ git commit -m "feat: QuestPlayer + sidequests del Mundo 3 (bespoke) + acceso en 
 > **Patrón común (aplica a cada task):** crear `src/content/quests/mundoN-quests.jsx` con **2 quests** (Mundo 8: 3 quests) siguiendo el esquema y estilo del Mundo 3; registrar el array en `src/content/quests/index.js` (`questsByWorld`); crear el test de fábricas `src/content/quests/__tests__/mundoN-quests.test.js` (copia del de Mundo 3 cambiando el import y el número de quests). Cada quest: `{ id, title, emoji, npc, intro, outro, questions: [3-5 fábricas] }`. Cada fábrica computacional usa `randInt` + `makeOptions` (correcto primero, distractores distintos); las conceptuales usan `staticQuestion`. **Criterio de aceptación:** el test de 300 tiradas pasa (4 opciones distintas, correctAnswer 0..3) y `npm run build` compila.
 
 ### Task 6: Mundo 4 — 🏰 Castillo del Álgebra (2 quests)
+- [x] **Task 6 completa** — commit `6c96add`
 **Files:** Create `src/content/quests/mundo4-quests.jsx`, `.../__tests__/mundo4-quests.test.js`; Modify `src/content/quests/index.js`.
 **Contenido a redactar** (temas: MCD/MCM, fracciones algebraicas, ecuaciones lineales):
 - `castillo-quest-1` — "El reparto del botín" (NPC: Maestro del gremio). Fábricas: (a) **MCD reparto** — repartir N espadas y M escudos en partes iguales → máximo de aventureros = MCD; (b) **MCM eventos** — dos hechizos que se recargan cada `a` y `b` turnos, ¿cuándo coinciden? = MCM; (c) estática: simplificar `(x²−9)/(x+3) = x−3`.
@@ -1185,24 +1213,28 @@ function repartoBotin(rng = Math.random) {
 ```
 
 ### Task 7: Mundo 5 — 🌀 Laberinto de Sistemas (2 quests)
+- [x] **Task 7 completa** — commit `eb95248`
 **Files:** Create `src/content/quests/mundo5-quests.jsx`, test; Modify `index.js`.
 **Contenido** (temas: cuadrantes, sistemas 2×2, Cramer/determinante):
 - `laberinto-quest-1` — "El cruce de caminos" (NPC: Guía del laberinto). Fábricas: (a) **cuadrante de un punto** (I/II/III/IV según signos); (b) estática: dos rutas `100+3x` y `50+5x` se igualan en `x=25`; (c) estática: rectas paralelas → sistema sin solución.
 - `laberinto-quest-2` — "La cerradura de Cramer" (NPC: Cerrajero). Fábricas: (a) **determinante** `D = a₁b₂ − a₂b₁` (garantizar `D ≠ 0` como en el contenido del mundo); (b) estática: `x = Dx/D`; (c) estática: `D = 0` significa sin solución única.
 
 ### Task 8: Mundo 6 — 🚀 Estación de Funciones (2 quests)
+- [ ] **Task 8 completa** (contenido + test de 300 tiradas + `index.js` + build)
 **Files:** Create `src/content/quests/mundo6-quests.jsx`, test; Modify `index.js`.
 **Contenido** (temas: pendiente/ordenada, corte con ejes, vértice de parábola):
 - `estacion-quest-1` — "Trayectoria de la nave" (NPC: Piloto). Fábricas: (a) **pendiente de** `f(x)=mx+b`; (b) **corte eje Y** `(0,b)`; (c) estática: `m<0 → la recta baja`.
 - `estacion-quest-2` — "El salto del cohete" (NPC: Ingeniera). Fábricas: (a) **vértice de parábola** `f(x)=x²+bx+c → (h,k)` con `h=−b/2`, `k=f(h)`; (b) estática: `a<0 → abre hacia abajo`; (c) estática: discriminante `Δ<0 → sin raíces reales`.
 
 ### Task 9: Mundo 7 — ⛰️ Montañas de Geometría (2 quests)
+- [ ] **Task 9 completa** (contenido + test de 300 tiradas + `index.js` + build)
 **Files:** Create `src/content/quests/mundo7-quests.jsx`, test; Modify `index.js`.
 **Contenido** (temas: Pitágoras, trigonometría 30/60, cilindro/prisma):
 - `montanas-quest-1` — "La escalada segura" (NPC: Sherpa). Fábricas: (a) **hipotenusa** con tripletas pitagóricas `[3,4,5]…`; (b) **cateto faltante** `b=√(c²−a²)`; (c) estática: `√(9+16)=5` (no 7).
 - `montanas-quest-2` — "El refugio cilíndrico" (NPC: Arquitecta). Fábricas: (a) **seno de 30°** → opuesto = hip/2 (usar hipotenusa par); (b) estática: área lateral del cilindro `2πrh` con valores fijos; (c) estática: caras de un prisma = `n+2`.
 
 ### Task 10: Mundo 8 — 🎡 Feria de Datos (3 quests) + validación de quests
+- [ ] **Task 10 completa** (contenido + test + `index.js` + los 2 pasos de validación de abajo)
 **Files:** Create `src/content/quests/mundo8-quests.jsx`, test; Modify `index.js`, `src/content/validateContent.js`, `src/content/__tests__/validateContent.test.js`.
 **Contenido** (temas: media/mediana, conteo, permutaciones/combinaciones, probabilidad):
 - `feria-quest-1` — "El promedio del squad" (NPC: Capitán). Fábricas: (a) **media** de un set generado (K/D del squad); (b) estática: mediana de una lista impar; (c) estática: rango = máx − mín.

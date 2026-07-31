@@ -1,63 +1,99 @@
 # TODO — Math Quest
 
-Plan por fases. Spec: [docs/superpowers/specs/2026-07-18-math-quest-design.md](docs/superpowers/specs/2026-07-18-math-quest-design.md)
+Hoja de ruta por fases. Lo pendiente va arriba; el historial, al final.
 
-**Rediseño visual (Spec 1) — completo ✅:** mapa de mundos 3D + HUD + reskin glossy + transiciones + celebración de nivel. Ver [docs/superpowers/specs/2026-07-19-rediseno-worldmap-3d-design.md](docs/superpowers/specs/2026-07-19-rediseno-worldmap-3d-design.md). **La migración de contenido de bloques (Fase 2) ahora completa ✅:** todos los Mundos 4-8 migrados, widgets extraídos, redirects de bloques, validación de contenido.
+**Specs:** [base](docs/superpowers/specs/2026-07-18-math-quest-design.md) · [worldmap 3D](docs/superpowers/specs/2026-07-19-rediseno-worldmap-3d-design.md) · [Fase 2](docs/superpowers/specs/2026-07-21-fase2-migracion-completa-design.md) · [Fase 3](docs/superpowers/specs/2026-07-22-fase3-gamificacion-design.md)
+**Planes:** [Fases 0-1](docs/superpowers/plans/2026-07-18-math-quest-fase0-fase1.md) · [worldmap 3D](docs/superpowers/plans/2026-07-19-rediseno-worldmap-3d.md) · [Fase 2](docs/superpowers/plans/2026-07-21-fase2-migracion-completa.md) · [**Fase 3 (en curso)**](docs/superpowers/plans/2026-07-22-fase3-gamificacion.md)
 
-## Fase 0 — Base segura ✅ (rama feat/math-quest)
-- [x] 🔴 Mover el token del túnel de Cloudflare de `docker-compose.yml` a `.env` (y añadir `.env` a `.gitignore`) — ⚠️ rotar el token en el dashboard de Cloudflare (vivió en texto plano)
-- [x] Commitear el trabajo pendiente (6 componentes nuevos, bloques reescritos, deploy)
-- [x] Corregir bug MCM "36 minutos" vs horas (Bloque 2)
-- [x] Corregir pregunta inconsistente de Cramer (Bloque 3, D=−18 vs opciones)
-- [x] Renombrar componente `Math` → `MathTex` y eliminar los `window.Math`
-- [x] Crear `docs/` (análisis, research, spec) y `TODO.md`
+## Estado — 2026-07-30
 
-## Fase 1 — Motor piloto ✅ (rama feat/math-quest, 28 tests, build OK)
-- [x] `state/gameStore.js` (contexto/reducer/hook/constantes) + `state/GameProvider.jsx` (proveedor) + `state/persistence.js` (localStorage versionado + respaldo) + `state/xpCurve.js`
-- [x] Definir schema de contenido (mundo → niveles → pasos de briefing + reto)
-- [x] Extraer widgets de Bloque 1 a `src/widgets/` con registro por id
-- [x] `engine/LevelPlayer.jsx` (briefing por pasos + reto con vidas y estrellas)
-- [x] `engine/generators.js` (plantillas parametrizadas + barajado de opciones)
-- [x] Migrar Mundo 3 🌋 (← Bloque 1) como piloto, conviviendo con rutas viejas (`WorldView` + rutas `/mundo/*`)
-- [x] Tests Vitest: guardado/restauración, curva XP, generadores + test de integración del bucle jugable
-- [ ] ⏳ Verificación e2e interactiva en navegador (pendiente: extensión Chrome no conectada; cubierto parcialmente por test de integración + dev server HTTP 200)
+- **Rama:** `feat/fase3-gamificacion` (9 commits sobre `main`), árbol limpio.
+- **Suite:** `npm test` → 26 archivos, 161 tests en verde.
+- **Jugable hoy:** 6 mundos (3-8) con niveles + modo estudio, jefe en cada uno, sidequests en los Mundos 3/4/5, mapa 3D con fallback 2D, HUD, guardado v2 con migración.
+- **Fase en curso:** Fase 3 — **7 de 18 tasks completas** (Capas A y B cerradas, Capa C a mitad).
+- **Siguiente paso:** Task 8 (sidequests del Mundo 6 🚀). Alternativa si se prefiere impacto jugable antes que contenido: saltar a la Capa D (cofres/tienda/pistas), que no depende de las Tasks 8-9.
 
-### Follow-ups de la revisión final (no bloqueantes, para Fase 2/3)
-- [ ] Economía: XP/monedas se otorgan en cada completado (solo estrellas topadas con `Math.max`) — decidir la regla al añadir la tienda (Fase 3)
-- [x] `LevelPlayer`: `key={levelId}` (envoltorio que fuerza remount al cambiar de nivel; preventivo, evita estado obsoleto)
-- [x] Retirar las preguntas duplicadas entre `Bloque1` y `mundo3` al migrar los Bloques
-- [x] `persistence`: `try/catch` en `setItem` (QuotaExceededError / modo privado) + test
-- [x] Render-test de `GameProvider`/`useGame` (infra: `@testing-library/react` + `jsdom`)
+---
 
-## Fase 2 — Migración completa ✅
-- [x] Extraer el resto de widgets (Bloques 2-6)
-- [x] Migrar Mundo 4 🏰 (← Bloques 2+4 parte), Mundo 5 🌀 (← B3), Mundo 6 🚀 (← B4), Mundo 7 ⛰️ (← B5), Mundo 8 🎡 (← B6)
-- [x] Añadir nivel de probabilidad básica al Mundo 8
-- [x] `engine/WorldMap.jsx` reemplaza Home; redirects `/bloqueN` → mundo; ruta 404
-- [x] Script de validación de contenido (preguntas, widgets, estructura de mundos)
+# 🔴 En curso — Fase 3: Gamificación completa (→ MVP jugable)
 
-## Fase 3 — Gamificación completa (→ MVP jugable)
-- [ ] `engine/BossArena.jsx` (jefe con barra de vida) para los mundos 3-8
-- [ ] `engine/QuestPlayer.jsx` + 2-3 sidequests narrativas por mundo
-- [ ] Logros (`content/achievements.js`) + pantalla `/logros`
-- [ ] Monedas, cofres sorpresa, tienda de cosméticos, pistas compradas
-- [ ] Racha diaria + perfil (`/perfil`: avatar, título, stats)
+## Capa C — Sidequests (3 de 6 mundos)
 
-## Fase 4 — Contenido nuevo
-- [ ] Mundo 1 🏝️ Isla Numérica (operaciones básicas, orden, múltiplos) — tono 8-11 años
-- [ ] Mundo 2 🍕 Reino de las Fracciones (fracciones, decimales, porcentajes)
+- [ ] **Task 8** — Mundo 6 🚀 Estación de Funciones (2 quests: pendiente/ordenada, vértice de parábola)
+- [ ] **Task 9** — Mundo 7 ⛰️ Montañas de Geometría (2 quests: Pitágoras, trigonometría 30/60, cilindro)
+- [ ] **Task 10** — Mundo 8 🎡 Feria de Datos (3 quests: media/mediana, conteo, probabilidad) + extender `validateContent` para exigir ≥1 sidequest por mundo
+
+## Capa D — Economía visible
+
+- [ ] **Task 11** — Cofres: `engine/chests.js` (`rollChest`) + `Chest.jsx` + catálogo `content/shop.js`; enganche en primer completado de nivel y en victoria de jefe
+- [ ] **Task 12** — Tienda `/tienda` (comprar cosméticos y packs de pistas con `BUY_ITEM`)
+- [ ] **Task 13** — Pistas compradas: botón "💡 Pedir pista" en `LevelPlayer` y `BossArena` (gasta `USE_HINT`)
+
+## Capa E — Logros
+
+- [ ] **Task 14** — `content/achievements.js` (definiciones) + `state/achievements.js` (`evaluateAchievements`, puro y testeado)
+- [ ] **Task 15** — `Toast.jsx` + wiring en `GameProvider` (evaluar tras cada dispatch + cola de avisos) + página `/logros` + cronómetro para el logro "Speedrunner"
+
+## Capa F — Racha + Perfil
+
+- [ ] **Task 16** — Racha diaria: `state/streak.js` (`nextStreak`/`dailyBonus`/`todayStr`), disparo diario en `GameProvider`, indicador 🔥 en el HUD
+- [ ] **Task 17** — Perfil `/perfil` (equipar avatar/marco/título, stats) + accesos a perfil/tienda/logros en el HUD
+- [ ] **Task 18** — Verificación final (`npm test` + `build` + `lint`) y cierre de Fase 3 en este archivo
+
+## ✅ Ya cerrado en Fase 3
+
+- [x] **Capa A** — estado v2 (jefes, quests, logros, cosméticos, pistas, racha) + migración de guardado v1 → v2 + economía por estrellas nuevas (`coinsForCompletion`)
+- [x] **Capa B** — `buildBossPool`, campo `boss` en los 6 mundos + validación, `BossArena` con barra de vida, acceso al jefe y ⭐ de maestría en `WorldView`
+- [x] **Capa C (parcial)** — `QuestPlayer` + esquema/índice de quests + sidequests bespoke de los Mundos 3 🌋, 4 🏰 y 5 🌀
+
+---
+
+# ⬜ Fase 4 — Contenido nuevo
+
+- [ ] Mundo 1 🏝️ Isla Numérica (operaciones básicas, orden, múltiplos) — tono 8-11 años. Ya existe como teaser bloqueado en `worldMap.js`.
+- [ ] Mundo 2 🍕 Reino de las Fracciones (fracciones, decimales, porcentajes) — ídem.
 - [ ] Portal de teletransporte (prueba de dominio para saltar mundos)
 - [ ] `content/season.js` con referencias pop de temporada (julio 2026)
 
-## Fase 5 — Pulido
-- [ ] Export/import de partida (base64 + checksum)
-- [x] Celebración de nivel (3D offline, lazy, gateada por device-tier + reduced-motion)
-  - [ ] Pendiente: celebración de logro y de jefe derrotado
-- [ ] Suite de tests completa + validación de contenido en CI
-- [ ] README real del proyecto (reemplazar plantilla de Vite)
-- [ ] Revisar rendimiento (lazy loading por mundo)
+# ⬜ Fase 5 — Pulido
 
-## Ideas futuras (fuera de alcance actual)
+- [ ] Celebración de logro desbloqueado y de jefe derrotado (la de nivel ya existe)
+- [ ] Export/import de partida (base64 + checksum)
+- [ ] Validación de contenido + suite de tests en CI
+- [ ] Revisar rendimiento: lazy loading por mundo
+
+---
+
+# Deuda y cabos sueltos
+
+- [ ] **Verificación e2e interactiva en navegador** (arrastrada desde Fase 1: la extensión de Chrome no estaba conectada). Checklist en el plan de Fases 0-1, Task 14 · Step 4. Cubierta parcialmente por los tests de integración.
+- [x] ~~README desactualizado~~ — actualizado el 2026-07-30 (estructura, rutas y estado real).
+- [ ] ⚠️ **Rotar el token del túnel de Cloudflare** en el dashboard — vivió en texto plano en `docker-compose.yml` antes de moverse a `.env`.
+
+# Ideas futuras (fuera de alcance actual)
+
 - Batallas RPG como tipo de nivel adicional (estilo Prodigy)
 - Integración de perfil compartido cuando exista el portal kidtopiaplay
 - Modo profesor/padre (ver progreso)
+
+---
+
+# Historial — fases completas
+
+## Fase 0 — Base segura ✅ (2026-07-18)
+
+Token del túnel movido a `.env` (git-ignored), trabajo pendiente commiteado, bug de MCM "36 minutos" vs horas (Bloque 2), pregunta inconsistente de Cramer (Bloque 3, D=−18 vs opciones), `Math` → `MathTex` (fuera los `window.Math`), y creación de `docs/` + este TODO.
+
+## Fase 1 — Motor piloto ✅ (2026-07-18, 28 tests)
+
+`state/` (gameStore + GameProvider + persistencia versionada con respaldo + curva de XP), schema de contenido (mundo → niveles → briefing + reto), widgets del Bloque 1 extraídos con registro por id, `engine/LevelPlayer.jsx` (briefing por pasos, vidas, estrellas), `engine/generators.js` (plantillas parametrizadas + barajado), y Mundo 3 🌋 migrado como piloto conviviendo con las rutas `/bloqueN`.
+
+**Follow-ups de la revisión final** — todos cerrados: `key={levelId}` en `LevelPlayer`, preguntas duplicadas Bloque1/mundo3 retiradas al migrar, `try/catch` en `persistence.setItem` (QuotaExceededError / modo privado), render-test de `GameProvider`/`useGame`. La duda de economía ("XP/monedas en cada completado") quedó **resuelta en Fase 3 · Task 1**: se paga por estrellas nuevas, rejugar sin mejorar da 0.
+
+## Rediseño visual (Spec 1) ✅ (2026-07-19/21)
+
+Mapa de mundos 3D con react-three-fiber (lazy, offline, bloom) y fallback 2D accesible, tokens glossy + fuente display auto-hospedada, HUD de juego (nivel, barra de XP, monedas), transiciones de página con motion y celebración 3D al completar nivel. Todo respetando `prefers-reduced-motion` y el device-tier (WebGL + núcleos).
+
+## Fase 2 — Migración completa de contenido ✅ (2026-07-21/22)
+
+Widgets de los Bloques 2-6 extraídos, Mundos 4 🏰 / 5 🌀 / 6 🚀 / 7 ⛰️ / 8 🎡 migrados, nivel de probabilidad básica añadido al Mundo 8, `WorldMap` reemplaza Home, redirects `/bloqueN` → mundo, ruta 404, modo estudio y script de validación de contenido.

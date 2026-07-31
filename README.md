@@ -22,21 +22,24 @@ También hay un flujo con Docker en el `Makefile` (`make dev`, `make up`, `make 
 
 ```
 src/
-  state/       curva de XP, persistencia (localStorage + respaldo), gameStore
-  engine/      generadores de preguntas, LevelPlayer, WorldView
+  state/       gameStore (estado v2 + reducer), persistencia con migración, curva de XP
+  engine/      generadores de preguntas, LevelPlayer, BossArena, QuestPlayer, WorldView, StudyView
   widgets/     calculadoras interactivas reutilizables (registro por id)
-  content/     datos de los mundos (mundo → niveles → briefing + reto)
-  components/  UI compartida (MathTex, MiniQuiz, glosario, etc.)
-  pages/       Home + Bloques 1-6 (guía de estudio original, en migración a mundos)
-docs/          análisis, investigación, spec de diseño y planes de implementación
+  content/     datos: mundos (niveles → briefing + reto + jefe), quests, mapa, validador
+  three/       escena 3D del mapa, celebración y detección de device-tier
+  components/  UI compartida (MathTex, HUD, MiniQuiz, glosario, etc.)
+  pages/       WorldMap (home) + Bloques 1-6 (guía de estudio original, ya migrada a mundos)
+docs/          análisis, investigación, specs de diseño y planes de implementación
 TODO.md        hoja de ruta por fases
 ```
 
+Rutas: `/` (mapa) · `/mundo/:slug` · `/mundo/:slug/nivel/:levelId` · `/mundo/:slug/estudio` · `/mundo/:slug/jefe` · `/mundo/:slug/quest/:questId`. Las rutas originales `/bloqueN` redirigen a su mundo.
+
 ## Estado
 
-- **Fase 0-1 (completas):** base saneada + motor de juego piloto. El Mundo 3 🌋 "Volcán de las Potencias" es jugable en `/mundo/volcan-potencias` (accesible desde la tarjeta beta en Home), conviviendo con las rutas originales `/bloqueN`.
-- **Rediseño visual (Spec 1, completo):** mapa de mundos 3D con fallback 2D accesible, HUD glossy, transiciones de página y celebración de nivel — todo lazy, offline y respetando `prefers-reduced-motion` y el device-tier (WebGL + núcleos).
-- **Siguiente:** migrar los Bloques 2-6 a los mundos 4-8, y añadir jefes, sidequests, logros y economía. Ver [`TODO.md`](TODO.md) y [`docs/superpowers/specs`](docs/superpowers/specs).
+- **Fases 0-1, rediseño visual y Fase 2: completas.** Base saneada, motor de juego data-driven, mapa de mundos 3D con fallback 2D accesible + HUD glossy + transiciones y celebración de nivel (lazy, offline, respetando `prefers-reduced-motion` y el device-tier), y los seis mundos 3-8 migrados desde los Bloques 1-6 con modo juego y modo estudio.
+- **Fase 3 (en curso):** gamificación completa. Ya hay estado v2 con migración de guardado, economía por estrellas nuevas, jefe con barra de vida en los seis mundos y sidequests narrativas en los Mundos 3, 4 y 5.
+- **Siguiente:** completar las sidequests de los Mundos 6-8 y añadir cofres, tienda, pistas, logros, racha diaria y perfil. Ver [`TODO.md`](TODO.md) y [`docs/superpowers/specs`](docs/superpowers/specs).
 
 ## Despliegue
 

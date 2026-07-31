@@ -1,5 +1,7 @@
 # Fase 2 — Migración completa (Mundos 4-8) Implementation Plan
 
+> **Estado: ejecutado y cerrado ✅ (2026-07-21/22)** — 58/58 pasos. Commits `f01340a`…`d880eed`.
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Migrar los Bloques 2-6 al motor de juego como Mundos 4-8 jugables (briefing + reto por nivel, con preguntas parametrizadas), añadir el nivel nuevo de probabilidad básica, convertir el mapa 3D en la puerta de entrada (nodos 4-8 pasan de estudio a juego), conservar la prosa como "modo estudio", y añadir redirects, ruta 404 y un validador de contenido.
@@ -54,7 +56,7 @@ Orden: **Task 1** (validador + fix bug Mundo 3) → **Task 2** (`makeOptions`) �
 - Produces: `validateContent({ worlds, widgets, worldMapNodes }) → string[]`. Cada string es un problema legible; array vacío = todo válido. Consumido por el test y (a futuro) CI.
 - Consumes: `worlds` (`src/content/worlds`), `widgets` (`src/widgets`), `worldMapNodes` (`src/content/worldMap`).
 
-- [ ] **Step 1: Escribir el validador (falla al ejecutar cada fábrica una vez)**
+- [x] **Step 1: Escribir el validador (falla al ejecutar cada fábrica una vez)**
 
 Create `src/content/validateContent.js`:
 ```js
@@ -121,7 +123,7 @@ export function validateContent({ worlds, widgets, worldMapNodes }) {
 }
 ```
 
-- [ ] **Step 2: Escribir el test que ejecuta el validador con el contenido real**
+- [x] **Step 2: Escribir el test que ejecuta el validador con el contenido real**
 
 Create `src/content/__tests__/validateContent.test.js`:
 ```js
@@ -145,12 +147,12 @@ describe('validación de contenido', () => {
 })
 ```
 
-- [ ] **Step 3: Ejecutar — falla por el bug de ids del Mundo 3**
+- [x] **Step 3: Ejecutar — falla por el bug de ids del Mundo 3**
 
 Run: `npm test -- validateContent`
 Expected: FAIL. El nodo `volcan-potencias` declara `levelKeys` con `mundo3/potencias` y `mundo3/radicales`, pero los ids reales del Mundo 3 son `potenciacion` y `radicacion` → problemas `levelKey "mundo3/potencias" no corresponde a ningún nivel real` (y `radicales`).
 
-- [ ] **Step 4: Corregir `MUNDO3_LEVELS` en worldMap.js**
+- [x] **Step 4: Corregir `MUNDO3_LEVELS` en worldMap.js**
 
 En `src/content/worldMap.js:11` reemplazar:
 ```js
@@ -161,7 +163,7 @@ por:
 const MUNDO3_LEVELS = ['aproximacion', 'potenciacion', 'notacion', 'radicacion']
 ```
 
-- [ ] **Step 5: Corregir los ids buggeados en worldMap.test.js**
+- [x] **Step 5: Corregir los ids buggeados en worldMap.test.js**
 
 En `src/content/__tests__/worldMap.test.js`, sustituir `mundo3/potencias` → `mundo3/potenciacion` y `mundo3/radicales` → `mundo3/radicacion` en las líneas 76-77, 85 y 114-115. Concretamente:
 
@@ -181,12 +183,12 @@ En `src/content/__tests__/worldMap.test.js`, sustituir `mundo3/potencias` → `m
     ]
 ```
 
-- [ ] **Step 6: Ejecutar todo — pasa**
+- [x] **Step 6: Ejecutar todo — pasa**
 
 Run: `npm test -- validateContent worldMap`
 Expected: PASS (validación real vacía; tests de worldMap verdes).
 
-- [ ] **Step 7: Commit**
+- [x] **Step 7: Commit**
 
 ```bash
 git add src/content/validateContent.js src/content/__tests__/validateContent.test.js src/content/worldMap.js src/content/__tests__/worldMap.test.js
@@ -204,7 +206,7 @@ git commit -m "feat: validador de contenido + fix de ids de niveles del Mundo 3"
 **Interfaces:**
 - Produces: `makeOptions(correct, distractors) → { options: string[4], correctAnswer: 0 }`. Pone el correcto primero (índice 0), añade distractores distintos (dedup por string), y **rellena** con vecinos numéricos si faltan (para correctos numéricos). `buildReto` baraja después, así que el índice 0 es seguro. Consumido por todas las fábricas de las Tasks 3-7.
 
-- [ ] **Step 1: Escribir los tests que fallan**
+- [x] **Step 1: Escribir los tests que fallan**
 
 Añadir a `src/engine/__tests__/generators.test.js` (nuevo `describe`, sin borrar lo existente):
 ```js
@@ -236,12 +238,12 @@ describe('makeOptions', () => {
 })
 ```
 
-- [ ] **Step 2: Ejecutar para ver que falla**
+- [x] **Step 2: Ejecutar para ver que falla**
 
 Run: `npm test -- generators`
 Expected: FAIL con "makeOptions is not a function".
 
-- [ ] **Step 3: Implementar `makeOptions`**
+- [x] **Step 3: Implementar `makeOptions`**
 
 Añadir al final de `src/engine/generators.js`:
 ```js
@@ -268,12 +270,12 @@ export function makeOptions(correct, distractors = []) {
 }
 ```
 
-- [ ] **Step 4: Ejecutar — pasa**
+- [x] **Step 4: Ejecutar — pasa**
 
 Run: `npm test -- generators`
 Expected: PASS (los tests nuevos y los existentes).
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add src/engine/generators.js src/engine/__tests__/generators.test.js
@@ -308,7 +310,7 @@ Cada mundo se arma con **tres clases de material**, todas localizables sin ambig
 - Consumes: `makeOptions`, `randInt`, `staticQuestion` (generators).
 - Produces: `export const mundo4` (slug `castillo-algebra`, id `mundo4`, 5 niveles: `mcd`, `mcm`, `fracciones-algebraicas`, `operaciones`, `ecuaciones-lineales`); fábricas exportadas `mcdReparto`, `mcmEventos`, `resolverLineal`; widgets `mcd-calculadora`, `mcm-calculadora`, `fracciones-ejemplo`.
 
-- [ ] **Step 1: Extraer los 3 widgets**
+- [x] **Step 1: Extraer los 3 widgets**
 
 - `src/widgets/McdCalculadora.jsx` ← `Bloque2.jsx` `MCDSection`: copiar `useState a/b` (L13-14), `gcd` (L16-20), `mcdVal` (L22), `factorizar` (L48-61) y el JSX interno del `InteractiveBox "Calculadora de MCD…"` (L103-122). Componente `default McdCalculadora`.
 - `src/widgets/McmCalculadora.jsx` ← `MCMSection`: `useState a/b` (L131-132), `gcd` (L134-138), `mcmVal` (L140), JSX interno del `InteractiveBox "Calculadora de MCM…"` (L202-221). Importa `MathTex`.
@@ -316,7 +318,7 @@ Cada mundo se arma con **tres clases de material**, todas localizables sin ambig
 
 En cada `InteractiveBox` de `Bloque2.jsx`, reemplazar el cuerpo por `<McdCalculadora />` / `<McmCalculadora />` / `<FraccionesEjemplo />` con su import, y borrar el estado/funciones que se movieron.
 
-- [ ] **Step 2: Registrar los widgets**
+- [x] **Step 2: Registrar los widgets**
 
 En `src/widgets/index.js` añadir imports y entradas:
 ```js
@@ -329,7 +331,7 @@ import FraccionesEjemplo from './FraccionesEjemplo'
   'fracciones-ejemplo': FraccionesEjemplo,
 ```
 
-- [ ] **Step 3: Escribir el test de fábricas (falla)**
+- [x] **Step 3: Escribir el test de fábricas (falla)**
 
 Create `src/content/worlds/__tests__/mundo4.test.js`:
 ```js
@@ -362,7 +364,7 @@ describe('fábricas del Mundo 4', () => {
 ```
 Run: `npm test -- mundo4` → FAIL (`mundo4-algebra` no existe).
 
-- [ ] **Step 4: Escribir el contenido del Mundo 4**
+- [x] **Step 4: Escribir el contenido del Mundo 4**
 
 Create `src/content/worlds/mundo4-algebra.jsx`. Cabecera con las fábricas (código completo) seguido del objeto `mundo4`:
 ```jsx
@@ -477,7 +479,7 @@ export const mundo4 = {
 ```
 **Importante:** los comentarios `/* … */` marcan copia literal desde el fuente indicado (prosa y preguntas). El archivo final NO lleva comentarios-placeholder: cada `staticQuestion({...})` contiene el objeto `{question, options, correctAnswer, hint, reminder}` copiado tal cual del `quizQuestions` de la sección, y cada briefing lleva el JSX copiado. Cada nivel de estudio tiene ≥1 paso `content` real; los niveles con widget tienen also los pasos `why`/`content`/`mistakes` antes del `widget`.
 
-- [ ] **Step 5: Registrar el mundo**
+- [x] **Step 5: Registrar el mundo**
 
 En `src/content/worlds/index.js`:
 ```js
@@ -491,11 +493,11 @@ export function findWorld(slug) {
 }
 ```
 
-- [ ] **Step 6: Escribir el test de integración**
+- [x] **Step 6: Escribir el test de integración**
 
 Create `src/__tests__/mundo4-integracion.test.jsx` copiando `mundo3-integracion.test.jsx` y cambiando: `findWorld('castillo-algebra')`, `world.id === 'mundo4'`, `world.levels` tiene **5** niveles, y `contain('castillo-algebra')`. El resto (widgetIds, buildReto 50 tiradas, desbloqueo) queda igual.
 
-- [ ] **Step 7: Verificar y commitear**
+- [x] **Step 7: Verificar y commitear**
 
 ```bash
 npm test -- mundo4 validateContent
@@ -518,16 +520,16 @@ Expected: tests verdes, `vite build` sin errores.
 **Interfaces:**
 - Produces: `export const mundo5` (slug `laberinto-sistemas`, id `mundo5`, 4 niveles: `intro-sistemas`, `metodo-grafico`, `reduccion`, `cramer`); fábricas `cuadrantePunto`, `cramerDeterminante`; widgets `sistemas-grafica`, `cramer-calculadora`.
 
-- [ ] **Step 1: Extraer los 2 widgets**
+- [x] **Step 1: Extraer los 2 widgets**
 
 - `src/widgets/SistemasGrafica.jsx` ← `Bloque3.jsx` `MetodoGrafico`: copiar `useState a1..c2` (L14-19), `solucion` `useMemo` (L21-27), `getY1`/`getY2` (L29-30) y el JSX interno del `InteractiveBox "Gráfica interactiva…"` (L77-136). Copiar también los imports que usa desde la cabecera de `Bloque3.jsx` (`useState`, `useMemo`, `MathTex`, y las de Mafs: `Mafs`, `Coordinates`, `Line`, `Theme`, y `Text as MafsText`).
 - `src/widgets/CramerCalculadora.jsx` ← `MetodoCramer`: copiar el estado/lógica del InteractiveBox `"Calculadora de Cramer"` (a partir de L329) y su JSX interno. Importa `MathTex`.
 
 Reemplazar los cuerpos en `Bloque3.jsx` por `<SistemasGrafica />` / `<CramerCalculadora />`.
 
-- [ ] **Step 2: Registrar los widgets** — en `src/widgets/index.js`: `'sistemas-grafica': SistemasGrafica`, `'cramer-calculadora': CramerCalculadora` (con imports).
+- [x] **Step 2: Registrar los widgets** — en `src/widgets/index.js`: `'sistemas-grafica': SistemasGrafica`, `'cramer-calculadora': CramerCalculadora` (con imports).
 
-- [ ] **Step 3: Test de fábricas (falla)**
+- [x] **Step 3: Test de fábricas (falla)**
 
 Create `src/content/worlds/__tests__/mundo5.test.js`:
 ```js
@@ -556,7 +558,7 @@ describe('fábricas del Mundo 5', () => {
 ```
 Run: `npm test -- mundo5` → FAIL.
 
-- [ ] **Step 4: Contenido del Mundo 5**
+- [x] **Step 4: Contenido del Mundo 5**
 
 Create `src/content/worlds/mundo5-sistemas.jsx`:
 ```jsx
@@ -641,11 +643,11 @@ export const mundo5 = {
 }
 ```
 
-- [ ] **Step 5: Registrar** — `import { mundo5 }` y `worlds = [mundo3, mundo4, mundo5]` en `index.js`.
+- [x] **Step 5: Registrar** — `import { mundo5 }` y `worlds = [mundo3, mundo4, mundo5]` en `index.js`.
 
-- [ ] **Step 6: Integración** — `src/__tests__/mundo5-integracion.test.jsx` (copia de la plantilla): `findWorld('laberinto-sistemas')`, `id === 'mundo5'`, **4** niveles.
+- [x] **Step 6: Integración** — `src/__tests__/mundo5-integracion.test.jsx` (copia de la plantilla): `findWorld('laberinto-sistemas')`, `id === 'mundo5'`, **4** niveles.
 
-- [ ] **Step 7: Verificar y commitear**
+- [x] **Step 7: Verificar y commitear**
 ```bash
 npm test -- mundo5 validateContent
 npm run build
@@ -666,14 +668,14 @@ git commit -m "feat: Mundo 5 (Laberinto de Sistemas) migrado del Bloque 3 + intr
 **Interfaces:**
 - Produces: `export const mundo6` (slug `estacion-funciones`, id `mundo6`, 2 niveles: `funcion-lineal`, `funcion-cuadratica`); fábricas `pendienteDe`, `corteEjeY`, `verticeParabola`; widgets `pendiente-ordenada`, `parabola-explorer`.
 
-- [ ] **Step 1: Extraer los 2 widgets** de `Bloque4.jsx`:
+- [x] **Step 1: Extraer los 2 widgets** de `Bloque4.jsx`:
 - `PendienteOrdenada.jsx` ← `FuncionLinealSection` InteractiveBox `"Juega con la pendiente y la ordenada"` (L178+): copiar su estado + JSX interno.
 - `ParabolaExplorer.jsx` ← `FuncionCuadraticaSection` InteractiveBox `"Explora la parábola"` (L422+): estado + JSX interno.
 Reemplazar cuerpos en `Bloque4.jsx` por los componentes.
 
-- [ ] **Step 2: Registrar** `'pendiente-ordenada'`, `'parabola-explorer'` en `widgets/index.js`.
+- [x] **Step 2: Registrar** `'pendiente-ordenada'`, `'parabola-explorer'` en `widgets/index.js`.
 
-- [ ] **Step 3: Test de fábricas (falla)**
+- [x] **Step 3: Test de fábricas (falla)**
 
 Create `src/content/worlds/__tests__/mundo6.test.js`:
 ```js
@@ -696,7 +698,7 @@ describe('fábricas del Mundo 6', () => {
 ```
 Run: `npm test -- mundo6` → FAIL.
 
-- [ ] **Step 4: Contenido del Mundo 6**
+- [x] **Step 4: Contenido del Mundo 6**
 
 Create `src/content/worlds/mundo6-funciones.jsx`:
 ```jsx
@@ -773,11 +775,11 @@ export const mundo6 = {
 }
 ```
 
-- [ ] **Step 5: Registrar** `mundo6` en `index.js` (`worlds = [mundo3, mundo4, mundo5, mundo6]`).
+- [x] **Step 5: Registrar** `mundo6` en `index.js` (`worlds = [mundo3, mundo4, mundo5, mundo6]`).
 
-- [ ] **Step 6: Integración** — `mundo6-integracion.test.jsx`: `findWorld('estacion-funciones')`, `id==='mundo6'`, **2** niveles.
+- [x] **Step 6: Integración** — `mundo6-integracion.test.jsx`: `findWorld('estacion-funciones')`, `id==='mundo6'`, **2** niveles.
 
-- [ ] **Step 7: Verificar y commitear**
+- [x] **Step 7: Verificar y commitear**
 ```bash
 npm test -- mundo6 validateContent
 npm run build
@@ -798,11 +800,11 @@ git commit -m "feat: Mundo 6 (Estación de Funciones) migrado del Bloque 4"
 **Interfaces:**
 - Produces: `export const mundo7` (slug `montanas-geometria`, id `mundo7`, 4 niveles: `pitagoras`, `trigonometria`, `cilindro`, `prisma`); fábricas `hipotenusa`, `catetoFaltante`, `senOpuesto`, `cosAdyacente`, `areaLateralCilindro`, `areaLateralPrisma`, `carasPrisma`, `aristasPrisma`; widgets `pitagoras-calculadora`, `triangulo-interactivo`, `cilindro-calculadora`.
 
-- [ ] **Step 1: Extraer los 3 widgets** de `Bloque5.jsx`: `PitagorasCalculadora` ← `"Calculadora de Pitágoras"` (L84+), `TrianguloInteractivo` ← `"Triángulo interactivo — Cambia el ángulo"` (L204+), `CilindroCalculadora` ← `"Calculadora del cilindro"` (L316+). Copiar estado + JSX interno + imports (`MathTex`, y si el triángulo usa Mafs, sus imports). Reemplazar cuerpos en `Bloque5.jsx`.
+- [x] **Step 1: Extraer los 3 widgets** de `Bloque5.jsx`: `PitagorasCalculadora` ← `"Calculadora de Pitágoras"` (L84+), `TrianguloInteractivo` ← `"Triángulo interactivo — Cambia el ángulo"` (L204+), `CilindroCalculadora` ← `"Calculadora del cilindro"` (L316+). Copiar estado + JSX interno + imports (`MathTex`, y si el triángulo usa Mafs, sus imports). Reemplazar cuerpos en `Bloque5.jsx`.
 
-- [ ] **Step 2: Registrar** `'pitagoras-calculadora'`, `'triangulo-interactivo'`, `'cilindro-calculadora'`.
+- [x] **Step 2: Registrar** `'pitagoras-calculadora'`, `'triangulo-interactivo'`, `'cilindro-calculadora'`.
 
-- [ ] **Step 3: Test de fábricas (falla)**
+- [x] **Step 3: Test de fábricas (falla)**
 
 Create `src/content/worlds/__tests__/mundo7.test.js`:
 ```js
@@ -837,7 +839,7 @@ describe('fábricas del Mundo 7', () => {
 ```
 Run: `npm test -- mundo7` → FAIL.
 
-- [ ] **Step 4: Contenido del Mundo 7**
+- [x] **Step 4: Contenido del Mundo 7**
 
 Create `src/content/worlds/mundo7-geometria.jsx`:
 ```jsx
@@ -982,9 +984,9 @@ export const mundo7 = {
 }
 ```
 
-- [ ] **Step 5: Registrar** `mundo7` (`worlds = [mundo3, mundo4, mundo5, mundo6, mundo7]`).
-- [ ] **Step 6: Integración** — `mundo7-integracion.test.jsx`: `findWorld('montanas-geometria')`, `id==='mundo7'`, **4** niveles.
-- [ ] **Step 7: Verificar y commitear**
+- [x] **Step 5: Registrar** `mundo7` (`worlds = [mundo3, mundo4, mundo5, mundo6, mundo7]`).
+- [x] **Step 6: Integración** — `mundo7-integracion.test.jsx`: `findWorld('montanas-geometria')`, `id==='mundo7'`, **4** niveles.
+- [x] **Step 7: Verificar y commitear**
 ```bash
 npm test -- mundo7 validateContent
 npm run build
@@ -1005,11 +1007,11 @@ git commit -m "feat: Mundo 7 (Montañas de Geometría) migrado del Bloque 5"
 **Interfaces:**
 - Produces: `export const mundo8` (slug `feria-datos`, id `mundo8`, 6 niveles: `estadistica`, `percentiles`, `conteo`, `permutaciones`, `combinaciones`, `probabilidad`); fábricas `media`, `mediana`, `moda`, `principioConteo`, `menuConteo`, `permutaciones`, `factorial`, `combinaciones`, `probEvento`, `probComplementario`, `probIndependientes`; widgets `estadistica-calculadora`, `boxplot`, `permutaciones-calculadora`, `combinaciones-calculadora`, `atuendos-ejemplo`.
 
-- [ ] **Step 1: Extraer los 5 widgets** de `Bloque6.jsx`: `EstadisticaCalculadora` ← `"Calculadora interactiva"` (L119+), `BoxPlot` ← `"Diagrama de caja (Box Plot)"` (L259+), `PermutacionesCalculadora` ← `"Calculadora de permutaciones"` (L395+), `CombinacionesCalculadora` ← `"Calculadora de combinaciones"` (L483+), `AtuendosEjemplo` ← `"Ejemplo: ¿Cuántos atuendos puedes formar?"` (L560+). Copiar estado + JSX interno + imports (BoxPlot puede usar Recharts/Mafs → copiar sus imports). Reemplazar cuerpos en `Bloque6.jsx`.
+- [x] **Step 1: Extraer los 5 widgets** de `Bloque6.jsx`: `EstadisticaCalculadora` ← `"Calculadora interactiva"` (L119+), `BoxPlot` ← `"Diagrama de caja (Box Plot)"` (L259+), `PermutacionesCalculadora` ← `"Calculadora de permutaciones"` (L395+), `CombinacionesCalculadora` ← `"Calculadora de combinaciones"` (L483+), `AtuendosEjemplo` ← `"Ejemplo: ¿Cuántos atuendos puedes formar?"` (L560+). Copiar estado + JSX interno + imports (BoxPlot puede usar Recharts/Mafs → copiar sus imports). Reemplazar cuerpos en `Bloque6.jsx`.
 
-- [ ] **Step 2: Registrar** los 5 ids: `'estadistica-calculadora'`, `'boxplot'`, `'permutaciones-calculadora'`, `'combinaciones-calculadora'`, `'atuendos-ejemplo'`.
+- [x] **Step 2: Registrar** los 5 ids: `'estadistica-calculadora'`, `'boxplot'`, `'permutaciones-calculadora'`, `'combinaciones-calculadora'`, `'atuendos-ejemplo'`.
 
-- [ ] **Step 3: Test de fábricas (falla)**
+- [x] **Step 3: Test de fábricas (falla)**
 
 Create `src/content/worlds/__tests__/mundo8.test.js`:
 ```js
@@ -1046,7 +1048,7 @@ describe('fábricas del Mundo 8', () => {
 ```
 Run: `npm test -- mundo8` → FAIL.
 
-- [ ] **Step 4: Contenido del Mundo 8 (incluye el nivel nuevo de probabilidad)**
+- [x] **Step 4: Contenido del Mundo 8 (incluye el nivel nuevo de probabilidad)**
 
 Create `src/content/worlds/mundo8-datos.jsx`:
 ```jsx
@@ -1269,9 +1271,9 @@ export const mundo8 = {
 }
 ```
 
-- [ ] **Step 5: Registrar** `mundo8` (`worlds = [mundo3, mundo4, mundo5, mundo6, mundo7, mundo8]`).
-- [ ] **Step 6: Integración** — `mundo8-integracion.test.jsx`: `findWorld('feria-datos')`, `id==='mundo8'`, **6** niveles.
-- [ ] **Step 7: Verificar y commitear**
+- [x] **Step 5: Registrar** `mundo8` (`worlds = [mundo3, mundo4, mundo5, mundo6, mundo7, mundo8]`).
+- [x] **Step 6: Integración** — `mundo8-integracion.test.jsx`: `findWorld('feria-datos')`, `id==='mundo8'`, **6** niveles.
+- [x] **Step 7: Verificar y commitear**
 ```bash
 npm test -- mundo8 validateContent
 npm run build
@@ -1291,7 +1293,7 @@ git commit -m "feat: Mundo 8 (Feria de Datos) migrado del Bloque 6 + nivel de pr
 - Consumes: los `BloqueN.jsx` (páginas de estudio), `worldMapNodes` (para navegación).
 - Produces: rutas `/mundo/:slug/estudio` (prosa), redirects `/bloqueN → /mundo/:slug`, ruta `*` (404). Nodos 4-8 con `mode:'game'`, `levelKeys`, `studyTarget`.
 
-- [ ] **Step 1: Actualizar el test de worldMap para los targets nuevos (falla)**
+- [x] **Step 1: Actualizar el test de worldMap para los targets nuevos (falla)**
 
 En `src/content/__tests__/worldMap.test.js`, reemplazar el `validTargets` (L15-17) por:
 ```js
@@ -1333,7 +1335,7 @@ Además, dos tests existentes usaban `castillo` como ejemplo de nodo de **estudi
 
 Run: `npm test -- worldMap` → FAIL (nodos 4-8 aún `mode:'study'` con targets `/bloqueN`; los tests actualizados esperan modo juego).
 
-- [ ] **Step 2: Flip de los nodos 4-8 en worldMap.js**
+- [x] **Step 2: Flip de los nodos 4-8 en worldMap.js**
 
 En `src/content/worldMap.js`, para cada nodo activo `castillo-algebra`, `laberinto-sistemas`, `estacion-funciones`, `montanas-geometria`, `feria-datos`: cambiar `mode: 'study'` → `mode: 'game'`, `target: '/bloqueN'` → `target: '/mundo/<slug>'`, y añadir `studyTarget: '/mundo/<slug>/estudio'` y `levelKeys`. Ejemplo para castillo-algebra:
 ```js
@@ -1356,7 +1358,7 @@ También añadir `studyTarget: '/mundo/volcan-potencias/estudio'` al nodo `volca
 
 Run: `npm test -- worldMap validateContent` → PASS (validador confirma que los levelKeys existen).
 
-- [ ] **Step 3: StudyView (slug → BloqueN)**
+- [x] **Step 3: StudyView (slug → BloqueN)**
 
 Create `src/engine/StudyView.jsx`:
 ```jsx
@@ -1392,7 +1394,7 @@ export default function StudyView() {
 }
 ```
 
-- [ ] **Step 4: NotFound**
+- [x] **Step 4: NotFound**
 
 Create `src/components/NotFound.jsx`:
 ```jsx
@@ -1410,7 +1412,7 @@ export default function NotFound() {
 }
 ```
 
-- [ ] **Step 5: Rutas en App.jsx**
+- [x] **Step 5: Rutas en App.jsx**
 
 Reescribir `src/App.jsx`: quitar las rutas directas `/bloqueN` y sus imports de página (se resuelven en StudyView); añadir estudio, redirects y 404:
 ```jsx
@@ -1441,7 +1443,7 @@ export default function App() {
 }
 ```
 
-- [ ] **Step 6: Enlace "Modo estudio" en WorldView**
+- [x] **Step 6: Enlace "Modo estudio" en WorldView**
 
 En `src/engine/WorldView.jsx`, dentro del `<div>` de cabecera (bajo la tarjeta de Nv./XP, antes de la lista de niveles), añadir:
 ```jsx
@@ -1453,7 +1455,7 @@ En `src/engine/WorldView.jsx`, dentro del `<div>` de cabecera (bajo la tarjeta d
 ```
 (`Link` ya está importado.)
 
-- [ ] **Step 7: Verificar y probar en navegador**
+- [x] **Step 7: Verificar y probar en navegador**
 
 ```bash
 npm test
@@ -1467,7 +1469,7 @@ Checklist en `http://localhost:5173`:
 4. Una ruta inventada (`/xyz`) muestra el 404 con enlace al mapa.
 5. Completar el nivel 1 de un mundo nuevo desbloquea el 2 y persiste tras F5; la barra de progreso del mundo en el mapa sube.
 
-- [ ] **Step 8: Commit**
+- [x] **Step 8: Commit**
 
 ```bash
 git add src/App.jsx src/engine/StudyView.jsx src/engine/WorldView.jsx src/components/NotFound.jsx src/content/worldMap.js src/content/__tests__/worldMap.test.js
@@ -1481,7 +1483,7 @@ git commit -m "feat: modo juego en mundos 4-8, modo estudio, redirects /bloqueN 
 **Files:**
 - Modify: `TODO.md`
 
-- [ ] **Step 1: Suite completa + build**
+- [x] **Step 1: Suite completa + build**
 
 ```bash
 npm test
@@ -1489,11 +1491,11 @@ npm run build
 ```
 Expected: todos los tests verdes (incluye `validateContent` con los 6 mundos, las fábricas de 4-8, e integración por mundo) y `vite build` sin errores.
 
-- [ ] **Step 2: Marcar Fase 2 completa en TODO.md**
+- [x] **Step 2: Marcar Fase 2 completa en TODO.md**
 
 En `TODO.md`, marcar los ítems de "## Fase 2 — Migración completa" como `[x]` (extraer widgets 2-6, migrar Mundos 4-8, nivel de probabilidad, WorldMap/redirects/404, script de validación) y actualizar la nota del encabezado indicando que la migración de contenido de bloques está completa. Retirar de "Follow-ups" el ítem "Retirar preguntas duplicadas entre Bloque1 y mundo3" si ya no aplica.
 
-- [ ] **Step 3: Commit**
+- [x] **Step 3: Commit**
 
 ```bash
 git add TODO.md

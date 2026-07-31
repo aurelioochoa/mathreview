@@ -1,5 +1,7 @@
 # Math Quest — Plan de implementación Fases 0-1 (base segura + motor piloto)
 
+> **Estado: ejecutado ✅ (2026-07-18)** — 46/47 pasos hechos. Único pendiente: la verificación e2e manual en navegador (Task 14 · Step 4), bloqueada en su momento porque la extensión de Chrome no estaba conectada; cubierta parcialmente por los tests de integración.
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Asegurar la base del repo (token, bugs, wart `Math`) y construir el motor de juego piloto con el Mundo 3 (🌋 Volcán de las Potencias ← Bloque 1) jugable con XP, vidas, estrellas y guardado en localStorage.
@@ -33,7 +35,7 @@
 - Consumes: token actual visible en `math-review/docker-compose.yml:29` (string que empieza con `eyJhIjoi…`)
 - Produces: compose interpola `${TUNNEL_TOKEN}`; `.env` ignorado por git
 
-- [ ] **Step 1: Crear `.env` con el token real**
+- [x] **Step 1: Crear `.env` con el token real**
 
 Copia el valor del token que está hoy en `docker-compose.yml` línea 29 (todo el string después de `--token `) y crea `math-review/.env` (no escribas el token en ningún otro archivo):
 
@@ -44,7 +46,7 @@ TUNNEL_TOKEN=<TOKEN>
 EOF
 ```
 
-- [ ] **Step 2: Referenciar la variable en docker-compose.yml**
+- [x] **Step 2: Referenciar la variable en docker-compose.yml**
 
 Reemplazar el servicio `tunnel` (líneas 27-33) por:
 
@@ -62,7 +64,7 @@ Reemplazar el servicio `tunnel` (líneas 27-33) por:
 
 (`cloudflared` lee `TUNNEL_TOKEN` del entorno de forma nativa; compose carga `.env` automáticamente.)
 
-- [ ] **Step 3: Ignorar `.env` en git**
+- [x] **Step 3: Ignorar `.env` en git**
 
 Añadir al final de `math-review/.gitignore`:
 
@@ -71,7 +73,7 @@ Añadir al final de `math-review/.gitignore`:
 .env
 ```
 
-- [ ] **Step 4: Verificar**
+- [x] **Step 4: Verificar**
 
 ```bash
 docker compose config | grep -A2 TUNNEL_TOKEN   # debe mostrar el token interpolado desde .env
@@ -79,7 +81,7 @@ git check-ignore -v .env                         # debe indicar la regla de .git
 grep -c "eyJhIjoi" docker-compose.yml            # debe dar 0
 ```
 
-- [ ] **Step 5: Commit (solo compose y .gitignore)**
+- [x] **Step 5: Commit (solo compose y .gitignore)**
 
 ```bash
 git add math-review/docker-compose.yml math-review/.gitignore
@@ -97,21 +99,21 @@ Nota: el token nunca llegó a un commit, así que no hace falta reescribir histo
 **Interfaces:**
 - Produces: working tree limpio; las Fases siguientes parten de aquí.
 
-- [ ] **Step 1: Verificar que no hay secretos en lo que se va a commitear**
+- [x] **Step 1: Verificar que no hay secretos en lo que se va a commitear**
 
 ```bash
 git diff HEAD -- math-review/ | grep -c "eyJhIjoi"        # 0
 grep -c "eyJhIjoi" math-review/cloudflare-config.yml       # 0 (el UUID del túnel no es secreto)
 ```
 
-- [ ] **Step 2: Verificar que la app compila**
+- [x] **Step 2: Verificar que la app compila**
 
 ```bash
 npm run build
 ```
 Expected: `vite build` termina sin errores (`✓ built in …`).
 
-- [ ] **Step 3: Commit**
+- [x] **Step 3: Commit**
 
 ```bash
 git add math-review/
@@ -124,7 +126,7 @@ git status --short   # sin cambios pendientes (salvo .env sin trackear... que no
 **Files:**
 - Modify: `math-review/src/pages/Bloque2.jsx:171`
 
-- [ ] **Step 1: Corregir la unidad**
+- [x] **Step 1: Corregir la unidad**
 
 En la línea 171, el problema habla de eventos "cada 12 horas / cada 18 horas" pero la respuesta dice minutos. Cambiar:
 
@@ -138,7 +140,7 @@ por:
 
 (La línea 187 NO se toca: ese ejemplo del bus sí está en minutos y es consistente.)
 
-- [ ] **Step 2: Verificar y commitear**
+- [x] **Step 2: Verificar y commitear**
 
 ```bash
 grep -n "36 horas\|36 minutos" src/pages/Bloque2.jsx   # línea 171 en horas; 187 en minutos
@@ -153,7 +155,7 @@ git commit -m "fix: MCM de eventos en horas, no minutos (Bloque 2)"
 
 Para el sistema {2x+3y=12, 4x−3y=6}: D = a₁b₂ − a₂b₁ = (2)(−3) − (4)(3) = **−18**. Las opciones actuales no incluyen −18 y el hint se contradice. Además la pregunta 2 usa valores hipotéticos que no corresponden al sistema (los reales: Dx = (12)(−3) − (6)(3) = −54, Dy = (2)(6) − (4)(12) = −36, x = 3, y = 2 — coincide con el walkthrough de reducción del mismo archivo).
 
-- [ ] **Step 1: Reemplazar las preguntas 1 y 2 del array `quizQuestions` de `MetodoCramer` (líneas 271-284)**
+- [x] **Step 1: Reemplazar las preguntas 1 y 2 del array `quizQuestions` de `MetodoCramer` (líneas 271-284)**
 
 ```jsx
     {
@@ -174,7 +176,7 @@ Para el sistema {2x+3y=12, 4x−3y=6}: D = a₁b₂ − a₂b₁ = (2)(−3) −
 
 (La pregunta 3 sobre D = 0 no se toca.)
 
-- [ ] **Step 2: Verificar y commitear**
+- [x] **Step 2: Verificar y commitear**
 
 ```bash
 grep -n '"-18"' src/pages/Bloque3.jsx    # debe aparecer en las opciones
@@ -192,14 +194,14 @@ git commit -m "fix: pregunta de Cramer con D=-18 correcto y x=3 coherente (Bloqu
 **Interfaces:**
 - Produces: componente `MathTex` (`import MathTex from '../components/MathTex'`, uso `<MathTex expr={...} display />`). El global `Math` de JS vuelve a estar disponible — las tareas de Fase 1 dependen de esto.
 
-- [ ] **Step 1: Renombrar el archivo y la función**
+- [x] **Step 1: Renombrar el archivo y la función**
 
 ```bash
 git mv src/components/Math.jsx src/components/MathTex.jsx
 sed -i 's/export default function Math(/export default function MathTex(/' src/components/MathTex.jsx
 ```
 
-- [ ] **Step 2: Actualizar los 6 Bloques (import, JSX y window.Math)**
+- [x] **Step 2: Actualizar los 6 Bloques (import, JSX y window.Math)**
 
 ```bash
 sed -i "s|import Math from '../components/Math'|import MathTex from '../components/MathTex'|" src/pages/Bloque*.jsx
@@ -207,21 +209,21 @@ sed -i 's/<Math /<MathTex /g' src/pages/Bloque*.jsx
 sed -i 's/window\.Math\./Math./g' src/pages/Bloque*.jsx
 ```
 
-- [ ] **Step 3: Verificar que no queda nada**
+- [x] **Step 3: Verificar que no queda nada**
 
 ```bash
 grep -rn "window\.Math\|components/Math'\|<Math " src/   # sin resultados
 npm run build                                             # sin errores
 ```
 
-- [ ] **Step 4: Prueba visual rápida**
+- [x] **Step 4: Prueba visual rápida**
 
 ```bash
 npm run dev
 ```
 Abrir `http://localhost:5173/bloque1`: las fórmulas KaTeX se ven, la calculadora de potencias calcula (p.ej. base 2, exp 3 → 8).
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add -A math-review/src/
@@ -237,7 +239,7 @@ git commit -m "refactor: renombrar componente Math a MathTex y recuperar el glob
 **Files:**
 - Modify: `math-review/package.json` (script `test`)
 
-- [ ] **Step 1: Instalar y configurar**
+- [x] **Step 1: Instalar y configurar**
 
 ```bash
 npm install -D vitest
@@ -249,7 +251,7 @@ Añadir a `"scripts"` en `package.json`:
     "test:watch": "vitest"
 ```
 
-- [ ] **Step 2: Smoke test**
+- [x] **Step 2: Smoke test**
 
 Create `math-review/src/state/__tests__/smoke.test.js`:
 ```js
@@ -265,7 +267,7 @@ npm test
 ```
 Expected: `1 passed`.
 
-- [ ] **Step 3: Commit (y borrar el smoke test en el siguiente task al llegar tests reales)**
+- [x] **Step 3: Commit (y borrar el smoke test en el siguiente task al llegar tests reales)**
 
 ```bash
 git add math-review/package.json math-review/package-lock.json math-review/src/state/__tests__/smoke.test.js
@@ -281,7 +283,7 @@ git commit -m "chore: añadir Vitest para tests de lógica"
 **Interfaces:**
 - Produces: `xpForLevel(level) → number` (XP total para alcanzar el nivel), `levelForXp(xp) → number`, `titleForLevel(level) → string`. Consumidas por gameStore (Task 9) y UI (Tasks 13-14).
 
-- [ ] **Step 1: Escribir tests que fallan**
+- [x] **Step 1: Escribir tests que fallan**
 
 Create `math-review/src/state/__tests__/xpCurve.test.js`:
 ```js
@@ -319,7 +321,7 @@ npm test
 ```
 Expected: FAIL (`xpCurve` no existe).
 
-- [ ] **Step 2: Implementar**
+- [x] **Step 2: Implementar**
 
 Create `math-review/src/state/xpCurve.js`:
 ```js
@@ -351,7 +353,7 @@ export function titleForLevel(level) {
 }
 ```
 
-- [ ] **Step 3: Verificar y commitear**
+- [x] **Step 3: Verificar y commitear**
 
 ```bash
 npm test   # todos pasan
@@ -368,7 +370,7 @@ git commit -m "feat: curva de XP y títulos de nivel de jugador"
 **Interfaces:**
 - Produces: `SAVE_KEY = 'mathquest-save-v1'`, `BACKUP_KEY = 'mathquest-save-v1-backup'`, `loadSave() → object|null`, `persistSave(data) → void`. Consumidas por gameStore (Task 9).
 
-- [ ] **Step 1: Tests que fallan**
+- [x] **Step 1: Tests que fallan**
 
 Create `math-review/src/state/__tests__/persistence.test.js`:
 ```js
@@ -420,7 +422,7 @@ npm test
 ```
 Expected: FAIL (`persistence` no existe).
 
-- [ ] **Step 2: Implementar**
+- [x] **Step 2: Implementar**
 
 Create `math-review/src/state/persistence.js`:
 ```js
@@ -450,7 +452,7 @@ export function persistSave(data) {
 }
 ```
 
-- [ ] **Step 3: Verificar y commitear**
+- [x] **Step 3: Verificar y commitear**
 
 ```bash
 npm test
@@ -472,7 +474,7 @@ git commit -m "feat: persistencia de partida en localStorage con respaldo"
   - `<GameProvider>` y hook `useGame() → { state, dispatch }`
   - Constantes: `XP_PER_CORRECT = 10`, `XP_LEVEL_COMPLETE = 50`, `COINS_PER_STAR = 10`
 
-- [ ] **Step 1: Tests del reducer que fallan**
+- [x] **Step 1: Tests del reducer que fallan**
 
 Create `math-review/src/state/__tests__/gameStore.test.js`:
 ```js
@@ -510,7 +512,7 @@ npm test
 ```
 Expected: FAIL.
 
-- [ ] **Step 2: Implementar**
+- [x] **Step 2: Implementar**
 
 Create `math-review/src/state/gameStore.jsx`:
 ```jsx
@@ -565,7 +567,7 @@ export function useGame() {
 }
 ```
 
-- [ ] **Step 3: Montar el provider en `main.jsx`**
+- [x] **Step 3: Montar el provider en `main.jsx`**
 
 Modify `math-review/src/main.jsx` — envolver `<App />` con `<GameProvider>`:
 ```jsx
@@ -588,7 +590,7 @@ createRoot(document.getElementById('root')).render(
 ```
 (Ajustar a la estructura real del archivo si difiere; lo esencial: `GameProvider` dentro de `BrowserRouter`, envolviendo `App`.)
 
-- [ ] **Step 4: Verificar y commitear**
+- [x] **Step 4: Verificar y commitear**
 
 ```bash
 npm test          # reducer pasa
@@ -610,7 +612,7 @@ git commit -m "feat: gameStore con XP, monedas, estrellas y persistencia automá
   - `buildReto(factories, pick, rng?) → question[]` — elige `pick` fábricas sin repetición y las ejecuta
   Consumidas por el contenido (Task 12) y LevelPlayer (Task 13).
 
-- [ ] **Step 1: Tests que fallan**
+- [x] **Step 1: Tests que fallan**
 
 Create `math-review/src/engine/__tests__/generators.test.js`:
 ```js
@@ -652,7 +654,7 @@ npm test
 ```
 Expected: FAIL.
 
-- [ ] **Step 2: Implementar**
+- [x] **Step 2: Implementar**
 
 Create `math-review/src/engine/generators.js`:
 ```js
@@ -679,7 +681,7 @@ export function buildReto(factories, pick, rng = Math.random) {
 }
 ```
 
-- [ ] **Step 3: Verificar y commitear**
+- [x] **Step 3: Verificar y commitear**
 
 ```bash
 npm test
@@ -696,7 +698,7 @@ git commit -m "feat: generadores de preguntas (fábricas, selección aleatoria d
 **Interfaces:**
 - Produces: registro `widgets` en `src/widgets/index.js`: `{ 'aproximacion-explorer': …, 'potencia-calculadora': …, 'notacion-conversor': …, 'raiz-calculadora': … }`. Cada widget es un componente sin props obligatorias, autocontenido (estado propio). Consumido por LevelPlayer (Task 13) vía id.
 
-- [ ] **Step 1: Crear los 4 widgets extrayendo el JSX de los `InteractiveBox` de Bloque1.jsx**
+- [x] **Step 1: Crear los 4 widgets extrayendo el JSX de los `InteractiveBox` de Bloque1.jsx**
 
 Cada widget = el contenido interno del `InteractiveBox` correspondiente de `Bloque1.jsx` (tras Task 5 ya usan `Math` global y `MathTex`), envuelto en su propio componente. Ejemplo completo del primero — los otros tres siguen exactamente el mismo patrón de extracción literal:
 
@@ -766,7 +768,7 @@ Del mismo modo:
 - `NotacionConversor.jsx` ← `decimal` + `convertir` + JSX del `InteractiveBox` "Convertidor…" (líneas 235-245 y 308-327; importa `MathTex`).
 - `RaizCalculadora.jsx` ← `radicando`/`indice`/`resultado` + JSX del `InteractiveBox` "Calculadora: áreas de bases en Minecraft" (líneas 335-338 y 400-437; importa `MathTex`).
 
-- [ ] **Step 2: Registro**
+- [x] **Step 2: Registro**
 
 Create `math-review/src/widgets/index.js`:
 ```js
@@ -783,7 +785,7 @@ export const widgets = {
 }
 ```
 
-- [ ] **Step 3: Bloque1.jsx usa los widgets extraídos (sin duplicar código)**
+- [x] **Step 3: Bloque1.jsx usa los widgets extraídos (sin duplicar código)**
 
 En cada sección de `Bloque1.jsx`, sustituir el contenido interno del `InteractiveBox` por el widget, y borrar el estado/funciones que se movieron. Ejemplo (AproximacionSection):
 
@@ -794,7 +796,7 @@ En cada sección de `Bloque1.jsx`, sustituir el contenido interno del `Interacti
 ```
 con `import AproximacionExplorer from '../widgets/AproximacionExplorer'` (ídem los otros tres).
 
-- [ ] **Step 4: Verificar y commitear**
+- [x] **Step 4: Verificar y commitear**
 
 ```bash
 npm run build
@@ -826,7 +828,7 @@ git commit -m "refactor: extraer widgets interactivos del Bloque 1 a src/widgets
   ```
   y `export const worlds = [mundo3]` + `export function findWorld(slug)` en `index.js`. Consumido por Tasks 13-14.
 
-- [ ] **Step 1: Crear el archivo de contenido con los 4 niveles**
+- [x] **Step 1: Crear el archivo de contenido con los 4 niveles**
 
 El briefing de cada nivel se arma con el contenido pedagógico de la sección equivalente de `Bloque1.jsx` (WhySection → `type:'why'`, prosa y cajas de fórmulas → `type:'content'`, CommonMistakes → `type:'mistakes'`, InteractiveBox → `type:'widget'`). Las 12 preguntas del quiz se migran como `staticQuestion(...)` **copiadas literalmente de Bloque1.jsx** (líneas 25-47, 136-158, 247-269, 340-362), y se añaden 2 fábricas parametrizadas para probar el mecanismo. Esqueleto completo con el nivel 2 (Potenciación) desarrollado del todo; los niveles 1, 3 y 4 siguen el mismo patrón con su contenido correspondiente:
 
@@ -954,7 +956,7 @@ export const mundo3 = {
 
 **Importante:** los comentarios de los niveles 3 y 4 del esqueleto NO son opcionales — el archivo final debe tener los 4 niveles completos siguiendo el patrón mostrado en los niveles 1 y 2, con las preguntas copiadas literalmente de las líneas indicadas.
 
-- [ ] **Step 2: Índice de mundos**
+- [x] **Step 2: Índice de mundos**
 
 Create `math-review/src/content/worlds/index.js`:
 ```js
@@ -967,7 +969,7 @@ export function findWorld(slug) {
 }
 ```
 
-- [ ] **Step 3: Verificar y commitear**
+- [x] **Step 3: Verificar y commitear**
 
 ```bash
 npm run build   # compila (el contenido JSX es válido)
@@ -984,7 +986,7 @@ git commit -m "feat: contenido del Mundo 3 (Volcán de las Potencias) migrado de
 - Consumes: `findWorld` (Task 12), `widgets` (Task 11), `buildReto` (Task 10), `useGame` + constantes XP/monedas (Task 9), `WhySection`, `CommonMistakes`, `InteractiveBox` existentes.
 - Produces: componente de ruta para `/mundo/:slug/nivel/:levelId`. Reglas: briefing paso a paso sin vidas → reto de `pick` preguntas con 3 vidas; respuesta correcta = `ANSWER_CORRECT` (+`XP_PER_CORRECT`); quedarse sin vidas = pantalla "Reintentar" (regenera preguntas, vidas a 3, XP ganado se conserva); completar = estrellas (100% aciertos primer intento de cada pregunta → 3⭐, ≥66% → 2⭐, resto → 1⭐) y `LEVEL_COMPLETED` (+`XP_LEVEL_COMPLETE`, monedas = estrellas × `COINS_PER_STAR`).
 
-- [ ] **Step 1: Implementar**
+- [x] **Step 1: Implementar**
 
 Create `math-review/src/engine/LevelPlayer.jsx`:
 ```jsx
@@ -1141,7 +1143,7 @@ export default function LevelPlayer() {
 }
 ```
 
-- [ ] **Step 2: Verificar compilación y commitear**
+- [x] **Step 2: Verificar compilación y commitear**
 
 ```bash
 npm run build
@@ -1160,7 +1162,7 @@ git commit -m "feat: LevelPlayer con briefing por pasos, reto con vidas y estrel
 - Consumes: `findWorld` (Task 12), `useGame` (Task 9), `levelForXp`/`titleForLevel` (Task 7), `LevelPlayer` (Task 13).
 - Produces: rutas `/mundo/:slug` y `/mundo/:slug/nivel/:levelId`. Regla de desbloqueo: nivel `n` desbloqueado si `n === 0` o el nivel `n-1` está en `completedLevels`.
 
-- [ ] **Step 1: Crear WorldView**
+- [x] **Step 1: Crear WorldView**
 
 Create `math-review/src/engine/WorldView.jsx`:
 ```jsx
@@ -1219,7 +1221,7 @@ export default function WorldView() {
 }
 ```
 
-- [ ] **Step 2: Rutas en App.jsx**
+- [x] **Step 2: Rutas en App.jsx**
 
 Añadir a `math-review/src/App.jsx` (dentro del `<Route element={<Layout />}>`, debajo de las rutas de bloques):
 
@@ -1231,7 +1233,7 @@ import LevelPlayer from './engine/LevelPlayer'
         <Route path="/mundo/:slug/nivel/:levelId" element={<LevelPlayer />} />
 ```
 
-- [ ] **Step 3: Enlace beta en Home.jsx**
+- [x] **Step 3: Enlace beta en Home.jsx**
 
 Añadir en `math-review/src/pages/Home.jsx`, justo encima del grid de bloques:
 
@@ -1258,7 +1260,7 @@ Checklist en `http://localhost:5173`:
 7. Rejugar nivel 1 con todo correcto a la primera: estrellas suben a 3⭐ y nunca bajan.
 8. Las rutas viejas `/bloque1`…`/bloque6` siguen funcionando.
 
-- [ ] **Step 5: Tests + build finales y commit**
+- [x] **Step 5: Tests + build finales y commit**
 
 ```bash
 npm test && npm run build
