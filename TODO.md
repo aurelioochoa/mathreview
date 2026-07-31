@@ -8,20 +8,14 @@ Hoja de ruta por fases. Lo pendiente va arriba; el historial, al final.
 ## Estado — 2026-07-30
 
 - **Rama:** `feat/fase3-gamificacion`.
-- **Suite:** `npm test` → 29 archivos, 173 tests en verde; `build` y `lint` limpios.
+- **Suite:** `npm test` → 31 archivos, 181 tests en verde; `build` y `lint` limpios.
 - **Jugable hoy:** 6 mundos (3-8) con niveles + modo estudio, jefe y sidequests en cada uno, mapa 3D con fallback 2D, HUD, guardado v2 con migración.
-- **Fase en curso:** Fase 3 — **10 de 18 tasks completas** (Capas A, B y C cerradas).
-- **Siguiente paso:** Capa D — Task 11 (cofres), 12 (tienda) y 13 (pistas compradas).
+- **Fase en curso:** Fase 3 — **13 de 18 tasks completas** (Capas A, B, C y D cerradas).
+- **Siguiente paso:** Capa E — Task 14 (motor de logros) y 15 (toast + `/logros`).
 
 ---
 
 # 🔴 En curso — Fase 3: Gamificación completa (→ MVP jugable)
-
-## Capa D — Economía visible
-
-- [ ] **Task 11** — Cofres: `engine/chests.js` (`rollChest`) + `Chest.jsx` + catálogo `content/shop.js`; enganche en primer completado de nivel y en victoria de jefe
-- [ ] **Task 12** — Tienda `/tienda` (comprar cosméticos y packs de pistas con `BUY_ITEM`)
-- [ ] **Task 13** — Pistas compradas: botón "💡 Pedir pista" en `LevelPlayer` y `BossArena` (gasta `USE_HINT`)
 
 ## Capa E — Logros
 
@@ -39,6 +33,7 @@ Hoja de ruta por fases. Lo pendiente va arriba; el historial, al final.
 - [x] **Capa A** — estado v2 (jefes, quests, logros, cosméticos, pistas, racha) + migración de guardado v1 → v2 + economía por estrellas nuevas (`coinsForCompletion`)
 - [x] **Capa B** — `buildBossPool`, campo `boss` en los 6 mundos + validación, `BossArena` con barra de vida, acceso al jefe y ⭐ de maestría en `WorldView`
 - [x] **Capa C** — `QuestPlayer` + esquema/índice de quests + sidequests bespoke en los seis mundos (13 misiones) + `validateContent` exige ≥1 sidequest por mundo
+- [x] **Capa D** — cofres sorpresa (`rollChest` ponderado + `Chest`) en primer completado de nivel y primera victoria de jefe, tienda `/tienda` con catálogo `content/shop.js`, y pistas compradas en retos y jefes
 
 ---
 

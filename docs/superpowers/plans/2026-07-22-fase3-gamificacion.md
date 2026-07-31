@@ -22,7 +22,7 @@
 
 ## Progreso (actualizado 2026-07-30)
 
-**11 de 18 tasks completas.** Capas A, B y C cerradas; Capa D empezada. Suite en verde: 30 archivos, 178 tests.
+**13 de 18 tasks completas.** Capas A, B, C y D cerradas. Suite en verde: 31 archivos, 181 tests.
 
 | Capa | Task | Estado | Commit |
 |---|---|---|---|
@@ -37,15 +37,15 @@
 | C | 9 · Sidequests Mundo 7 ⛰️ | ✅ | — |
 | C | 10 · Sidequests Mundo 8 🎡 + validación de quests | ✅ | — |
 | D | 11 · Cofres (`rollChest` + `Chest` + `shop.js`) | ✅ | — |
-| D | 12 · Tienda `/tienda` | ⬜ | — |
-| D | 13 · Pistas compradas en reto y jefe | ⬜ | — |
+| D | 12 · Tienda `/tienda` | ✅ | — |
+| D | 13 · Pistas compradas en reto y jefe | ✅ | — |
 | E | 14 · Definiciones de logros + `evaluateAchievements` | ⬜ | — |
 | E | 15 · Toast + wiring en `GameProvider` + `/logros` | ⬜ | — |
 | F | 16 · Racha diaria + 🔥 en el HUD | ⬜ | — |
 | F | 17 · Perfil `/perfil` + accesos en el HUD | ⬜ | — |
 | — | 18 · Verificación final + cierre en `TODO.md` | ⬜ | — |
 
-> **Siguiente:** Task 12 (tienda `/tienda`) y Task 13 (pistas compradas).
+> **Siguiente:** Capa E (Tasks 14-15): logros y toasts.
 
 ---
 
