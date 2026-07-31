@@ -7,7 +7,7 @@ Hoja de ruta por fases. Lo pendiente va arriba; el historial, al final.
 
 ## Estado — 2026-07-31
 
-- **Rama:** `feat/fase4-contenido-nuevo` (Fase 3 ya mergeada en `main` y publicada).
+- **Rama:** `main` — Fases 3 y 4 mergeadas y publicadas (`a8cdf23`, `c663dda`).
 - **Suite:** `npm test` → 41 archivos, 249 tests en verde; `build` y `lint` limpios.
 - **🎮 Escalera 8-15 años completa.** Los 8 mundos son jugables, con desbloqueo secuencial por jefe y portal de teletransporte para saltárselo. Cada mundo: niveles, jefe y sidequests; más cofres, tienda, pistas, logros, racha y perfil, sobre mapa 3D con fallback 2D y guardado v3 con migración.
 - **Fase 4 completa** (12/12 tasks). **Siguiente:** Fase 5 — pulido.
@@ -25,7 +25,7 @@ Hoja de ruta por fases. Lo pendiente va arriba; el historial, al final.
 
 # Deuda y cabos sueltos
 
-- [x] ~~Verificación e2e interactiva en navegador~~ — hecha el 2026-07-31 al cerrar Fase 4, arrastrada desde Fase 1. Destapó tres bugs que ningún test veía: el bono de racha cobrado dos veces con StrictMode, el gate entre mundos ausente en el mapa 3D, y un logro mal nombrado.
+- [x] ~~Verificación e2e interactiva en navegador~~ — hecha el 2026-07-31 al cerrar Fase 4, arrastrada desde Fase 1. Destapó tres bugs que ningún test veía: el bono de racha cobrado dos veces con StrictMode, el gate entre mundos ausente en el mapa 3D, y un logro mal nombrado. Incluyó cargar un guardado v2 real: migra a v3 sin perder nada y el grandfathering deja abiertos justo los mundos que ya se jugaban.
 - [x] ~~README desactualizado~~ — actualizado el 2026-07-30 y el 2026-07-31.
 - [ ] ⚠️ **Rotar el token del túnel de Cloudflare** en el dashboard — vivió en texto plano en `docker-compose.yml` antes de moverse a `.env`.
 

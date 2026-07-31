@@ -1,5 +1,7 @@
 # Fase 4 — Contenido nuevo (Mundos 1-2, portal y temporada) Implementation Plan
 
+> **Estado: ejecutado y cerrado ✅ (2026-07-31)** — 12/12 tasks, commits `f1afdde`…`1a693d9`, mergeado en `main` con `c663dda`.
+
 > Spec: [`2026-07-31-fase4-contenido-nuevo-design.md`](../specs/2026-07-31-fase4-contenido-nuevo-design.md).
 > Ejecutar task a task; cada una deja `npm test` + `npm run build` + `npm run lint` en verde y su commit.
 
@@ -50,9 +52,9 @@
 - `pickSeason(rng, lista) → elemento` — determinista dado `rng`.
 
 **Steps:**
-- [ ] Test primero: listas no vacías, sin cifras con fecha, `pickSeason` determinista y siempre dentro de la lista.
-- [ ] Implementar. Comentario de cabecera dejando claro que **este es el único sitio con referencias fechables**.
-- [ ] `npm test -- season` verde. Commit: `feat: content/season.js (referencias pop de temporada)`.
+- [x] Test primero: listas no vacías, sin cifras con fecha, `pickSeason` determinista y siempre dentro de la lista.
+- [x] Implementar. Comentario de cabecera dejando claro que **este es el único sitio con referencias fechables**.
+- [x] `npm test -- season` verde. Commit: `feat: content/season.js (referencias pop de temporada)`.
 
 ---
 
@@ -69,9 +71,9 @@ Widgets interactivos autocontenidos, al estilo de los existentes (`McdCalculador
 - `jerarquia-pasos` — una expresión con paréntesis y × ÷ + −, resuelta paso a paso destacando qué se opera primero.
 
 **Steps:**
-- [ ] Implementar los tres y registrarlos por id en `widgets/index.js`.
-- [ ] `npm run build` + `npm run lint` verdes (sin test visual, por convención).
-- [ ] Commit: `feat: widgets de la Isla Numérica (recta, divisores, jerarquía)`.
+- [x] Implementar los tres y registrarlos por id en `widgets/index.js`.
+- [x] `npm run build` + `npm run lint` verdes (sin test visual, por convención).
+- [x] Commit: `feat: widgets de la Isla Numérica (recta, divisores, jerarquía)`.
 
 ## Task 3: Contenido del Mundo 1
 
@@ -82,10 +84,10 @@ Widgets interactivos autocontenidos, al estilo de los existentes (`McdCalculador
 Niveles y temas, según spec §4: `operaciones`, `orden`, `multiplos-divisores`, `jerarquia`. Cada uno: `briefing[]` (`why` → `content` → `mistakes` → `widget`) + `reto: { pick: 3, factories: [≥3] }`.
 
 **Steps:**
-- [ ] Test primero (espejo de `mundo3.test.js`): 4 niveles bien formados, briefing no vacío, `pick` y ≥3 fábricas, widgets existentes en el registro, y 300 tiradas por fábrica.
-- [ ] Escribir el contenido con el tono del §3: frases cortas, sin álgebra, resultados ≤ 1000, divisiones exactas. Referencias vía `pickSeason`.
-- [ ] Registrar `mundo1` **al principio** del array `worlds`.
-- [ ] `npm test -- mundo1 validateContent` verde. Commit.
+- [x] Test primero (espejo de `mundo3.test.js`): 4 niveles bien formados, briefing no vacío, `pick` y ≥3 fábricas, widgets existentes en el registro, y 300 tiradas por fábrica.
+- [x] Escribir el contenido con el tono del §3: frases cortas, sin álgebra, resultados ≤ 1000, divisiones exactas. Referencias vía `pickSeason`.
+- [x] Registrar `mundo1` **al principio** del array `worlds`.
+- [x] `npm test -- mundo1 validateContent` verde. Commit.
 
 ## Task 4: Sidequests del Mundo 1
 
@@ -94,20 +96,20 @@ Niveles y temas, según spec §4: `operaciones`, `orden`, `multiplos-divisores`,
 Dos quests con NPC y narrativa (spec §4): `isla-quest-1` "El tesoro repartido" (Pirata Coco) e `isla-quest-2` "El faro de la isla" (Farera Luna). Cada una 3 fábricas.
 
 **Steps:**
-- [ ] Test primero: 2 quests, 3-5 fábricas cada una, 300 tiradas.
-- [ ] Escribir el contenido; registrar en `questsByWorld`.
-- [ ] `npm test -- mundo1-quests validateContent` verde. Commit.
+- [x] Test primero: 2 quests, 3-5 fábricas cada una, 300 tiradas.
+- [x] Escribir el contenido; registrar en `questsByWorld`.
+- [x] `npm test -- mundo1-quests validateContent` verde. Commit.
 
 ## Task 5: Activar el Mundo 1 en el mapa + modo estudio condicional
 
 **Files:** Modify `src/content/worldMap.js`, `src/engine/WorldView.jsx`, `src/content/__tests__/worldMap.test.js`.
 
 **Steps:**
-- [ ] Nodo `isla-numerica`: `mode: 'game'`, `status: 'active'`, `target: '/mundo/isla-numerica'`, `levelKeys` de los 4 niveles. **Sin `studyTarget`** (no hay página de estudio).
-- [ ] Añadirlo al principio de `pathOrder`.
-- [ ] `WorldView.jsx:32` — el enlace "📖 Modo estudio" hoy es incondicional y llevaría a un "Modo estudio no encontrado". Renderizarlo solo si el mundo tiene página de estudio (derivarlo del nodo del mapa o de un flag en el mundo).
-- [ ] Actualizar `worldMap.test.js`: hoy afirma `pathOrder` de 6 y que `teaserBranch` acaba en 2 teasers.
-- [ ] Suite completa verde. Commit.
+- [x] Nodo `isla-numerica`: `mode: 'game'`, `status: 'active'`, `target: '/mundo/isla-numerica'`, `levelKeys` de los 4 niveles. **Sin `studyTarget`** (no hay página de estudio).
+- [x] Añadirlo al principio de `pathOrder`.
+- [x] `WorldView.jsx:32` — el enlace "📖 Modo estudio" hoy es incondicional y llevaría a un "Modo estudio no encontrado". Renderizarlo solo si el mundo tiene página de estudio (derivarlo del nodo del mapa o de un flag en el mundo).
+- [x] Actualizar `worldMap.test.js`: hoy afirma `pathOrder` de 6 y que `teaserBranch` acaba en 2 teasers.
+- [x] Suite completa verde. Commit.
 
 ---
 
@@ -144,9 +146,9 @@ Nodo `reino-fracciones` a jugable, sin `studyTarget`; entra en `pathOrder` tras 
 - `nodeState` gana el valor `locked`.
 
 **Steps:**
-- [ ] Tests primero: las cuatro cláusulas, con un caso explícito de **save antiguo con progreso en Mundos 3-8 que sigue teniendo acceso**; migración v2 → v3 rellenando `portalPasses`.
-- [ ] Implementar. `migrate()` en `persistence.js` ya trata v1 y v2 rellenando defaults: extender a v3 con la misma forma.
-- [ ] Suite completa verde (ojo: `nodeState` cambia de valores y hay tests que lo asertan). Commit.
+- [x] Tests primero: las cuatro cláusulas, con un caso explícito de **save antiguo con progreso en Mundos 3-8 que sigue teniendo acceso**; migración v2 → v3 rellenando `portalPasses`.
+- [x] Implementar. `migrate()` en `persistence.js` ya trata v1 y v2 rellenando defaults: extender a v3 con la misma forma.
+- [x] Suite completa verde (ojo: `nodeState` cambia de valores y hay tests que lo asertan). Commit.
 
 ## Task 11: `PortalTrial` + ruta + UI de bloqueo
 
@@ -155,10 +157,10 @@ Nodo `reino-fracciones` a jugable, sin `studyTarget`; entra en `pathOrder` tras 
 **Interfaces:** ruta `/mundo/:slug/portal`. 5 preguntas de `buildBossPool`, sin vidas, se aprueba con 4/5, reintentable con preguntas nuevas. Aprobar → `PORTAL_PASSED`.
 
 **Steps:**
-- [ ] Test de integración primero: aprobar marca `portalPasses`, **no** añade estrellas, y el siguiente mundo pasa a desbloqueado.
-- [ ] Implementar el componente (patrón de `BossArena`: `key={slug}`, fases intro → prueba → resultado).
-- [ ] `WorldMap2D`: `locked` muestra candado + "Derrota al jefe anterior" + enlace al portal; `coming-soon` conserva "Próximamente"; un mundo con `portalPasses` se muestra como **"Superado por portal"**, no como completado.
-- [ ] Suite + build + lint verdes. Commit.
+- [x] Test de integración primero: aprobar marca `portalPasses`, **no** añade estrellas, y el siguiente mundo pasa a desbloqueado.
+- [x] Implementar el componente (patrón de `BossArena`: `key={slug}`, fases intro → prueba → resultado).
+- [x] `WorldMap2D`: `locked` muestra candado + "Derrota al jefe anterior" + enlace al portal; `coming-soon` conserva "Próximamente"; un mundo con `portalPasses` se muestra como **"Superado por portal"**, no como completado.
+- [x] Suite + build + lint verdes. Commit.
 
 ---
 
@@ -166,10 +168,10 @@ Nodo `reino-fracciones` a jugable, sin `studyTarget`; entra en `pathOrder` tras 
 
 ## Task 12: Verificación final y documentación
 
-- [ ] `npm test` + `npm run build` + `npm run lint` verdes.
-- [ ] `validateContent` cubriendo los 8 mundos con sus sidequests.
-- [ ] **Repaso de tono** de los briefings de Mundos 1-2 (spec §3).
-- [ ] Recorrido e2e en navegador si la extensión de Chrome está conectada — cierra además el pendiente arrastrado desde Fase 1: entrar al Mundo 1, completar nivel, cofre, jefe, comprobar que abre el Mundo 2; luego portal.
-- [ ] Prueba con save v2 real: grandfathering y migración sin pérdida.
-- [ ] `TODO.md` (Fase 4 al historial, Fase 5 arriba) y `README.md` (8 mundos, ruta del portal) al día. Marcar este plan como ejecutado.
-- [ ] Commit de cierre.
+- [x] `npm test` + `npm run build` + `npm run lint` verdes.
+- [x] `validateContent` cubriendo los 8 mundos con sus sidequests.
+- [x] **Repaso de tono** de los briefings de Mundos 1-2 (spec §3).
+- [x] Recorrido e2e en navegador si la extensión de Chrome está conectada — cierra además el pendiente arrastrado desde Fase 1: entrar al Mundo 1, completar nivel, cofre, jefe, comprobar que abre el Mundo 2; luego portal.
+- [x] Prueba con save v2 real: grandfathering y migración sin pérdida.
+- [x] `TODO.md` (Fase 4 al historial, Fase 5 arriba) y `README.md` (8 mundos, ruta del portal) al día. Marcar este plan como ejecutado.
+- [x] Commit de cierre.
