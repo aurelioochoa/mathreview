@@ -117,6 +117,10 @@ export function gameReducer(state, action) {
       return { ...state, hints: Math.max(0, state.hints - 1) }
 
     case 'TICK_STREAK':
+      // Idempotente por día: si ya se cobró el bono de esa fecha, no se repite.
+      // Sin esto, el doble montaje de React.StrictMode en desarrollo pagaba el
+      // bono dos veces (el efecto se reejecuta con el mismo state capturado).
+      if (state.streak.lastDate === action.streak?.lastDate) return state
       return { ...state, streak: action.streak, coins: state.coins + (action.bonus ?? 0) }
 
     case 'UNLOCK_ACHIEVEMENTS': {

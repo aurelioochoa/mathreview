@@ -102,6 +102,14 @@ describe('acciones nuevas del reducer', () => {
     expect(s.streak).toEqual({ count: 1, best: 1, lastDate: '2026-07-22' })
     expect(s.coins).toBe(7)
   })
+  it('TICK_STREAK no vuelve a pagar el bono del mismo día', () => {
+    const accion = { type: 'TICK_STREAK', streak: { count: 1, best: 1, lastDate: '2026-07-31' }, bonus: 7 }
+    const s = gameReducer(defaultState(), accion)
+    expect(s.coins).toBe(7)
+    // Segundo disparo idéntico (StrictMode remonta el efecto en desarrollo).
+    expect(gameReducer(s, accion)).toBe(s)
+  })
+
   it('PORTAL_PASSED registra el mundo una sola vez', () => {
     let s = gameReducer(defaultState(), { type: 'PORTAL_PASSED', worldId: 'mundo1' })
     expect(s.portalPasses).toEqual(['mundo1'])
