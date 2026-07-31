@@ -1,5 +1,8 @@
 import { describe, it, expect, beforeEach } from 'vitest'
-import { loadSave, persistSave, SAVE_KEY, BACKUP_KEY } from '../persistence'
+import {
+  loadSave, persistSave, SAVE_KEY, BACKUP_KEY,
+  savePreImportSnapshot, loadPreImportSnapshot, clearPreImportSnapshot, PRE_IMPORT_KEY,
+} from '../persistence'
 import { defaultState } from '../gameStore'
 
 // Fake localStorage (Vitest corre en Node, sin DOM)
@@ -97,5 +100,47 @@ describe('migración de guardados', () => {
     expect(loadSave()).toBe(null)
     localStorage.setItem('mathquest-save-v1-backup', JSON.stringify({ version: 1, xp: 7, coins: 0, stars: {}, completedLevels: [] }))
     expect(loadSave().xp).toBe(7)
+  })
+})
+
+describe('instantánea previa a importar', () => {
+  beforeEach(() => localStorage.clear())
+
+  it('sin instantánea guardada, devuelve null', () => {
+    expect(loadPreImportSnapshot()).toBeNull()
+  })
+
+  it('guarda y lee la instantánea, migrada como cualquier guardado', () => {
+    savePreImportSnapshot({ ...defaultState(), xp: 3 })
+    expect(loadPreImportSnapshot()).toEqual({ ...defaultState(), xp: 3 })
+  })
+
+  it('borrarla la deja en null', () => {
+    savePreImportSnapshot({ ...defaultState(), xp: 3 })
+    clearPreImportSnapshot()
+    expect(loadPreImportSnapshot()).toBeNull()
+  })
+
+  it('vive en su propia clave, distinta de SAVE_KEY y BACKUP_KEY', () => {
+    savePreImportSnapshot({ ...defaultState(), xp: 3 })
+    expect(PRE_IMPORT_KEY).not.toBe(SAVE_KEY)
+    expect(PRE_IMPORT_KEY).not.toBe(BACKUP_KEY)
+    expect(localStorage.getItem(PRE_IMPORT_KEY)).not.toBeNull()
+  })
+
+  // Caso real del bug: tras importar, un cambio de estado posterior (p. ej.
+  // el efecto de logros retroactivos de GameProvider) dispara persistSave(),
+  // que pisa SAVE_KEY y BACKUP_KEY. La instantánea de pre-import no debe
+  // moverse, porque persistSave() nunca toca su clave.
+  it('sobrevive a los persistSave posteriores (partida importada + otro cambio de estado)', () => {
+    persistSave({ ...defaultState(), coins: 3 }) // partida anterior, antes de importar
+    savePreImportSnapshot(loadSave())
+
+    persistSave({ ...defaultState(), coins: 777 }) // IMPORT_SAVE
+    persistSave({ ...defaultState(), coins: 777, achievements: ['cazajefes'] }) // logro retroactivo
+
+    expect(loadPreImportSnapshot()).toEqual({ ...defaultState(), coins: 3 })
+    // BACKUP_KEY, en cambio, sí quedó pisado por el segundo persistSave.
+    expect(JSON.parse(localStorage.getItem(BACKUP_KEY)).coins).toBe(777)
   })
 })

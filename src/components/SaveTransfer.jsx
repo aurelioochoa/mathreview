@@ -2,6 +2,7 @@ import { lazy, Suspense, useCallback, useEffect, useState } from 'react'
 import { useGame } from '../state/gameStore'
 import { hudStats } from '../state/hudStats'
 import { encodeSave, decodeSave, QR_MAX_BYTES } from '../state/saveCode'
+import { savePreImportSnapshot, loadPreImportSnapshot, clearPreImportSnapshot } from '../state/persistence'
 
 // Va aparte y en lazy: `qrcode` no puede acabar en el bundle inicial.
 const QrPanel = lazy(() => import('./QrPanel'))
@@ -33,6 +34,7 @@ export default function SaveTransfer() {
   const [error, setError] = useState(null)
   const [verQr, setVerQr] = useState(false)
   const [escaneando, setEscaneando] = useState(false)
+  const [hayInstantanea, setHayInstantanea] = useState(() => loadPreImportSnapshot() !== null)
   const cabeEnQr = codigo.length > 0 && codigo.length <= QR_MAX_BYTES
 
   useEffect(() => {
@@ -72,9 +74,22 @@ export default function SaveTransfer() {
   }
 
   const confirmar = () => {
+    // La instantánea se guarda ANTES de importar: si se guardara después,
+    // el efecto de logros retroactivos ya habría cambiado el estado y
+    // estaríamos guardando la partida nueva, no la que se pierde.
+    savePreImportSnapshot(state)
     dispatch({ type: 'IMPORT_SAVE', save: pendiente })
     setPendiente(null)
     setPegado('')
+    setHayInstantanea(true)
+  }
+
+  const deshacer = () => {
+    const previa = loadPreImportSnapshot()
+    if (!previa) return
+    dispatch({ type: 'IMPORT_SAVE', save: previa })
+    clearPreImportSnapshot()
+    setHayInstantanea(false)
   }
 
   return (
@@ -83,6 +98,17 @@ export default function SaveTransfer() {
       <p className="text-xs text-gray-500 mb-3">
         Llévate tu progreso a otro dispositivo. Guarda el código en sitio seguro: es tu partida entera.
       </p>
+
+      {hayInstantanea && (
+        <div className="glass rounded-2xl p-4 mb-3 border border-amber-300">
+          <p className="text-sm text-gray-700 mb-2">
+            Cargaste una partida hace poco. Si no era la tuya, puedes recuperar la de antes.
+          </p>
+          <button onClick={deshacer} className={`${boton} bg-white border border-amber-300 text-amber-700`}>
+            Deshacer la última carga
+          </button>
+        </div>
+      )}
 
       <div className="glass rounded-2xl p-4 mb-3">
         <label htmlFor="codigo-salida" className="text-xs text-gray-500 block mb-1">Tu código de partida</label>

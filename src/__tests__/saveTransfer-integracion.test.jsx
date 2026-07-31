@@ -3,7 +3,7 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import SaveTransfer from '../components/SaveTransfer'
 import { GameProvider } from '../state/GameProvider'
 import { defaultState } from '../state/gameStore'
-import { SAVE_KEY } from '../state/persistence'
+import { SAVE_KEY, PRE_IMPORT_KEY } from '../state/persistence'
 import { encodeSave } from '../state/saveCode'
 import { todayStr } from '../state/streak'
 
@@ -111,5 +111,56 @@ describe('integración: SaveTransfer — QR', () => {
     await screen.findByLabelText(/Tu código de partida/i)
     expect(await screen.findByText(/demasiado grande para un QR/i)).toBeTruthy()
     expect(screen.queryByRole('button', { name: /Mostrar QR/i })).toBeNull()
+  })
+})
+
+describe('integración: SaveTransfer — deshacer un import', () => {
+  beforeEach(() => localStorage.clear())
+
+  it('sin haber importado nada, no se ofrece deshacer', async () => {
+    montar()
+    await screen.findByLabelText(/Tu código de partida/i)
+    expect(screen.queryByRole('button', { name: /Deshacer/i })).toBeNull()
+  })
+
+  // Reproduce el bug real: la partida importada trae bossDefeats que
+  // desbloquean un logro retroactivo (ver GameProvider.test.jsx), lo que
+  // dispara un segundo cambio de estado — y por tanto un segundo
+  // persistSave() — después del import, sin que el jugador toque nada.
+  it('tras importar, la instantánea sobrevive al cambio de estado del logro retroactivo y aparece "Deshacer"', async () => {
+    montar({ xp: 10, coins: 3 })
+    const codigo = await encodeSave({
+      ...defaultState(), xp: 9000, coins: 777, bossDefeats: ['mundo3'],
+      streak: { count: 1, best: 1, lastDate: todayStr() },
+    })
+
+    fireEvent.change(screen.getByLabelText(/Pega aquí un código/i), { target: { value: codigo } })
+    fireEvent.click(screen.getByRole('button', { name: /Revisar código/i }))
+    fireEvent.click(await screen.findByRole('button', { name: /Cargar esta partida/i }))
+
+    // Espera a que el logro retroactivo se dispare y se persista de nuevo.
+    await waitFor(() => {
+      expect(JSON.parse(localStorage.getItem(SAVE_KEY)).achievements).toContain('cazajefes')
+    })
+
+    expect(await screen.findByRole('button', { name: /Deshacer/i })).toBeTruthy()
+    expect(JSON.parse(localStorage.getItem(PRE_IMPORT_KEY)).coins).toBe(3)
+  })
+
+  it('"Deshacer" restaura la partida anterior y hace desaparecer el botón', async () => {
+    montar({ xp: 10, coins: 3 })
+    const codigo = await encodeSave({ ...defaultState(), xp: 9000, coins: 777 })
+
+    fireEvent.change(screen.getByLabelText(/Pega aquí un código/i), { target: { value: codigo } })
+    fireEvent.click(screen.getByRole('button', { name: /Revisar código/i }))
+    fireEvent.click(await screen.findByRole('button', { name: /Cargar esta partida/i }))
+
+    await waitFor(() => expect(JSON.parse(localStorage.getItem(SAVE_KEY)).coins).toBe(777))
+
+    fireEvent.click(await screen.findByRole('button', { name: /Deshacer/i }))
+
+    await waitFor(() => expect(JSON.parse(localStorage.getItem(SAVE_KEY)).coins).toBe(3))
+    expect(localStorage.getItem(PRE_IMPORT_KEY)).toBeNull()
+    expect(screen.queryByRole('button', { name: /Deshacer/i })).toBeNull()
   })
 })

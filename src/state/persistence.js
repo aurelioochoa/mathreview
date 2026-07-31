@@ -2,6 +2,12 @@ import { defaultState } from './gameStore'
 
 export const SAVE_KEY = 'mathquest-save-v1'
 export const BACKUP_KEY = 'mathquest-save-v1-backup'
+// Instantánea tomada justo antes de aplicar un código importado. Clave aparte
+// de BACKUP_KEY a propósito: BACKUP_KEY la pisa persistSave() en cada cambio
+// de estado (incluido el que dispara el propio import al desbloquear logros
+// retroactivos), así que no sirve para deshacer un import. Esta sí sobrevive,
+// porque persistSave() no la toca nunca.
+export const PRE_IMPORT_KEY = 'mathquest-save-v1-pre-import'
 
 // Lleva cualquier save reconocido (v1 o v2) al estado v2 completo, rellenando
 // defaults. Devuelve null si no es un objeto reconocible.
@@ -53,5 +59,33 @@ export function persistSave(data) {
   } catch {
     // localStorage lleno (QuotaExceededError) o no disponible (modo privado):
     // la partida sigue viva en memoria.
+  }
+}
+
+// Guarda la partida actual como instantánea de "antes de importar". Se llama
+// justo antes de despachar IMPORT_SAVE, para poder deshacer si el código
+// pegado no era el que el jugador creía.
+export function savePreImportSnapshot(data) {
+  try {
+    localStorage.setItem(PRE_IMPORT_KEY, JSON.stringify(data))
+  } catch {
+    // Igual que persistSave: sin instantánea no hay deshacer, pero el juego
+    // sigue funcionando con lo que haya en memoria.
+  }
+}
+
+// Lee la instantánea previa a importar, ya migrada a la forma actual. null si
+// no hay ninguna (no se ha importado nada, o ya se deshizo).
+export function loadPreImportSnapshot() {
+  return tryParse(localStorage.getItem(PRE_IMPORT_KEY))
+}
+
+// Borra la instantánea tras usarla (o si el jugador decide que ya no la
+// necesita). Sin esto, "Deshacer" seguiría ofreciéndose para siempre.
+export function clearPreImportSnapshot() {
+  try {
+    localStorage.removeItem(PRE_IMPORT_KEY)
+  } catch {
+    // ver savePreImportSnapshot
   }
 }
