@@ -24,7 +24,7 @@
 
 | Capa | Task | Estado |
 |---|---|---|
-| A | 1 · `content/season.js` + test | ⬜ |
+| A | 1 · `content/season.js` + test | ✅ |
 | B | 2 · Widgets del Mundo 1 (`recta-numerica`, `divisores-explorer`, `jerarquia-pasos`) | ⬜ |
 | B | 3 · Contenido del Mundo 1 🏝️ (4 niveles + jefe) | ⬜ |
 | B | 4 · Sidequests del Mundo 1 (2) | ⬜ |
