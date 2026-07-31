@@ -2,12 +2,21 @@ import { useEffect, useRef, useState } from 'react'
 
 const INTERVALO_MS = 250
 
+// Si en este tiempo no se ha encontrado ningún QR, la cámara se apaga sola.
+// 45 s da margen de sobra para apuntar y centrar el código a mano sin dejar
+// la cámara encendida indefinidamente si el jugador se distrae con la
+// tablet abierta.
+const INACTIVIDAD_MS = 45000
+
 const ERRORES = {
   sinApi: 'Este navegador no puede usar la cámara aquí. Prueba con el código o el fichero.',
   permiso: 'No hay permiso para usar la cámara. Actívalo o usa el código o el fichero.',
   sinCamara: 'No se ha encontrado ninguna cámara. Usa el código o el fichero.',
   otro: 'No se ha podido abrir la cámara. Usa el código o el fichero.',
 }
+
+const AVISO_OCULTO = 'Se apagó la cámara porque cambiaste de pantalla. Pulsa "Escanear QR" para volver a intentarlo.'
+const AVISO_INACTIVIDAD = 'Se apagó la cámara porque llevaba un rato sin encontrar ningún código. Pulsa "Escanear QR" para volver a intentarlo.'
 
 function motivoDe(error) {
   if (error?.name === 'NotAllowedError' || error?.name === 'SecurityError') return 'permiso'
@@ -42,11 +51,39 @@ export default function QrScanner({ onCode, onCancel }) {
   const videoRef = useRef(null)
   const canvasRef = useRef(null)
   const [error, setError] = useState(null)
+  // Mensaje de autocierre (inactividad o pestaña oculta), o null si la
+  // cámara sigue encendida. Distinto de `error`: aquí no ha fallado nada, es
+  // el propio escáner el que decide apagarse.
+  const [cerrado, setCerrado] = useState(null)
 
   useEffect(() => {
     let vivo = true
     let stream = null
     let timer = null
+    let inactividad = null
+
+    // Punto único de apagado: para el sondeo, quita el aviso de visibilidad,
+    // suelta la cámara física y desengancha el vídeo. Se usa al desmontar,
+    // al autocerrarse y al encontrar un código -- así ningún camino se deja
+    // la cámara viva por olvido.
+    function detener() {
+      if (timer) { clearInterval(timer); timer = null }
+      if (inactividad) { clearTimeout(inactividad); inactividad = null }
+      document.removeEventListener('visibilitychange', alCambiarVisibilidad)
+      if (stream) { stream.getTracks().forEach(t => t.stop()); stream = null }
+      if (videoRef.current) videoRef.current.srcObject = null
+    }
+
+    function cerrarPor(mensaje) {
+      detener()
+      if (vivo) setCerrado(mensaje)
+    }
+
+    function alCambiarVisibilidad() {
+      // Solo importa que se oculte: al volver a primer plano no se reabre
+      // sola la cámara (el jugador vuelve a pulsar "Escanear QR" si quiere).
+      if (document.hidden) cerrarPor(AVISO_OCULTO)
+    }
 
     async function arrancar() {
       if (!navigator.mediaDevices?.getUserMedia) {
@@ -65,7 +102,10 @@ export default function QrScanner({ onCode, onCancel }) {
       }
 
       const video = videoRef.current
-      if (!video) return
+      if (!video) {
+        stream.getTracks().forEach(t => t.stop())
+        return
+      }
       video.srcObject = stream
       await video.play().catch(() => {})
       if (!vivo) return
@@ -74,11 +114,14 @@ export default function QrScanner({ onCode, onCancel }) {
         ? new window.BarcodeDetector({ formats: ['qr_code'] })
         : null
 
+      document.addEventListener('visibilitychange', alCambiarVisibilidad)
+      inactividad = setTimeout(() => cerrarPor(AVISO_INACTIVIDAD), INACTIVIDAD_MS)
+
       timer = setInterval(async () => {
         if (!vivo || !videoRef.current || !canvasRef.current) return
         const texto = await leerFotograma(videoRef.current, canvasRef.current, detector).catch(() => null)
         if (texto && vivo) {
-          clearInterval(timer)
+          detener()
           onCode(texto)
         }
       }, INTERVALO_MS)
@@ -88,8 +131,7 @@ export default function QrScanner({ onCode, onCancel }) {
 
     return () => {
       vivo = false
-      if (timer) clearInterval(timer)
-      if (stream) stream.getTracks().forEach(t => t.stop())
+      detener()
     }
   }, [onCode])
 
@@ -97,6 +139,8 @@ export default function QrScanner({ onCode, onCancel }) {
     <div className="mt-3">
       {error ? (
         <p role="alert" className="text-sm text-red-600">{error}</p>
+      ) : cerrado ? (
+        <p role="status" className="text-sm text-gray-600">{cerrado}</p>
       ) : (
         <>
           <video ref={videoRef} playsInline muted className="w-full max-w-xs rounded-xl bg-black mx-auto block" />

@@ -1,5 +1,5 @@
 import { describe, it, expect, afterEach, vi } from 'vitest'
-import { render, screen, waitFor } from '@testing-library/react'
+import { render, screen, waitFor, act } from '@testing-library/react'
 import QrScanner from '../components/QrScanner'
 
 // jsdom no trae mediaDevices. Estos tests cubren los caminos de fallo, que son
@@ -89,6 +89,73 @@ describe('QrScanner — desmontaje mientras la cámara sigue arrancando', () => 
       expect(setIntervalSpy).not.toHaveBeenCalled()
     } finally {
       window.HTMLMediaElement.prototype.play = playOriginal
+    }
+  })
+})
+
+describe('QrScanner — la cámara no se queda encendida sola', () => {
+  afterEach(() => {
+    Object.defineProperty(navigator, 'mediaDevices', { value: undefined, configurable: true })
+    Object.defineProperty(document, 'hidden', { value: false, configurable: true })
+  })
+
+  function fingirCamaraLista() {
+    const detener = vi.fn()
+    const stream = { getTracks: () => [{ stop: detener }] }
+    fingirCamara(vi.fn().mockResolvedValue(stream))
+    return { detener }
+  }
+
+  it('si la pestaña deja de estar visible, suelta la cámara y lo dice en pantalla', async () => {
+    const { detener } = fingirCamaraLista()
+    const playOriginal = window.HTMLMediaElement.prototype.play
+    window.HTMLMediaElement.prototype.play = vi.fn().mockResolvedValue(undefined)
+
+    try {
+      const { container } = render(<QrScanner onCode={() => {}} onCancel={() => {}} />)
+
+      // Deja que arrancar() pase getUserMedia + video.play() y registre el
+      // listener de visibilitychange antes de disparar el evento.
+      await waitFor(() => expect(window.HTMLMediaElement.prototype.play).toHaveBeenCalled())
+      await new Promise(resolve => setTimeout(resolve, 0))
+
+      const video = container.querySelector('video')
+      expect(video.srcObject).toBeTruthy()
+
+      Object.defineProperty(document, 'hidden', { value: true, configurable: true })
+      document.dispatchEvent(new Event('visibilitychange'))
+
+      expect(await screen.findByText(/se apagó la cámara.*cambiaste de pantalla/i)).toBeTruthy()
+      expect(detener).toHaveBeenCalled()
+      expect(video.srcObject).toBeNull()
+    } finally {
+      window.HTMLMediaElement.prototype.play = playOriginal
+    }
+  })
+
+  it('si nadie encuentra un código en el plazo de inactividad, se apaga sola y lo dice', async () => {
+    vi.useFakeTimers()
+    const { detener } = fingirCamaraLista()
+    const playOriginal = window.HTMLMediaElement.prototype.play
+    window.HTMLMediaElement.prototype.play = vi.fn().mockResolvedValue(undefined)
+
+    try {
+      render(<QrScanner onCode={() => {}} onCancel={() => {}} />)
+
+      // Con temporizadores falsos, getUserMedia/video.play() (ya resueltos)
+      // solo necesitan que se vacíen los microtasks para que arrancar()
+      // continúe y registre el temporizador de inactividad. act() asegura
+      // que React aplique esos cambios de estado antes de seguir.
+      await act(async () => { await vi.advanceTimersByTimeAsync(0) })
+      // 45 s sin encontrar ningún código (el vídeo de jsdom nunca alcanza
+      // HAVE_ENOUGH_DATA, así que el sondeo nunca "encuentra" nada él solo).
+      await act(async () => { await vi.advanceTimersByTimeAsync(45000) })
+
+      expect(screen.getByText(/se apagó la cámara.*sin encontrar/i)).toBeTruthy()
+      expect(detener).toHaveBeenCalled()
+    } finally {
+      window.HTMLMediaElement.prototype.play = playOriginal
+      vi.useRealTimers()
     }
   })
 })
