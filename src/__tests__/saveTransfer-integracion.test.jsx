@@ -67,4 +67,28 @@ describe('integración: SaveTransfer', () => {
     expect(await screen.findByText(/no parece un código de Math Quest/i)).toBeTruthy()
     expect(screen.queryByRole('button', { name: /Cargar esta partida/i })).toBeNull()
   })
+
+  it('cambiar el código pegado tras revisarlo descarta la partida pendiente', async () => {
+    montar({ xp: 10 })
+    const codigoA = await encodeSave({ ...defaultState(), xp: 9000, coins: 777 })
+
+    fireEvent.change(screen.getByLabelText(/Pega aquí un código/i), { target: { value: codigoA } })
+    fireEvent.click(screen.getByRole('button', { name: /Revisar código/i }))
+    expect(await screen.findByRole('button', { name: /Cargar esta partida/i })).toBeTruthy()
+
+    // El jugador se da cuenta de que pegó el código equivocado y lo cambia,
+    // pero sin volver a pulsar "Revisar código". El resumen y el botón de
+    // confirmar de la partida anterior ya no deben estar en pantalla: no hay
+    // que poder cargar una partida que ya no corresponde al texto visible.
+    fireEvent.change(screen.getByLabelText(/Pega aquí un código/i), { target: { value: 'otro-texto-cualquiera' } })
+
+    expect(screen.queryByRole('button', { name: /Cargar esta partida/i })).toBeNull()
+    expect(screen.queryByText(/777 monedas/)).toBeNull()
+  })
+
+  it('el input de "Abrir fichero" es accesible por teclado, no está oculto con display:none', async () => {
+    montar()
+    const input = await screen.findByLabelText(/Abrir fichero/i)
+    expect(input.className).not.toMatch(/\bhidden\b/)
+  })
 })

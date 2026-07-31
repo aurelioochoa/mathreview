@@ -87,14 +87,22 @@ export default function SaveTransfer() {
         <label htmlFor="codigo-entrada" className="text-xs text-gray-500 block mb-1">Pega aquí un código de otro dispositivo</label>
         <textarea
           id="codigo-entrada" value={pegado} rows={3}
-          onChange={e => setPegado(e.target.value)}
+          onChange={e => {
+            setPegado(e.target.value)
+            // Un código pendiente sin confirmar solo vale para el texto que lo
+            // generó: si el jugador lo cambia sin volver a pulsar "Revisar
+            // código", el resumen y el botón de confirmar quedan obsoletos y
+            // podrían aplicar una partida que ya no coincide con lo que ve.
+            setPendiente(null)
+            setError(null)
+          }}
           className="w-full text-xs font-mono border border-gray-200 rounded-lg p-2 bg-white break-all"
         />
         <div className="flex flex-wrap gap-2 mt-2 items-center">
           <button onClick={() => revisar(pegado)} className={`${boton} bg-primary text-white`}>Revisar código</button>
-          <label className={`${boton} bg-white border border-gray-200 cursor-pointer`}>
+          <label className={`${boton} bg-white border border-gray-200 cursor-pointer focus-within:ring-2 focus-within:ring-primary`}>
             Abrir fichero
-            <input type="file" accept=".mathquest,text/plain" onChange={subir} className="hidden" />
+            <input type="file" accept=".mathquest,text/plain" onChange={subir} className="sr-only" />
           </label>
         </div>
 
