@@ -4,6 +4,7 @@ import { findWorld } from '../content/worlds'
 import { buildBossPool } from './generators'
 import { useGame, XP_PER_CORRECT, COINS_BOSS, XP_BOSS } from '../state/gameStore'
 import { useDeviceTier } from '../three/useDeviceTier'
+import Chest from './Chest'
 
 const Celebration = lazy(() => import('../three/Celebration'))
 const BOSS_QUESTIONS = 8
@@ -25,6 +26,7 @@ function BossArenaView() {
   const [lives, setLives] = useState(BOSS_LIVES)
   const [hits, setHits] = useState(0)           // golpes acertados (vida del jefe)
   const [selected, setSelected] = useState(null)
+  const [cofre, setCofre] = useState(false)   // solo en la primera victoria del mundo
   const { use3D } = useDeviceTier()
 
   const questions = useMemo(
@@ -57,6 +59,9 @@ function BossArenaView() {
     if (qIndex + 1 < questions.length) {
       setQIndex(qIndex + 1)
     } else {
+      // El cofre solo cae la primera vez que se derrota a este jefe: rejugarlo
+      // sigue pagando XP y monedas, pero no es una fuente infinita de cosméticos.
+      setCofre(!state.bossDefeats.includes(world.id))
       dispatch({ type: 'BOSS_DEFEATED', worldId: world.id, coins: COINS_BOSS, xp: XP_BOSS })
       setPhase('victoria')
     }
@@ -147,6 +152,7 @@ function BossArenaView() {
               <div className="h-full bg-red-500 transition-all" style={{ width: '0%' }} />
             </div>
             <p className="text-sm text-gray-500 mb-4">+{XP_BOSS} XP · +{COINS_BOSS} 🪙 · ⭐ Maestría del mundo</p>
+            {cofre && <Chest />}
             <Link to={`/mundo/${world.slug}`} className="px-6 py-3 rounded-xl bg-primary text-white font-display font-bold inline-block">Volver al mundo</Link>
           </div>
         </div>

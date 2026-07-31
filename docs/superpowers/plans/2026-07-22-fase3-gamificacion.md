@@ -22,7 +22,7 @@
 
 ## Progreso (actualizado 2026-07-30)
 
-**10 de 18 tasks completas.** Capas A, B y C cerradas. Suite en verde: 29 archivos, 173 tests.
+**11 de 18 tasks completas.** Capas A, B y C cerradas; Capa D empezada. Suite en verde: 30 archivos, 178 tests.
 
 | Capa | Task | Estado | Commit |
 |---|---|---|---|
@@ -36,7 +36,7 @@
 | C | 8 · Sidequests Mundo 6 🚀 | ✅ | — |
 | C | 9 · Sidequests Mundo 7 ⛰️ | ✅ | — |
 | C | 10 · Sidequests Mundo 8 🎡 + validación de quests | ✅ | — |
-| D | 11 · Cofres (`rollChest` + `Chest` + `shop.js`) | ⬜ | — |
+| D | 11 · Cofres (`rollChest` + `Chest` + `shop.js`) | ✅ | — |
 | D | 12 · Tienda `/tienda` | ⬜ | — |
 | D | 13 · Pistas compradas en reto y jefe | ⬜ | — |
 | E | 14 · Definiciones de logros + `evaluateAchievements` | ⬜ | — |
@@ -45,7 +45,7 @@
 | F | 17 · Perfil `/perfil` + accesos en el HUD | ⬜ | — |
 | — | 18 · Verificación final + cierre en `TODO.md` | ⬜ | — |
 
-> **Siguiente:** Capa D (Tasks 11-13): cofres, tienda y pistas compradas.
+> **Siguiente:** Task 12 (tienda `/tienda`) y Task 13 (pistas compradas).
 
 ---
 
@@ -1288,7 +1288,7 @@ Cada una: `npm test -- mundoN-quests validateContent && npm run build` en verde 
 - Consumes: `SHOP_ITEMS` (catálogo, ver Task 12 — se crea aquí porque el cofre necesita la lista de cosméticos posibles), `state.cosmetics.owned`.
 - Produces: `rollChest(state, rng=Math.random) → { type:'coins'|'hint'|'cosmetic', amount?, id? }` puro. `Chest.jsx` (componente con animación de apertura y `onCollect`).
 
-- [ ] **Step 1: Crear el catálogo mínimo `content/shop.js`** (lo amplía la Task 12)
+- [x] **Step 1: Crear el catálogo mínimo `content/shop.js`** (lo amplía la Task 12)
 ```js
 // Catálogo de la tienda. Cada ítem: { id, slot, label, emoji, price }.
 // slot: 'avatar' | 'frame' | 'title' | 'hint'.
@@ -1311,7 +1311,7 @@ export const SHOP_ITEMS = [
 export const COSMETIC_ITEMS = SHOP_ITEMS.filter(i => i.slot !== 'hint')
 ```
 
-- [ ] **Step 2: Escribir los tests de `rollChest` (fallan)**
+- [x] **Step 2: Escribir los tests de `rollChest` (fallan)**
 
 Create `src/engine/__tests__/chests.test.js`:
 ```js
@@ -1343,12 +1343,12 @@ describe('rollChest', () => {
 })
 ```
 
-- [ ] **Step 3: Ejecutar — falla**
+- [x] **Step 3: Ejecutar — falla**
 
 Run: `npm test -- chests`
 Expected: FAIL (`rollChest` no existe).
 
-- [ ] **Step 4: Implementar `src/engine/chests.js`**
+- [x] **Step 4: Implementar `src/engine/chests.js`**
 ```js
 import { COSMETIC_ITEMS } from '../content/shop'
 
@@ -1374,7 +1374,7 @@ export function rollChest(state, rng = Math.random) {
 }
 ```
 
-- [ ] **Step 5: Implementar `src/engine/Chest.jsx`**
+- [x] **Step 5: Implementar `src/engine/Chest.jsx`**
 ```jsx
 import { useState } from 'react'
 import { useGame } from '../state/gameStore'
@@ -1415,7 +1415,7 @@ export default function Chest({ onDone }) {
 }
 ```
 
-- [ ] **Step 6: Enganchar el cofre en `LevelPlayer` (primer completado) y `BossArena` (victoria)**
+- [x] **Step 6: Enganchar el cofre en `LevelPlayer` (primer completado) y `BossArena` (victoria)**
 
 En `LevelPlayer.jsx`, en la fase `completado`, mostrar `<Chest />` **solo si fue primer completado** — calcularlo antes de despachar: en `nextQuestion`, `const primeraVez = state.stars[levelKey] === undefined` y guardarlo en `setResult({ stars, coins, primeraVez })`. Importar `Chest` y renderizar dentro del bloque `phase === 'completado'`:
 ```jsx
@@ -1423,11 +1423,11 @@ En `LevelPlayer.jsx`, en la fase `completado`, mostrar `<Chest />` **solo si fue
 ```
 En `BossArena.jsx`, en la fase `victoria`, renderizar `<Chest />` (importado) bajo el texto de recompensas.
 
-- [ ] **Step 7: Ejecutar — pasa; build**
+- [x] **Step 7: Ejecutar — pasa; build**
 
 Run: `npm test -- chests` → PASS. `npm run build`.
 
-- [ ] **Step 8: Commit**
+- [x] **Step 8: Commit**
 ```bash
 git add src/engine/chests.js src/engine/Chest.jsx src/content/shop.js src/engine/LevelPlayer.jsx src/engine/BossArena.jsx src/engine/__tests__/chests.test.js
 git commit -m "feat: cofres sorpresa (rollChest + Chest) en niveles y jefes"

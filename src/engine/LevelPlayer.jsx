@@ -7,6 +7,7 @@ import { useGame, XP_PER_CORRECT, XP_LEVEL_COMPLETE, coinsForCompletion } from '
 import WhySection from '../components/WhySection'
 import CommonMistakes from '../components/CommonMistakes'
 import InteractiveBox from '../components/InteractiveBox'
+import Chest from './Chest'
 import { useDeviceTier } from '../three/useDeviceTier'
 
 const Celebration = lazy(() => import('../three/Celebration'))
@@ -82,8 +83,10 @@ function LevelPlayerView() {
       const ratio = firstTryHits / questions.length
       const stars = ratio >= 1 ? 3 : ratio >= 0.66 ? 2 : 1
       const coins = coinsForCompletion(state.stars[levelKey], stars)
+      // Se calcula antes del dispatch: después, stars[levelKey] ya existe.
+      const primeraVez = state.stars[levelKey] === undefined
       dispatch({ type: 'LEVEL_COMPLETED', levelKey, stars, xp: XP_LEVEL_COMPLETE })
-      setResult({ stars, coins })
+      setResult({ stars, coins, primeraVez })
       setPhase('completado')
     }
   }
@@ -167,6 +170,7 @@ function LevelPlayerView() {
             <h2 className="font-display text-xl font-bold mb-1">¡Nivel superado!</h2>
             <p className="text-2xl my-2">{'⭐'.repeat(result?.stars ?? 1)}</p>
             <p className="text-sm text-gray-500 mb-4">+{XP_LEVEL_COMPLETE} XP · +{result?.coins ?? 0} 🪙</p>
+            {result?.primeraVez && <Chest />}
             <Link to={`/mundo/${world.slug}`} className="px-6 py-3 rounded-xl bg-primary text-white font-display font-bold inline-block">Volver al mundo</Link>
           </div>
         </div>
