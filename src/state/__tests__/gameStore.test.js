@@ -126,3 +126,16 @@ describe('acciones nuevas del reducer', () => {
     expect(s2.achievements).toEqual(['sin-dano', 'speedrunner'])
   })
 })
+
+describe('IMPORT_SAVE', () => {
+  it('sustituye el estado entero por la partida importada', () => {
+    const entrante = { ...defaultState(), xp: 999, coins: 42, hints: 7 }
+    const previo = { ...defaultState(), xp: 10 }
+    expect(gameReducer(previo, { type: 'IMPORT_SAVE', save: entrante })).toEqual(entrante)
+  })
+
+  it('sin partida no toca nada', () => {
+    const previo = { ...defaultState(), xp: 10 }
+    expect(gameReducer(previo, { type: 'IMPORT_SAVE' })).toBe(previo)
+  })
+})
