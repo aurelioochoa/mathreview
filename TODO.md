@@ -17,9 +17,8 @@ Hoja de ruta por fases. Lo pendiente va arriba; el historial, al final.
 
 # 🔴 En curso — Fase 3: Gamificación completa (→ MVP jugable)
 
-## Capa C — Sidequests (3 de 6 mundos)
+## Capa C — Sidequests (4 de 6 mundos)
 
-- [ ] **Task 8** — Mundo 6 🚀 Estación de Funciones (2 quests: pendiente/ordenada, vértice de parábola)
 - [ ] **Task 9** — Mundo 7 ⛰️ Montañas de Geometría (2 quests: Pitágoras, trigonometría 30/60, cilindro)
 - [ ] **Task 10** — Mundo 8 🎡 Feria de Datos (3 quests: media/mediana, conteo, probabilidad) + extender `validateContent` para exigir ≥1 sidequest por mundo
 
@@ -44,7 +43,7 @@ Hoja de ruta por fases. Lo pendiente va arriba; el historial, al final.
 
 - [x] **Capa A** — estado v2 (jefes, quests, logros, cosméticos, pistas, racha) + migración de guardado v1 → v2 + economía por estrellas nuevas (`coinsForCompletion`)
 - [x] **Capa B** — `buildBossPool`, campo `boss` en los 6 mundos + validación, `BossArena` con barra de vida, acceso al jefe y ⭐ de maestría en `WorldView`
-- [x] **Capa C (parcial)** — `QuestPlayer` + esquema/índice de quests + sidequests bespoke de los Mundos 3 🌋, 4 🏰 y 5 🌀
+- [x] **Capa C (parcial)** — `QuestPlayer` + esquema/índice de quests + sidequests bespoke de los Mundos 3 🌋, 4 🏰, 5 🌀 y 6 🚀
 
 ---
 
