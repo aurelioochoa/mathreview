@@ -7,27 +7,18 @@ Hoja de ruta por fases. Lo pendiente va arriba; el historial, al final.
 
 ## Estado — 2026-07-31
 
-- **Rama:** `main` — Fases 3 y 4 mergeadas y publicadas (`a8cdf23`, `c663dda`).
-- **Suite:** `npm test` → 41 archivos, 249 tests en verde; `build` y `lint` limpios.
+- **Rama:** `feat/fase5-pulido` (Fase 4 ya mergeada en `main` y publicada).
+- **Suite:** `npm test` → 46 archivos, 285 tests en verde; `build` y `lint` limpios.
 - **🎮 Escalera 8-15 años completa.** Los 8 mundos son jugables, con desbloqueo secuencial por jefe y portal de teletransporte para saltárselo. Cada mundo: niveles, jefe y sidequests; más cofres, tienda, pistas, logros, racha y perfil, sobre mapa 3D con fallback 2D y guardado v3 con migración.
-- **Fase 4 completa** (12/12 tasks). **Siguiente:** Fase 5 — pulido.
-
----
-
-# 🔴 En curso — Fase 5: Pulido
-
-Spec: [Fase 5](docs/superpowers/specs/2026-07-31-fase5-pulido-design.md) · Plan: [Fase 5](docs/superpowers/plans/2026-07-31-fase5-pulido.md) — 9 tasks.
-
-- [ ] Celebración con variante: `nivel` / `jefe` / `logro` sobre el `Celebration` que ya existe
-- [ ] Traspaso de partida por código, fichero y QR (gzip + checksum FNV-1a)
-- [ ] CI en GitHub Actions: lint + tests + build sobre Node 20
-
-**Aplazado** — lazy loading. Al medirlo, el peso no estaba en los mundos sino en `StudyView`, que importa los seis `Bloque*.jsx` y con ellos `mafs` y `recharts`. Se hará cuando entren más funciones 3D y el arranque importe de verdad. Línea base para entonces: `index.js` 1 321 KB (385 KB gzip), con `react-three-fiber` (860 KB) ya fuera.
+- **Pulido de Fase 5:** celebración propia por tipo de victoria (nivel, jefe, logro), traspaso de partida entre dispositivos por código, fichero `.mathquest` o QR, y CI en GitHub Actions (lint + tests + build) en cada push y PR.
+- **Fase 5 completa** (9/9 tasks). Sin fase siguiente definida todavía — ver «Deuda y cabos sueltos» e «Ideas futuras».
 
 ---
 
 # Deuda y cabos sueltos
 
+- [ ] Lazy loading por mundo/funciones 3D — aplazado en Fase 5 (era el cuarto punto del plan). Al medirlo, el peso no estaba en los mundos sino en `StudyView`, que importa los seis `Bloque*.jsx` y con ellos `mafs` y `recharts`. Se hará cuando entren más funciones 3D y el arranque importe de verdad. Línea base: `index.js` 1 321 KB (385 KB gzip) antes de Fase 5, con `react-three-fiber` (860 KB) ya fuera.
+- [ ] Verificación e2e interactiva en navegador de las funciones nuevas de Fase 5 — no se pudo comprobar a mano en esta sesión (sin navegador disponible). Pendiente: código/QR/fichero en `/perfil` (copiar, descargar, escanear, resumen de confirmación, código corrupto), corona al derrotar a un jefe y medalla en el aviso de logro.
 - [x] ~~Verificación e2e interactiva en navegador~~ — hecha el 2026-07-31 al cerrar Fase 4, arrastrada desde Fase 1. Destapó tres bugs que ningún test veía: el bono de racha cobrado dos veces con StrictMode, el gate entre mundos ausente en el mapa 3D, y un logro mal nombrado. Incluyó cargar un guardado v2 real: migra a v3 sin perder nada y el grandfathering deja abiertos justo los mundos que ya se jugaban.
 - [x] ~~README desactualizado~~ — actualizado el 2026-07-30 y el 2026-07-31.
 - [ ] ⚠️ **Rotar el token del túnel de Cloudflare** en el dashboard — vivió en texto plano en `docker-compose.yml` antes de moverse a `.env`.
@@ -73,3 +64,9 @@ Desviaciones conscientes del plan, todas anotadas en sus commits: el cofre del j
 Tono 8-11 años, nuevo en el proyecto: frases cortas, sin incógnitas ni exponentes, divisiones exactas y referencias infantiles. Hay tests que lo vigilan, no solo la convención: ningún enunciado usa notación algebraica y las cantidades de porcentajes son siempre enteras (antes salía "9.6 cromos").
 
 El gating fue la parte delicada, porque cambia las reglas con partidas ya en marcha. Se resolvió por regla y no migrando datos: un mundo también está abierto si el jugador ya tiene progreso en él, así que nadie se encontró una puerta nueva. Los mundos 1-2 no tienen modo estudio (no vienen de ningún Bloque) y el enlace se oculta.
+
+## Fase 5 — Pulido ✅ (2026-07-31)
+
+9 tasks. **Traspaso de partida:** `state/saveCode.js` codifica la partida en un código `MQ1.<base64url(gzip(JSON))>` con checksum FNV-1a de segunda red; `migrate` pasó a exportarse desde `persistence.js` para que un código de hoy siga entrando dentro de un año. Acción `IMPORT_SAVE` en el reducer, que sustituye el estado entero sin revalidar (de eso ya se encarga `decodeSave`). Sección «Partida» en `/perfil` (`SaveTransfer.jsx`): código copiable y fichero `.mathquest`, con pantalla de confirmación que resume la partida antes de reemplazarla. `QrPanel.jsx` pinta la partida como QR y `QrScanner.jsx` la lee con `BarcodeDetector` nativo (jsQR de reserva); ambos en su propio chunk, cargado bajo demanda. **Celebraciones:** `three/celebrationVariants.js` + prop `variant` en `Celebration` — `nivel` (trofeo, igual que antes), `jefe` (corona) y `logro` (medalla) — y el aviso de logro desbloqueado ya luce su celebración de fondo, bajo la verja `use3D`. **CI:** `.github/workflows/ci.yml` corre lint + tests + build en Node 20 en cada push a `main` y cada pull request, a juego con el `Dockerfile`.
+
+Desviaciones conscientes del plan: el lazy loading por mundo, cuarto punto del plan original de la fase, se aplazó — al medirlo, el peso no estaba en los mundos sino en `StudyView`, que importa los seis `Bloque*.jsx` y con ellos `mafs` y `recharts` (queda en «Deuda y cabos sueltos»). El tope de capacidad de un QR se corrigió de 2953 a 2331 bytes al escribir el plan: 2953 es el nivel de corrección de errores L, y `qrcode` usa M por defecto, que además aguanta mejor el escaneo desde una pantalla. Y el checksum FNV-1a no acabó siendo el detector primario que el spec pintaba — el gzip ya lleva CRC32, así que un código mal copiado revienta al descomprimir y nunca llega al checksum; por eso el fallo de descompresión se reporta como `corrupto` y no como `formato`, y el FNV quedó como segunda red.
