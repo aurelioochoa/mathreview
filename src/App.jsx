@@ -8,6 +8,7 @@ import BossArena from './engine/BossArena'
 import QuestPlayer from './engine/QuestPlayer'
 import Shop from './pages/Shop'
 import Achievements from './pages/Achievements'
+import Profile from './pages/Profile'
 import NotFound from './components/NotFound'
 import { blockRoutes } from './content/worldMap'
 
@@ -23,6 +24,7 @@ export default function App() {
         <Route path="/mundo/:slug/quest/:questId" element={<QuestPlayer />} />
         <Route path="/tienda" element={<Shop />} />
         <Route path="/logros" element={<Achievements />} />
+        <Route path="/perfil" element={<Profile />} />
         {blockRoutes.map(b => (
           <Route key={b.path} path={b.path} element={<Navigate to={`/mundo/${b.slug}`} replace />} />
         ))}

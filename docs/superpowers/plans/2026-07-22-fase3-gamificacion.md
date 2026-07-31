@@ -1972,7 +1972,7 @@ git commit -m "feat: racha diaria (streak + bono) con indicador 🔥 en el HUD"
 - Consumes: `useGame`, `hudStats`, `SHOP_ITEMS`/`COSMETIC_ITEMS`, `ACHIEVEMENTS`, `worlds`, acción `EQUIP_COSMETIC`, `titleForLevel`/`levelForXp`.
 - Produces: página `Profile` (ruta `/perfil`).
 
-- [ ] **Step 1: Test de integración (falla)**
+- [x] **Step 1: Test de integración (falla)**
 
 Create `src/__tests__/profile-integracion.test.jsx`:
 ```jsx
@@ -1991,9 +1991,9 @@ describe('integración: Profile', () => {
 })
 ```
 
-- [ ] **Step 2: Ejecutar — falla.** Run: `npm test -- profile` → FAIL.
+- [x] **Step 2: Ejecutar — falla.** Run: `npm test -- profile` → FAIL.
 
-- [ ] **Step 3: Implementar `src/pages/Profile.jsx`**
+- [x] **Step 3: Implementar `src/pages/Profile.jsx`**
 ```jsx
 import { useGame } from '../state/gameStore'
 import { hudStats } from '../state/hudStats'
@@ -2068,7 +2068,7 @@ export default function Profile() {
 }
 ```
 
-- [ ] **Step 4: Ruta + accesos en el HUD**
+- [x] **Step 4: Ruta + accesos en el HUD**
 
 En `App.jsx`: `import Profile from './pages/Profile'` + `<Route path="/perfil" element={<Profile />} />`.
 En `src/components/Hud.jsx`, añadir enlaces con iconos (usar `lucide-react`, ya dependencia; p. ej. `User`, `ShoppingBag`, `Award`) a `/perfil`, `/tienda`, `/logros` en el extremo derecho del HUD, con `shrink-0`:
@@ -2081,9 +2081,9 @@ En `src/components/Hud.jsx`, añadir enlaces con iconos (usar `lucide-react`, ya
 ```
 (añadir los imports de iconos a la línea de `lucide-react` existente.)
 
-- [ ] **Step 5: Ejecutar — pasa; build.** `npm test -- profile` → PASS. `npm run build`.
+- [x] **Step 5: Ejecutar — pasa; build.** `npm test -- profile` → PASS. `npm run build`.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 ```bash
 git add src/pages/Profile.jsx src/App.jsx src/components/Hud.jsx src/__tests__/profile-integracion.test.jsx
 git commit -m "feat: perfil /perfil (equipar cosméticos + stats) y accesos en el HUD"
