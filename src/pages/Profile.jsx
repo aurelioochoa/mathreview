@@ -4,6 +4,7 @@ import { titleForLevel } from '../state/xpCurve'
 import { COSMETIC_ITEMS, findItem } from '../content/shop'
 import { ACHIEVEMENTS } from '../content/achievements'
 import { worlds } from '../content/worlds'
+import SaveTransfer from '../components/SaveTransfer'
 
 const emojiDe = (id) => findItem(id)?.emoji ?? '🙂'
 
@@ -75,6 +76,8 @@ export default function Profile() {
       <Selector slot="avatar" label="Avatar" equipped={state.cosmetics.avatar} owned={owned} onEquip={onEquip} />
       <Selector slot="frame" label="Marco" allowAuto equipped={state.cosmetics.frame} owned={owned} onEquip={onEquip} />
       <Selector slot="title" label="Título" allowAuto equipped={state.cosmetics.title} owned={owned} onEquip={onEquip} />
+
+      <SaveTransfer />
     </div>
   )
 }
