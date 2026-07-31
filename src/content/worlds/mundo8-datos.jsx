@@ -134,6 +134,7 @@ export const mundo8 = {
   id: 'mundo8', slug: 'feria-datos', name: 'Feria de Datos',
   emoji: '🎡', color: 'bg-bloque6',
   description: 'Estadística, percentiles, conteo, permutaciones, combinaciones y probabilidad',
+  boss: { name: 'El Croupier del Azar', emoji: '🎩', intro: 'En la feria, el Croupier apuesta a que fallas una probabilidad. Demuéstrale que no.' },
   levels: [
     {
       id: 'estadistica', title: 'Media, Mediana y Moda', icon: '📊',

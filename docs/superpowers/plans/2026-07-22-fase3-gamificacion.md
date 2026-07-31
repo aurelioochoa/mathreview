@@ -20,6 +20,33 @@
 - Spec de referencia: `docs/superpowers/specs/2026-07-22-fase3-gamificacion-design.md`.
 - **Economía (regla acordada):** al completar un nivel, monedas = `(estrellas_nuevas − mejor_previa)×COINS_PER_STAR` si es positivo, más `BASE_FIRST_CLEAR` solo la primera vez. Rejugar sin mejorar la marca paga 0. Jefes/quests/cofres son las fuentes principales.
 
+## Progreso (actualizado 2026-07-30)
+
+**18 de 18 tasks completas — plan ejecutado y cerrado ✅ (2026-07-30).** Suite en verde: 35 archivos, 209 tests; `build` y `lint` limpios.
+
+| Capa | Task | Estado | Commit |
+|---|---|---|---|
+| A | 1 · Estado v2 + economía por estrellas nuevas | ✅ | `555b31e` |
+| A | 2 · Migración de guardado v1 → v2 | ✅ | `8d4a777` |
+| B | 3 · `buildBossPool` + campo `boss` + validación | ✅ | `57be2dc` |
+| B | 4 · `BossArena` + ruta + maestría en `WorldView` | ✅ | `8d46668` (+ fix `d479404`) |
+| C | 5 · `QuestPlayer` + índice + sidequests Mundo 3 | ✅ | `feee1f9` (+ fix `fa0fe98`) |
+| C | 6 · Sidequests Mundo 4 🏰 | ✅ | `6c96add` |
+| C | 7 · Sidequests Mundo 5 🌀 | ✅ | `eb95248` |
+| C | 8 · Sidequests Mundo 6 🚀 | ✅ | — |
+| C | 9 · Sidequests Mundo 7 ⛰️ | ✅ | — |
+| C | 10 · Sidequests Mundo 8 🎡 + validación de quests | ✅ | — |
+| D | 11 · Cofres (`rollChest` + `Chest` + `shop.js`) | ✅ | — |
+| D | 12 · Tienda `/tienda` | ✅ | — |
+| D | 13 · Pistas compradas en reto y jefe | ✅ | — |
+| E | 14 · Definiciones de logros + `evaluateAchievements` | ✅ | — |
+| E | 15 · Toast + wiring en `GameProvider` + `/logros` | ✅ | — |
+| F | 16 · Racha diaria + 🔥 en el HUD | ✅ | — |
+| F | 17 · Perfil `/perfil` + accesos en el HUD | ✅ | — |
+| — | 18 · Verificación final + cierre en `TODO.md` | ✅ | — |
+
+> **Fase 3 cerrada.** Lo siguiente es la Fase 4 (contenido nuevo: Mundos 1 y 2). Ver `TODO.md`.
+
 ---
 
 # CAPA A — Base de estado (v2 + migración + economía)
@@ -41,7 +68,7 @@
   - `gameReducer(state, action)` con las acciones nuevas: `BOSS_DEFEATED`, `QUEST_COMPLETED`, `OPEN_CHEST`, `BUY_ITEM`, `EQUIP_COSMETIC`, `USE_HINT`, `TICK_STREAK`, `UNLOCK_ACHIEVEMENTS` (más `ANSWER_CORRECT`, `LEVEL_COMPLETED` existentes).
 - Consumes: nada nuevo.
 
-- [ ] **Step 1: Escribir los tests que fallan (economía nueva + acciones nuevas)**
+- [x] **Step 1: Escribir los tests que fallan (economía nueva + acciones nuevas)**
 
 Reemplazar el contenido de `src/state/__tests__/gameStore.test.js` por:
 ```js
@@ -157,12 +184,12 @@ describe('acciones nuevas del reducer', () => {
 })
 ```
 
-- [ ] **Step 2: Ejecutar para ver que falla**
+- [x] **Step 2: Ejecutar para ver que falla**
 
 Run: `npm test -- gameStore`
 Expected: FAIL (`defaultState`/`coinsForCompletion` no existen; economía nueva no implementada).
 
-- [ ] **Step 3: Reescribir `src/state/gameStore.js`**
+- [x] **Step 3: Reescribir `src/state/gameStore.js`**
 
 ```js
 import { createContext, useContext } from 'react'
@@ -299,7 +326,7 @@ export function useGame() {
 }
 ```
 
-- [ ] **Step 4: Actualizar `LevelPlayer.jsx` para mostrar las monedas reales**
+- [x] **Step 4: Actualizar `LevelPlayer.jsx` para mostrar las monedas reales**
 
 En `src/engine/LevelPlayer.jsx`, importar el helper y usarlo para el display (el reducer recalcula lo mismo; se pasa `previa` desde el estado actual). Reemplazar el bloque `nextQuestion` (L76-89) por:
 ```jsx
@@ -328,7 +355,7 @@ Y en `LevelPlayerView` obtener `state` del hook (L34):
 ```
 (La línea 169 que muestra `+{result?.coins ?? 0} 🪙` ya funciona con el nuevo `result.coins`. `COINS_PER_STAR` deja de importarse si no se usa en otro sitio del archivo — quitarlo del import si ESLint marca no-usado.)
 
-- [ ] **Step 5: Arreglar la aserción de monedas en los 6 tests de integración**
+- [x] **Step 5: Arreglar la aserción de monedas en los 6 tests de integración**
 
 En cada `src/__tests__/mundo{3,4,5,6,7,8}-integracion.test.jsx`, línea 74, reemplazar:
 ```js
@@ -340,12 +367,12 @@ por:
 ```
 (Las líneas 67/81/84 que pasan `coins: 30/10` son ahora ignoradas por el reducer; se pueden dejar. El test de "rejugar peor" sigue verde porque no asertaba monedas.)
 
-- [ ] **Step 6: Ejecutar toda la suite — pasa**
+- [x] **Step 6: Ejecutar toda la suite — pasa**
 
 Run: `npm test`
 Expected: PASS (gameStore nuevos + integración con 45 + resto sin cambios).
 
-- [ ] **Step 7: Commit**
+- [x] **Step 7: Commit**
 ```bash
 git add src/state/gameStore.js src/state/__tests__/gameStore.test.js src/engine/LevelPlayer.jsx src/__tests__/mundo*-integracion.test.jsx
 git commit -m "feat: estado v2 del juego + regla de monedas por estrellas nuevas"
@@ -363,7 +390,7 @@ git commit -m "feat: estado v2 del juego + regla de monedas por estrellas nuevas
 - Consumes: `defaultState` (gameStore).
 - Produces: `loadSave()` acepta saves v1 (migrando a v2) y v2 (completando defaults ausentes); `persistSave` sin cambios de contrato. Migración interna `migrate(data) → stateV2 | null`.
 
-- [ ] **Step 1: Escribir los tests de migración (fallan)**
+- [x] **Step 1: Escribir los tests de migración (fallan)**
 
 Añadir a `src/state/__tests__/persistence.test.js` (nuevo `describe`, sin borrar lo existente). Importar lo necesario arriba: `import { defaultState } from '../gameStore'`.
 ```js
@@ -404,12 +431,12 @@ describe('migración v1 → v2', () => {
 ```
 (Asegurar que `loadSave`, `persistSave` ya están importados en el archivo; si no, añadir `beforeEach` import de vitest.)
 
-- [ ] **Step 2: Ejecutar — falla**
+- [x] **Step 2: Ejecutar — falla**
 
 Run: `npm test -- persistence`
 Expected: FAIL (v1 devuelve version 1, sin campos nuevos).
 
-- [ ] **Step 3: Reescribir `src/state/persistence.js`**
+- [x] **Step 3: Reescribir `src/state/persistence.js`**
 ```js
 import { defaultState } from './gameStore'
 
@@ -468,12 +495,12 @@ export function persistSave(data) {
 }
 ```
 
-- [ ] **Step 4: Ejecutar — pasa**
+- [x] **Step 4: Ejecutar — pasa**
 
 Run: `npm test -- persistence`
 Expected: PASS (migración + tests existentes).
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 ```bash
 git add src/state/persistence.js src/state/__tests__/persistence.test.js
 git commit -m "feat: migración de guardado v1 → v2 (rellena campos de gamificación)"
@@ -496,7 +523,7 @@ git commit -m "feat: migración de guardado v1 → v2 (rellena campos de gamific
 - Consumes: `buildReto` (generators), `worlds`.
 - Produces: `buildBossPool(world, pick, rng=Math.random) → question[]` (aplana `reto.factories` de todos los niveles del mundo y baraja `pick`). Cada `world.boss = { name, emoji, intro }`.
 
-- [ ] **Step 1: Escribir el test de `buildBossPool` (falla)**
+- [x] **Step 1: Escribir el test de `buildBossPool` (falla)**
 
 Añadir a `src/engine/__tests__/generators.test.js`:
 ```js
@@ -524,12 +551,12 @@ describe('buildBossPool', () => {
 })
 ```
 
-- [ ] **Step 2: Ejecutar — falla**
+- [x] **Step 2: Ejecutar — falla**
 
 Run: `npm test -- generators`
 Expected: FAIL (`buildBossPool` no existe).
 
-- [ ] **Step 3: Implementar `buildBossPool`**
+- [x] **Step 3: Implementar `buildBossPool`**
 
 Añadir al final de `src/engine/generators.js`:
 ```js
@@ -541,7 +568,7 @@ export function buildBossPool(world, pick, rng = Math.random) {
 }
 ```
 
-- [ ] **Step 4: Añadir el campo `boss` a cada mundo**
+- [x] **Step 4: Añadir el campo `boss` a cada mundo**
 
 En cada archivo de mundo, añadir la propiedad `boss` al objeto exportado (junto a `description`, antes de `levels`). Valores (español, tono acorde a cada mundo):
 - `mundo3-potencias.jsx`: `boss: { name: 'Ígneo, Señor del Magma', emoji: '🐲', intro: 'El volcán ruge: Ígneo pondrá a prueba todo lo que aprendiste sobre potencias y raíces.' },`
@@ -551,7 +578,7 @@ En cada archivo de mundo, añadir la propiedad `boss` al objeto exportado (junto
 - `mundo7-geometria.jsx`: `boss: { name: 'El Coloso de la Cima', emoji: '🗿', intro: 'En la cumbre, el Coloso mide cada ángulo y cada lado de tu conocimiento.' },`
 - `mundo8-datos.jsx`: `boss: { name: 'El Croupier del Azar', emoji: '🎩', intro: 'En la feria, el Croupier apuesta a que fallas una probabilidad. Demuéstrale que no.' },`
 
-- [ ] **Step 5: Extender `validateContent` para exigir `boss`**
+- [x] **Step 5: Extender `validateContent` para exigir `boss`**
 
 En `src/content/validateContent.js`, dentro del bucle `for (const w of worlds)`, tras validar `w.slug` (antes del bucle de niveles), añadir:
 ```js
@@ -559,12 +586,12 @@ En `src/content/validateContent.js`, dentro del bucle `for (const w of worlds)`,
       problems.push(`mundo ${w.id}: falta boss bien formado { name, emoji, intro }`)
 ```
 
-- [ ] **Step 6: Ejecutar — pasa**
+- [x] **Step 6: Ejecutar — pasa**
 
 Run: `npm test -- generators validateContent`
 Expected: PASS (buildBossPool verde; validación real vacía con los 6 bosses).
 
-- [ ] **Step 7: Commit**
+- [x] **Step 7: Commit**
 ```bash
 git add src/engine/generators.js src/engine/__tests__/generators.test.js src/content/worlds/ src/content/validateContent.js
 git commit -m "feat: jefes en los 6 mundos (campo boss) + buildBossPool + validación"
@@ -584,7 +611,7 @@ git commit -m "feat: jefes en los 6 mundos (campo boss) + buildBossPool + valida
 - Consumes: `findWorld`, `buildBossPool`, `useGame`, constantes `COINS_BOSS`/`XP_BOSS`, `useDeviceTier`, `Celebration` (lazy).
 - Produces: componente `BossArena` (ruta `/mundo/:slug/jefe`). Al ganar: `dispatch({ type: 'BOSS_DEFEATED', worldId, coins: COINS_BOSS, xp: XP_BOSS })` y (Capa D) un cofre.
 
-- [ ] **Step 1: Escribir el test de integración (falla)**
+- [x] **Step 1: Escribir el test de integración (falla)**
 
 Create `src/__tests__/bossArena-integracion.test.jsx`:
 ```jsx
@@ -617,12 +644,12 @@ describe('integración: BossArena', () => {
 })
 ```
 
-- [ ] **Step 2: Ejecutar — falla**
+- [x] **Step 2: Ejecutar — falla**
 
 Run: `npm test -- bossArena`
 Expected: FAIL (`BossArena` no existe).
 
-- [ ] **Step 3: Implementar `src/engine/BossArena.jsx`**
+- [x] **Step 3: Implementar `src/engine/BossArena.jsx`**
 ```jsx
 import { lazy, Suspense, useMemo, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
@@ -777,14 +804,14 @@ function BossArenaView() {
 ```
 > Nota: el cofre por derrotar al jefe se engancha en la **Capa D** (Task 11). Aquí basta con `BOSS_DEFEATED`.
 
-- [ ] **Step 4: Añadir la ruta en `App.jsx`**
+- [x] **Step 4: Añadir la ruta en `App.jsx`**
 
 En `src/App.jsx`, importar `import BossArena from './engine/BossArena'` y añadir dentro de `<Route element={<Layout />}>`:
 ```jsx
         <Route path="/mundo/:slug/jefe" element={<BossArena />} />
 ```
 
-- [ ] **Step 5: Acceso al jefe + estrella de maestría en `WorldView`**
+- [x] **Step 5: Acceso al jefe + estrella de maestría en `WorldView`**
 
 En `src/engine/WorldView.jsx`, tras el `<div className="space-y-3">…</div>` de niveles (antes del cierre del contenedor), añadir la sección de jefe. Calcular `allDone` y `mastered` con el estado:
 ```jsx
@@ -814,12 +841,12 @@ En `src/engine/WorldView.jsx`, tras el `<div className="space-y-3">…</div>` de
 ```
 Y en la cabecera de estrellas del mundo (opcional pero recomendado), mostrar la ⭐ de maestría junto al título si `mastered`.
 
-- [ ] **Step 6: Ejecutar — pasa**
+- [x] **Step 6: Ejecutar — pasa**
 
 Run: `npm test -- bossArena`
 Expected: PASS. Luego `npm run build` sin errores.
 
-- [ ] **Step 7: Commit**
+- [x] **Step 7: Commit**
 ```bash
 git add src/engine/BossArena.jsx src/App.jsx src/engine/WorldView.jsx src/__tests__/bossArena-integracion.test.jsx
 git commit -m "feat: BossArena (jefes con barra de vida) + acceso y maestría en WorldView"
@@ -845,7 +872,7 @@ git commit -m "feat: BossArena (jefes con barra de vida) + acceso y maestría en
   - `questsForWorld(worldId) → quest[]`, `findQuest(worldId, questId) → quest | null` (quests/index.js).
   - `QuestPlayer` (ruta `/mundo/:slug/quest/:questId`). Al terminar: `dispatch({ type: 'QUEST_COMPLETED', questKey: 'mundoN/<id>', coins: COINS_QUEST, xp: XP_QUEST })`.
 
-- [ ] **Step 1: Escribir los tests de fábricas y de integración (fallan)**
+- [x] **Step 1: Escribir los tests de fábricas y de integración (fallan)**
 
 Create `src/content/quests/__tests__/mundo3-quests.test.js`:
 ```js
@@ -903,12 +930,12 @@ describe('integración: QuestPlayer', () => {
 })
 ```
 
-- [ ] **Step 2: Ejecutar — falla**
+- [x] **Step 2: Ejecutar — falla**
 
 Run: `npm test -- mundo3-quests questPlayer`
 Expected: FAIL (módulos no existen).
 
-- [ ] **Step 3: Escribir las sidequests del Mundo 3 (bespoke)**
+- [x] **Step 3: Escribir las sidequests del Mundo 3 (bespoke)**
 
 Create `src/content/quests/mundo3-quests.jsx`. Fábricas bespoke con narrativa gamer (temas del Volcán: aproximación, potencias, notación científica, radicales). **Contenido completo:**
 ```jsx
@@ -992,7 +1019,7 @@ export const mundo3Quests = [
 ]
 ```
 
-- [ ] **Step 4: Crear el índice de quests**
+- [x] **Step 4: Crear el índice de quests**
 
 Create `src/content/quests/index.js`:
 ```js
@@ -1012,7 +1039,7 @@ export function findQuest(worldId, questId) {
 }
 ```
 
-- [ ] **Step 5: Implementar `src/engine/QuestPlayer.jsx`**
+- [x] **Step 5: Implementar `src/engine/QuestPlayer.jsx`**
 ```jsx
 import { useMemo, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
@@ -1118,7 +1145,7 @@ function QuestPlayerView() {
 }
 ```
 
-- [ ] **Step 6: Ruta + acceso en `WorldView`**
+- [x] **Step 6: Ruta + acceso en `WorldView`**
 
 En `src/App.jsx`: `import QuestPlayer from './engine/QuestPlayer'` y
 ```jsx
@@ -1146,11 +1173,11 @@ En `src/engine/WorldView.jsx`, importar `import { questsForWorld } from '../cont
       )}
 ```
 
-- [ ] **Step 7: Ejecutar — pasa; build**
+- [x] **Step 7: Ejecutar — pasa; build**
 
 Run: `npm test -- mundo3-quests questPlayer` → PASS. Luego `npm run build`.
 
-- [ ] **Step 8: Commit**
+- [x] **Step 8: Commit**
 ```bash
 git add src/content/quests/ src/engine/QuestPlayer.jsx src/App.jsx src/engine/WorldView.jsx src/__tests__/questPlayer-integracion.test.jsx
 git commit -m "feat: QuestPlayer + sidequests del Mundo 3 (bespoke) + acceso en WorldView"
@@ -1163,6 +1190,7 @@ git commit -m "feat: QuestPlayer + sidequests del Mundo 3 (bespoke) + acceso en 
 > **Patrón común (aplica a cada task):** crear `src/content/quests/mundoN-quests.jsx` con **2 quests** (Mundo 8: 3 quests) siguiendo el esquema y estilo del Mundo 3; registrar el array en `src/content/quests/index.js` (`questsByWorld`); crear el test de fábricas `src/content/quests/__tests__/mundoN-quests.test.js` (copia del de Mundo 3 cambiando el import y el número de quests). Cada quest: `{ id, title, emoji, npc, intro, outro, questions: [3-5 fábricas] }`. Cada fábrica computacional usa `randInt` + `makeOptions` (correcto primero, distractores distintos); las conceptuales usan `staticQuestion`. **Criterio de aceptación:** el test de 300 tiradas pasa (4 opciones distintas, correctAnswer 0..3) y `npm run build` compila.
 
 ### Task 6: Mundo 4 — 🏰 Castillo del Álgebra (2 quests)
+- [x] **Task 6 completa** — commit `6c96add`
 **Files:** Create `src/content/quests/mundo4-quests.jsx`, `.../__tests__/mundo4-quests.test.js`; Modify `src/content/quests/index.js`.
 **Contenido a redactar** (temas: MCD/MCM, fracciones algebraicas, ecuaciones lineales):
 - `castillo-quest-1` — "El reparto del botín" (NPC: Maestro del gremio). Fábricas: (a) **MCD reparto** — repartir N espadas y M escudos en partes iguales → máximo de aventureros = MCD; (b) **MCM eventos** — dos hechizos que se recargan cada `a` y `b` turnos, ¿cuándo coinciden? = MCM; (c) estática: simplificar `(x²−9)/(x+3) = x−3`.
@@ -1185,24 +1213,28 @@ function repartoBotin(rng = Math.random) {
 ```
 
 ### Task 7: Mundo 5 — 🌀 Laberinto de Sistemas (2 quests)
+- [x] **Task 7 completa** — commit `eb95248`
 **Files:** Create `src/content/quests/mundo5-quests.jsx`, test; Modify `index.js`.
 **Contenido** (temas: cuadrantes, sistemas 2×2, Cramer/determinante):
 - `laberinto-quest-1` — "El cruce de caminos" (NPC: Guía del laberinto). Fábricas: (a) **cuadrante de un punto** (I/II/III/IV según signos); (b) estática: dos rutas `100+3x` y `50+5x` se igualan en `x=25`; (c) estática: rectas paralelas → sistema sin solución.
 - `laberinto-quest-2` — "La cerradura de Cramer" (NPC: Cerrajero). Fábricas: (a) **determinante** `D = a₁b₂ − a₂b₁` (garantizar `D ≠ 0` como en el contenido del mundo); (b) estática: `x = Dx/D`; (c) estática: `D = 0` significa sin solución única.
 
 ### Task 8: Mundo 6 — 🚀 Estación de Funciones (2 quests)
+- [x] **Task 8 completa** — commit `82efbc7` · quests bespoke (nave/cohete), no reutiliza las fábricas del mundo
 **Files:** Create `src/content/quests/mundo6-quests.jsx`, test; Modify `index.js`.
 **Contenido** (temas: pendiente/ordenada, corte con ejes, vértice de parábola):
 - `estacion-quest-1` — "Trayectoria de la nave" (NPC: Piloto). Fábricas: (a) **pendiente de** `f(x)=mx+b`; (b) **corte eje Y** `(0,b)`; (c) estática: `m<0 → la recta baja`.
 - `estacion-quest-2` — "El salto del cohete" (NPC: Ingeniera). Fábricas: (a) **vértice de parábola** `f(x)=x²+bx+c → (h,k)` con `h=−b/2`, `k=f(h)`; (b) estática: `a<0 → abre hacia abajo`; (c) estática: discriminante `Δ<0 → sin raíces reales`.
 
 ### Task 9: Mundo 7 — ⛰️ Montañas de Geometría (2 quests)
+- [x] **Task 9 completa** — quests bespoke (tirolesa/refugio) sobre tripletas pitagóricas
 **Files:** Create `src/content/quests/mundo7-quests.jsx`, test; Modify `index.js`.
 **Contenido** (temas: Pitágoras, trigonometría 30/60, cilindro/prisma):
 - `montanas-quest-1` — "La escalada segura" (NPC: Sherpa). Fábricas: (a) **hipotenusa** con tripletas pitagóricas `[3,4,5]…`; (b) **cateto faltante** `b=√(c²−a²)`; (c) estática: `√(9+16)=5` (no 7).
 - `montanas-quest-2` — "El refugio cilíndrico" (NPC: Arquitecta). Fábricas: (a) **seno de 30°** → opuesto = hip/2 (usar hipotenusa par); (b) estática: área lateral del cilindro `2πrh` con valores fijos; (c) estática: caras de un prisma = `n+2`.
 
 ### Task 10: Mundo 8 — 🎡 Feria de Datos (3 quests) + validación de quests
+- [x] **Task 10 completa** — 3 quests + `validateContent` valida sidequests cuando recibe `questsByWorld`
 **Files:** Create `src/content/quests/mundo8-quests.jsx`, test; Modify `index.js`, `src/content/validateContent.js`, `src/content/__tests__/validateContent.test.js`.
 **Contenido** (temas: media/mediana, conteo, permutaciones/combinaciones, probabilidad):
 - `feria-quest-1` — "El promedio del squad" (NPC: Capitán). Fábricas: (a) **media** de un set generado (K/D del squad); (b) estática: mediana de una lista impar; (c) estática: rango = máx − mín.
@@ -1210,7 +1242,7 @@ function repartoBotin(rng = Math.random) {
 - `feria-quest-3` — "La ruleta de la feria" (NPC: Croupier). Fábricas: (a) **probabilidad básica** `casos favorables / casos totales` (fracción simplificada — cuidar 4 opciones distintas); (b) estática: probabilidad complementaria; (c) estática: evento seguro = 1.
 
 **Además**, extender `validateContent` para exigir ≥1 quest por mundo (ahora que todos los mundos las tienen):
-- [ ] En `src/content/validateContent.js`, añadir un parámetro opcional `questsByWorld` y, dentro del bucle de mundos, validar:
+- [x] En `src/content/validateContent.js`, añadir un parámetro opcional `questsByWorld` y, dentro del bucle de mundos, validar:
 ```js
     const qs = questsByWorld?.[w.id] ?? []
     if (qs.length === 0) problems.push(`mundo ${w.id}: sin sidequests (≥1 requerida)`)
@@ -1226,7 +1258,7 @@ function repartoBotin(rng = Math.random) {
       }
     }
 ```
-- [ ] En `src/content/__tests__/validateContent.test.js`, pasar el nuevo argumento en la llamada real:
+- [x] En `src/content/__tests__/validateContent.test.js`, pasar el nuevo argumento en la llamada real:
 ```js
 import { questsByWorld } from '../quests'
 // …
@@ -1256,7 +1288,7 @@ Cada una: `npm test -- mundoN-quests validateContent && npm run build` en verde 
 - Consumes: `SHOP_ITEMS` (catálogo, ver Task 12 — se crea aquí porque el cofre necesita la lista de cosméticos posibles), `state.cosmetics.owned`.
 - Produces: `rollChest(state, rng=Math.random) → { type:'coins'|'hint'|'cosmetic', amount?, id? }` puro. `Chest.jsx` (componente con animación de apertura y `onCollect`).
 
-- [ ] **Step 1: Crear el catálogo mínimo `content/shop.js`** (lo amplía la Task 12)
+- [x] **Step 1: Crear el catálogo mínimo `content/shop.js`** (lo amplía la Task 12)
 ```js
 // Catálogo de la tienda. Cada ítem: { id, slot, label, emoji, price }.
 // slot: 'avatar' | 'frame' | 'title' | 'hint'.
@@ -1279,7 +1311,7 @@ export const SHOP_ITEMS = [
 export const COSMETIC_ITEMS = SHOP_ITEMS.filter(i => i.slot !== 'hint')
 ```
 
-- [ ] **Step 2: Escribir los tests de `rollChest` (fallan)**
+- [x] **Step 2: Escribir los tests de `rollChest` (fallan)**
 
 Create `src/engine/__tests__/chests.test.js`:
 ```js
@@ -1311,12 +1343,12 @@ describe('rollChest', () => {
 })
 ```
 
-- [ ] **Step 3: Ejecutar — falla**
+- [x] **Step 3: Ejecutar — falla**
 
 Run: `npm test -- chests`
 Expected: FAIL (`rollChest` no existe).
 
-- [ ] **Step 4: Implementar `src/engine/chests.js`**
+- [x] **Step 4: Implementar `src/engine/chests.js`**
 ```js
 import { COSMETIC_ITEMS } from '../content/shop'
 
@@ -1342,7 +1374,7 @@ export function rollChest(state, rng = Math.random) {
 }
 ```
 
-- [ ] **Step 5: Implementar `src/engine/Chest.jsx`**
+- [x] **Step 5: Implementar `src/engine/Chest.jsx`**
 ```jsx
 import { useState } from 'react'
 import { useGame } from '../state/gameStore'
@@ -1383,7 +1415,7 @@ export default function Chest({ onDone }) {
 }
 ```
 
-- [ ] **Step 6: Enganchar el cofre en `LevelPlayer` (primer completado) y `BossArena` (victoria)**
+- [x] **Step 6: Enganchar el cofre en `LevelPlayer` (primer completado) y `BossArena` (victoria)**
 
 En `LevelPlayer.jsx`, en la fase `completado`, mostrar `<Chest />` **solo si fue primer completado** — calcularlo antes de despachar: en `nextQuestion`, `const primeraVez = state.stars[levelKey] === undefined` y guardarlo en `setResult({ stars, coins, primeraVez })`. Importar `Chest` y renderizar dentro del bloque `phase === 'completado'`:
 ```jsx
@@ -1391,11 +1423,11 @@ En `LevelPlayer.jsx`, en la fase `completado`, mostrar `<Chest />` **solo si fue
 ```
 En `BossArena.jsx`, en la fase `victoria`, renderizar `<Chest />` (importado) bajo el texto de recompensas.
 
-- [ ] **Step 7: Ejecutar — pasa; build**
+- [x] **Step 7: Ejecutar — pasa; build**
 
 Run: `npm test -- chests` → PASS. `npm run build`.
 
-- [ ] **Step 8: Commit**
+- [x] **Step 8: Commit**
 ```bash
 git add src/engine/chests.js src/engine/Chest.jsx src/content/shop.js src/engine/LevelPlayer.jsx src/engine/BossArena.jsx src/engine/__tests__/chests.test.js
 git commit -m "feat: cofres sorpresa (rollChest + Chest) en niveles y jefes"
@@ -1415,7 +1447,7 @@ git commit -m "feat: cofres sorpresa (rollChest + Chest) en niveles y jefes"
 - Consumes: `SHOP_ITEMS` (shop), `useGame`, acción `BUY_ITEM`.
 - Produces: página `Shop` (ruta `/tienda`).
 
-- [ ] **Step 1: Test de integración (falla)**
+- [x] **Step 1: Test de integración (falla)**
 
 Create `src/__tests__/shop-integracion.test.jsx`:
 ```jsx
@@ -1434,9 +1466,9 @@ describe('integración: Shop', () => {
 })
 ```
 
-- [ ] **Step 2: Ejecutar — falla.** Run: `npm test -- shop-integracion` → FAIL.
+- [x] **Step 2: Ejecutar — falla.** Run: `npm test -- shop-integracion` → FAIL.
 
-- [ ] **Step 3: Implementar `src/pages/Shop.jsx`**
+- [x] **Step 3: Implementar `src/pages/Shop.jsx`**
 ```jsx
 import { Link } from 'react-router-dom'
 import { useGame } from '../state/gameStore'
@@ -1485,11 +1517,11 @@ export default function Shop() {
 }
 ```
 
-- [ ] **Step 4: Ruta.** En `src/App.jsx`: `import Shop from './pages/Shop'` y `<Route path="/tienda" element={<Shop />} />`.
+- [x] **Step 4: Ruta.** En `src/App.jsx`: `import Shop from './pages/Shop'` y `<Route path="/tienda" element={<Shop />} />`.
 
-- [ ] **Step 5: Ejecutar — pasa; build.** `npm test -- shop-integracion` → PASS. `npm run build`.
+- [x] **Step 5: Ejecutar — pasa; build.** `npm test -- shop-integracion` → PASS. `npm run build`.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 ```bash
 git add src/pages/Shop.jsx src/App.jsx src/__tests__/shop-integracion.test.jsx
 git commit -m "feat: tienda /tienda (compra de cosméticos y tokens de pista)"
@@ -1506,7 +1538,7 @@ git commit -m "feat: tienda /tienda (compra de cosméticos y tokens de pista)"
 - Consumes: `state.hints`, acción `USE_HINT`.
 - Produces: botón "💡 Pedir pista (1 token)" antes de responder que revela `q.hint` gastando un token.
 
-- [ ] **Step 1: Añadir estado local y botón en `LevelPlayer` (fase reto)**
+- [x] **Step 1: Añadir estado local y botón en `LevelPlayer` (fase reto)**
 
 En `LevelPlayerView`, añadir `const [hintShown, setHintShown] = useState(false)` y resetearlo en `nextQuestion`/`retry` (`setHintShown(false)`). En el bloque `phase === 'reto'`, encima de la lista de opciones, añadir:
 ```jsx
@@ -1522,13 +1554,13 @@ En `LevelPlayerView`, añadir `const [hintShown, setHintShown] = useState(false)
 ```
 Enlazar a la tienda cuando no hay tokens (texto pequeño): `{state.hints === 0 && <Link to="/tienda" className="text-xs text-primary underline">Consigue pistas en la tienda</Link>}` (importar `Link` si no está).
 
-- [ ] **Step 2: Repetir el patrón en `BossArena` (fase pelea)** con el mismo bloque (usa el mismo `state.hints` / `USE_HINT` / `hintShown`).
+- [x] **Step 2: Repetir el patrón en `BossArena` (fase pelea)** con el mismo bloque (usa el mismo `state.hints` / `USE_HINT` / `hintShown`).
 
-- [ ] **Step 3: Verificar y build**
+- [x] **Step 3: Verificar y build**
 
 Run: `npm test` (nada debe romperse; no hay test nuevo — es UI). `npm run build`.
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 ```bash
 git add src/engine/LevelPlayer.jsx src/engine/BossArena.jsx
 git commit -m "feat: pistas compradas (token) en retos y jefes"
@@ -1550,7 +1582,7 @@ git commit -m "feat: pistas compradas (token) en retos y jefes"
   - `ACHIEVEMENTS` — array de `{ id, name, emoji, description, secret?, check(state, event) }`.
   - `evaluateAchievements(state, event) → string[]` (ids recién desbloqueados, excluyendo los ya presentes en `state.achievements`).
 
-- [ ] **Step 1: Escribir los tests (fallan)**
+- [x] **Step 1: Escribir los tests (fallan)**
 
 Create `src/state/__tests__/achievements.test.js`:
 ```js
@@ -1580,9 +1612,9 @@ describe('evaluateAchievements', () => {
 })
 ```
 
-- [ ] **Step 2: Ejecutar — falla.** Run: `npm test -- achievements` → FAIL.
+- [x] **Step 2: Ejecutar — falla.** Run: `npm test -- achievements` → FAIL.
 
-- [ ] **Step 3: Definir `src/content/achievements.js`**
+- [x] **Step 3: Definir `src/content/achievements.js`**
 
 Lista de ~18 logros. Cada `check(state, event)` devuelve boolean. Los dependientes de un suceso puntual usan `event`. **Contenido completo:**
 ```js
@@ -1621,7 +1653,7 @@ export const ACHIEVEMENTS = [
 ]
 ```
 
-- [ ] **Step 4: Motor `src/state/achievements.js`**
+- [x] **Step 4: Motor `src/state/achievements.js`**
 ```js
 import { ACHIEVEMENTS } from '../content/achievements'
 
@@ -1639,9 +1671,9 @@ export function evaluateAchievements(state, event) {
 }
 ```
 
-- [ ] **Step 5: Ejecutar — pasa.** Run: `npm test -- achievements` → PASS.
+- [x] **Step 5: Ejecutar — pasa.** Run: `npm test -- achievements` → PASS.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 ```bash
 git add src/content/achievements.js src/state/achievements.js src/state/__tests__/achievements.test.js
 git commit -m "feat: definición de logros + motor evaluateAchievements"
@@ -1661,7 +1693,7 @@ git commit -m "feat: definición de logros + motor evaluateAchievements"
 - Consumes: `evaluateAchievements`, `ACHIEVEMENTS`, `useGame`.
 - Produces: `GameProvider` expone también `notify` opcional; los toasts de logro aparecen al desbloquear. Página `/logros` lista todos.
 
-- [ ] **Step 1: Test de la página (falla)**
+- [x] **Step 1: Test de la página (falla)**
 
 Create `src/__tests__/achievements-page.test.jsx`:
 ```jsx
@@ -1684,9 +1716,9 @@ describe('página /logros', () => {
 })
 ```
 
-- [ ] **Step 2: Ejecutar — falla.** Run: `npm test -- achievements-page` → FAIL.
+- [x] **Step 2: Ejecutar — falla.** Run: `npm test -- achievements-page` → FAIL.
 
-- [ ] **Step 3: `src/pages/Achievements.jsx`**
+- [x] **Step 3: `src/pages/Achievements.jsx`**
 ```jsx
 import { useGame } from '../state/gameStore'
 import { ACHIEVEMENTS } from '../content/achievements'
@@ -1718,7 +1750,7 @@ export default function Achievements() {
 }
 ```
 
-- [ ] **Step 4: `src/components/Toast.jsx`** (aviso efímero, sin dependencias nuevas)
+- [x] **Step 4: `src/components/Toast.jsx`** (aviso efímero, sin dependencias nuevas)
 ```jsx
 import { useEffect } from 'react'
 
@@ -1741,7 +1773,7 @@ export default function Toast({ toast, onDismiss }) {
 }
 ```
 
-- [ ] **Step 5: Wiring en `GameProvider.jsx`** — envolver `dispatch` para evaluar logros y encolar toasts. Reescribir:
+- [x] **Step 5: Wiring en `GameProvider.jsx`** — envolver `dispatch` para evaluar logros y encolar toasts. Reescribir:
 ```jsx
 import { useCallback, useEffect, useReducer, useState } from 'react'
 import { loadSave, persistSave } from './persistence'
@@ -1791,13 +1823,13 @@ function achievementEvent(action) {
 > - `BossArena` `BOSS_DEFEATED`: añadir `livesLeft: lives`.
 > - `GameProvider` `TICK_STREAK` (Task 16): añadir `hour` (hora local).
 
-- [ ] **Step 6: Cronómetro ligero para "Speedrunner" en `LevelPlayer`** — al entrar en fase `reto` por primera vez, guardar `const startRef = useRef(null)` y setear `startRef.current = Date.now()` cuando `phase` pasa a `reto` (en el botón "¡Al reto!" y en `retry`). En `nextQuestion`, calcular `const seconds = startRef.current ? (Date.now() - startRef.current) / 1000 : null` y pasarlo en el dispatch junto a `perfectLives: lives === 3`.
+- [x] **Step 6: Cronómetro ligero para "Speedrunner" en `LevelPlayer`** — al entrar en fase `reto` por primera vez, guardar `const startRef = useRef(null)` y setear `startRef.current = Date.now()` cuando `phase` pasa a `reto` (en el botón "¡Al reto!" y en `retry`). En `nextQuestion`, calcular `const seconds = startRef.current ? (Date.now() - startRef.current) / 1000 : null` y pasarlo en el dispatch junto a `perfectLives: lives === 3`.
 
-- [ ] **Step 7: Ruta `/logros`** en `App.jsx`: `import Achievements from './pages/Achievements'` + `<Route path="/logros" element={<Achievements />} />`.
+- [x] **Step 7: Ruta `/logros`** en `App.jsx`: `import Achievements from './pages/Achievements'` + `<Route path="/logros" element={<Achievements />} />`.
 
-- [ ] **Step 8: Ejecutar — pasa; build.** `npm test` (todo) → PASS. `npm run build`.
+- [x] **Step 8: Ejecutar — pasa; build.** `npm test` (todo) → PASS. `npm run build`.
 
-- [ ] **Step 9: Commit**
+- [x] **Step 9: Commit**
 ```bash
 git add src/components/Toast.jsx src/pages/Achievements.jsx src/state/GameProvider.jsx src/engine/LevelPlayer.jsx src/engine/BossArena.jsx src/App.jsx src/__tests__/achievements-page.test.jsx
 git commit -m "feat: logros en vivo (toast + /logros) enganchados al dispatch"
@@ -1821,7 +1853,7 @@ git commit -m "feat: logros en vivo (toast + /logros) enganchados al dispatch"
   - `dailyBonus(count) → number` (5→20 escalado, topado).
   - `todayStr(date=new Date()) → 'YYYY-MM-DD'` (fecha local).
 
-- [ ] **Step 1: Tests (fallan)**
+- [x] **Step 1: Tests (fallan)**
 
 Create `src/state/__tests__/streak.test.js`:
 ```js
@@ -1861,9 +1893,9 @@ describe('todayStr', () => {
 })
 ```
 
-- [ ] **Step 2: Ejecutar — falla.** Run: `npm test -- streak` → FAIL.
+- [x] **Step 2: Ejecutar — falla.** Run: `npm test -- streak` → FAIL.
 
-- [ ] **Step 3: Implementar `src/state/streak.js`**
+- [x] **Step 3: Implementar `src/state/streak.js`**
 ```js
 // Fecha local en 'YYYY-MM-DD' (sin depender de UTC).
 export function todayStr(date = new Date()) {
@@ -1894,7 +1926,7 @@ export function dailyBonus(count) {
 }
 ```
 
-- [ ] **Step 4: Disparo diario en `GameProvider`** — añadir un `useEffect` de montaje que, si `today !== state.streak.lastDate`, calcula la racha y despacha `TICK_STREAK`. Añadir dentro de `GameProvider` (usa `dispatch` envuelto para que los logros de racha se evalúen):
+- [x] **Step 4: Disparo diario en `GameProvider`** — añadir un `useEffect` de montaje que, si `today !== state.streak.lastDate`, calcula la racha y despacha `TICK_STREAK`. Añadir dentro de `GameProvider` (usa `dispatch` envuelto para que los logros de racha se evalúen):
 ```jsx
 import { nextStreak, dailyBonus, todayStr } from './streak'
 // … dentro del componente, tras definir dispatch:
@@ -1909,7 +1941,7 @@ import { nextStreak, dailyBonus, todayStr } from './streak'
 ```
 > Idempotente por día: al aplicarse, `lastDate` pasa a `today`, así que reabrir no vuelve a sumar. El `hour` alimenta el logro secreto "Búho nocturno".
 
-- [ ] **Step 5: Indicador 🔥 en `Hud.jsx`** — mostrar la racha junto a las monedas cuando `state.streak.count > 0`:
+- [x] **Step 5: Indicador 🔥 en `Hud.jsx`** — mostrar la racha junto a las monedas cuando `state.streak.count > 0`:
 ```jsx
       {state.streak?.count > 0 && (
         <div className="flex items-center gap-1 font-display font-bold text-orange-500 glass rounded-full px-3 py-1 shrink-0">
@@ -1919,9 +1951,9 @@ import { nextStreak, dailyBonus, todayStr } from './streak'
 ```
 (colócalo antes del bloque de monedas; usar `state` de `useGame`, ya disponible en `Hud`).
 
-- [ ] **Step 6: Ejecutar — pasa; build.** `npm test` → PASS. `npm run build`.
+- [x] **Step 6: Ejecutar — pasa; build.** `npm test` → PASS. `npm run build`.
 
-- [ ] **Step 7: Commit**
+- [x] **Step 7: Commit**
 ```bash
 git add src/state/streak.js src/state/GameProvider.jsx src/components/Hud.jsx src/state/__tests__/streak.test.js
 git commit -m "feat: racha diaria (streak + bono) con indicador 🔥 en el HUD"
@@ -1940,7 +1972,7 @@ git commit -m "feat: racha diaria (streak + bono) con indicador 🔥 en el HUD"
 - Consumes: `useGame`, `hudStats`, `SHOP_ITEMS`/`COSMETIC_ITEMS`, `ACHIEVEMENTS`, `worlds`, acción `EQUIP_COSMETIC`, `titleForLevel`/`levelForXp`.
 - Produces: página `Profile` (ruta `/perfil`).
 
-- [ ] **Step 1: Test de integración (falla)**
+- [x] **Step 1: Test de integración (falla)**
 
 Create `src/__tests__/profile-integracion.test.jsx`:
 ```jsx
@@ -1959,9 +1991,9 @@ describe('integración: Profile', () => {
 })
 ```
 
-- [ ] **Step 2: Ejecutar — falla.** Run: `npm test -- profile` → FAIL.
+- [x] **Step 2: Ejecutar — falla.** Run: `npm test -- profile` → FAIL.
 
-- [ ] **Step 3: Implementar `src/pages/Profile.jsx`**
+- [x] **Step 3: Implementar `src/pages/Profile.jsx`**
 ```jsx
 import { useGame } from '../state/gameStore'
 import { hudStats } from '../state/hudStats'
@@ -2036,7 +2068,7 @@ export default function Profile() {
 }
 ```
 
-- [ ] **Step 4: Ruta + accesos en el HUD**
+- [x] **Step 4: Ruta + accesos en el HUD**
 
 En `App.jsx`: `import Profile from './pages/Profile'` + `<Route path="/perfil" element={<Profile />} />`.
 En `src/components/Hud.jsx`, añadir enlaces con iconos (usar `lucide-react`, ya dependencia; p. ej. `User`, `ShoppingBag`, `Award`) a `/perfil`, `/tienda`, `/logros` en el extremo derecho del HUD, con `shrink-0`:
@@ -2049,9 +2081,9 @@ En `src/components/Hud.jsx`, añadir enlaces con iconos (usar `lucide-react`, ya
 ```
 (añadir los imports de iconos a la línea de `lucide-react` existente.)
 
-- [ ] **Step 5: Ejecutar — pasa; build.** `npm test -- profile` → PASS. `npm run build`.
+- [x] **Step 5: Ejecutar — pasa; build.** `npm test -- profile` → PASS. `npm run build`.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 ```bash
 git add src/pages/Profile.jsx src/App.jsx src/components/Hud.jsx src/__tests__/profile-integracion.test.jsx
 git commit -m "feat: perfil /perfil (equipar cosméticos + stats) y accesos en el HUD"
@@ -2064,7 +2096,7 @@ git commit -m "feat: perfil /perfil (equipar cosméticos + stats) y accesos en e
 **Files:**
 - Modify: `TODO.md`
 
-- [ ] **Step 1: Suite completa + build + lint**
+- [x] **Step 1: Suite completa + build + lint**
 
 Run:
 ```bash
@@ -2074,11 +2106,11 @@ npm run lint
 ```
 Expected: todos verdes (tests, build sin errores, lint limpio). Si `lint` marca imports no usados (p. ej. `COINS_PER_STAR` en `LevelPlayer`), limpiarlos.
 
-- [ ] **Step 2: Marcar la Fase 3 como completa en `TODO.md`**
+- [x] **Step 2: Marcar la Fase 3 como completa en `TODO.md`**
 
 En `TODO.md`, marcar los 5 ítems de "Fase 3 — Gamificación completa" como `[x]`, cambiar el encabezado a `## Fase 3 — Gamificación completa ✅ (→ MVP jugable)`, marcar el follow-up de economía (línea 26) como `[x]` con nota "resuelto: pago por estrellas nuevas", y actualizar el párrafo de estado del principio para reflejar el MVP jugable. Añadir referencia al spec/plan de Fase 3.
 
-- [ ] **Step 3: Commit final**
+- [x] **Step 3: Commit final**
 ```bash
 git add TODO.md
 git commit -m "docs: cerrar Fase 3 (MVP jugable) — jefes, sidequests, logros, economía, racha y perfil"

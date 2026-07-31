@@ -44,6 +44,7 @@ export const mundo6 = {
   id: 'mundo6', slug: 'estacion-funciones', name: 'Estación de Funciones',
   emoji: '🚀', color: 'bg-bloque4',
   description: 'Funciones lineales y cuadráticas',
+  boss: { name: 'La IA de la Estación', emoji: '🛰️', intro: 'La estación exige trazar cada función sin error para autorizar el despegue.' },
   levels: [
     {
       id: 'funcion-lineal', title: 'Función Lineal', icon: '📈',

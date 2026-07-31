@@ -42,6 +42,7 @@ export const mundo3 = {
   emoji: '🌋',
   color: 'bg-bloque1',
   description: 'Aproximación, potencias, notación científica y radicales',
+  boss: { name: 'Ígneo, Señor del Magma', emoji: '🐲', intro: 'El volcán ruge: Ígneo pondrá a prueba todo lo que aprendiste sobre potencias y raíces.' },
   levels: [
     {
       id: 'aproximacion',

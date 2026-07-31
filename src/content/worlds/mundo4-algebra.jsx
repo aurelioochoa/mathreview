@@ -50,6 +50,7 @@ export const mundo4 = {
   id: 'mundo4', slug: 'castillo-algebra', name: 'Castillo del Álgebra',
   emoji: '🏰', color: 'bg-bloque2',
   description: 'MCD, MCM, fracciones algebraicas, operaciones y ecuaciones lineales',
+  boss: { name: 'El Guardián del Castillo', emoji: '🛡️', intro: 'Las puertas del castillo solo se abren para quien domine el álgebra.' },
   levels: [
     {
       id: 'mcd', title: 'Máximo Común Divisor', icon: '🔗',

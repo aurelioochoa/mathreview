@@ -4,6 +4,11 @@ import WorldMap from './pages/WorldMap'
 import WorldView from './engine/WorldView'
 import LevelPlayer from './engine/LevelPlayer'
 import StudyView from './engine/StudyView'
+import BossArena from './engine/BossArena'
+import QuestPlayer from './engine/QuestPlayer'
+import Shop from './pages/Shop'
+import Achievements from './pages/Achievements'
+import Profile from './pages/Profile'
 import NotFound from './components/NotFound'
 import { blockRoutes } from './content/worldMap'
 
@@ -15,6 +20,11 @@ export default function App() {
         <Route path="/mundo/:slug" element={<WorldView />} />
         <Route path="/mundo/:slug/nivel/:levelId" element={<LevelPlayer />} />
         <Route path="/mundo/:slug/estudio" element={<StudyView />} />
+        <Route path="/mundo/:slug/jefe" element={<BossArena />} />
+        <Route path="/mundo/:slug/quest/:questId" element={<QuestPlayer />} />
+        <Route path="/tienda" element={<Shop />} />
+        <Route path="/logros" element={<Achievements />} />
+        <Route path="/perfil" element={<Profile />} />
         {blockRoutes.map(b => (
           <Route key={b.path} path={b.path} element={<Navigate to={`/mundo/${b.slug}`} replace />} />
         ))}

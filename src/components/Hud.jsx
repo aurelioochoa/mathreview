@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { Home, Coins, Star } from 'lucide-react'
+import { Home, Coins, Star, Award, ShoppingBag, User } from 'lucide-react'
 import { motion, useReducedMotion } from 'motion/react'
 import { useGame } from '../state/gameStore'
 import { hudStats } from '../state/hudStats'
@@ -48,6 +48,13 @@ export default function Hud() {
         <span className="tabular-nums">{s.totalStars}</span>
       </motion.div>
 
+      {/* Racha diaria */}
+      {state.streak?.count > 0 && (
+        <div className="flex items-center gap-1 font-display font-bold text-orange-500 glass rounded-full px-3 py-1 shrink-0" title={`Racha de ${state.streak.count} días`}>
+          🔥<span className="tabular-nums">{state.streak.count}</span>
+        </div>
+      )}
+
       {/* Monedas con pop al cambiar */}
       <motion.div
         key={s.coins}
@@ -59,6 +66,13 @@ export default function Hud() {
         <Coins size={16} />
         <span className="tabular-nums">{s.coins}</span>
       </motion.div>
+
+      {/* Accesos a logros, tienda y perfil */}
+      <div className="flex items-center gap-2 shrink-0">
+        <Link to="/logros" title="Logros" aria-label="Logros" className="text-gray-500 hover:text-primary"><Award size={18} /></Link>
+        <Link to="/tienda" title="Tienda" aria-label="Tienda" className="text-gray-500 hover:text-primary"><ShoppingBag size={18} /></Link>
+        <Link to="/perfil" title="Perfil" aria-label="Perfil" className="text-gray-500 hover:text-primary"><User size={18} /></Link>
+      </div>
     </div>
   )
 }

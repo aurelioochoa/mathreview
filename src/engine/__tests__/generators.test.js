@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { staticQuestion, randInt, buildReto, shuffleOptions, makeOptions } from '../generators'
+import { staticQuestion, randInt, buildReto, shuffleOptions, makeOptions, buildBossPool } from '../generators'
 
 const q = { question: '¿2+2?', options: ['3', '4', '5', '6'], correctAnswer: 1, hint: 'h', reminder: 'r' }
 
@@ -85,5 +85,26 @@ describe('makeOptions', () => {
     expect(r.correctAnswer).toBe(0)
     expect(r.options[0]).toBe('rojo')
     expect(r.options.slice(1)).toEqual(['rojo (1)', 'rojo (2)', 'rojo (3)'])
+  })
+})
+
+describe('buildBossPool', () => {
+  const world = {
+    levels: [
+      { reto: { factories: [() => ({ question: 'a', options: ['1','2','3','4'], correctAnswer: 0 })] } },
+      { reto: { factories: [() => ({ question: 'b', options: ['5','6','7','8'], correctAnswer: 0 })] } },
+    ],
+  }
+  it('agrega fábricas de todos los niveles y devuelve pick preguntas válidas', () => {
+    const qs = buildBossPool(world, 2)
+    expect(qs).toHaveLength(2)
+    for (const q of qs) {
+      expect(q.options).toHaveLength(4)
+      expect(q.correctAnswer).toBeGreaterThanOrEqual(0)
+      expect(q.correctAnswer).toBeLessThan(4)
+    }
+  })
+  it('si pick excede el pool, devuelve todas las disponibles', () => {
+    expect(buildBossPool(world, 10)).toHaveLength(2)
   })
 })

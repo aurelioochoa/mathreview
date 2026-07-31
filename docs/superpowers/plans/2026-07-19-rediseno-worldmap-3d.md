@@ -1,5 +1,7 @@
 # Rediseño World Map 3D + sistema glossy — Plan de implementación
 
+> **Estado: ejecutado y cerrado ✅ (2026-07-19/21)** — 58/58 pasos. Commits `926d745`…`83c56ce`.
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Convertir Math Quest en un juego 3D moderno: home = mapa de mundos 3D glossy navegable, HUD de juego persistente, reskin unificado de bloques y modo juego, y celebración 3D al completar un nivel — sin tocar el contenido ni la lógica ya probados.
@@ -64,7 +66,7 @@ Estas reglas aplican a **todas** las tareas (valores verificados el 2026-07-19 c
 **Interfaces:**
 - Produces: las dependencias `three`, `@react-three/fiber`, `@react-three/drei`, `@react-three/postprocessing`, `motion` disponibles para importar en todas las tareas siguientes; `react`/`react-dom` pineados `<19.3`.
 
-- [ ] **Step 1: Editar `package.json`** — en `"dependencies"`, cambiar los pines de React y añadir el stack. Deja el bloque `dependencies` así (respeta el orden alfabético existente donde puedas):
+- [x] **Step 1: Editar `package.json`** — en `"dependencies"`, cambiar los pines de React y añadir el stack. Deja el bloque `dependencies` así (respeta el orden alfabético existente donde puedas):
 
 ```jsonc
 "dependencies": {
@@ -83,22 +85,22 @@ Estas reglas aplican a **todas** las tareas (valores verificados el 2026-07-19 c
 }
 ```
 
-- [ ] **Step 2: Instalar**
+- [x] **Step 2: Instalar**
 
 Run: `npm install`
 Expected: instala sin errores de peer-deps. Si aparece `ERESOLVE`, NO uses `--force`; revisa que `react`/`react-dom` resolvieron a 19.2.x (ver Step 3).
 
-- [ ] **Step 3: Verificar versiones y compatibilidad de peers**
+- [x] **Step 3: Verificar versiones y compatibilidad de peers**
 
 Run: `npm ls react react-dom @react-three/fiber @react-three/drei three motion`
 Expected: `react@19.2.x`, `react-dom@19.2.x` (ambos < 19.3), `@react-three/fiber@9.6.x`, `@react-three/drei@10.7.x`, `three@0.185.x`, `motion@12.42.x`. Sin líneas `invalid` ni `UNMET PEER DEPENDENCY`.
 
-- [ ] **Step 4: El build y los tests actuales siguen sanos**
+- [x] **Step 4: El build y los tests actuales siguen sanos**
 
 Run: `npm run build && npm test`
 Expected: build OK; los 28 tests existentes pasan (verde). Aún no hay imports nuevos, así que no debe cambiar nada.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add package.json package-lock.json
@@ -116,7 +118,7 @@ git commit -m "build: añadir stack 3D/animación (r3f v9, drei, postprocessing,
 **Interfaces:**
 - Produces: utilidades Tailwind nuevas — `font-display`; colores de mundo `bg-world-volcan`/`text-world-volcan`/… para `volcan|castillo|laberinto|estacion|montanas|feria|isla|reino`; y variables CSS de vidrio (`--glass-bg`, `--glass-border`, `--shadow-glow`). Consumidas por todas las tareas de UI.
 
-- [ ] **Step 1: Obtener la fuente (asset de build, no runtime)** — Fredoka Variable es OFL (libre). Descárgala una vez a `public/fonts/`:
+- [x] **Step 1: Obtener la fuente (asset de build, no runtime)** — Fredoka Variable es OFL (libre). Descárgala una vez a `public/fonts/`:
 
 ```bash
 mkdir -p public/fonts
@@ -127,7 +129,7 @@ ls -l public/fonts/fredoka-variable.woff2   # debe pesar > 20 KB
 
 Si la descarga fallara, la UI no se rompe (el token cae a `sans-serif`); consigue el `.woff2` de https://fontsource.org/fonts/fredoka y colócalo con ese nombre. El navegador de la app NUNCA baja esta fuente: se sirve local desde `public/`.
 
-- [ ] **Step 2: Reescribir `src/index.css`** con `@font-face` + tokens glossy. El orden importa: `@import` primero, luego `@font-face` (regla normal), luego `@theme`.
+- [x] **Step 2: Reescribir `src/index.css`** con `@font-face` + tokens glossy. El orden importa: `@import` primero, luego `@font-face` (regla normal), luego `@theme`.
 
 ```css
 @import "tailwindcss";
@@ -209,16 +211,16 @@ body {
 }
 ```
 
-- [ ] **Step 3: Verificar que Tailwind genera las utilidades y el build pasa**
+- [x] **Step 3: Verificar que Tailwind genera las utilidades y el build pasa**
 
 Run: `npm run build`
 Expected: build OK. (Las clases `font-display`, `bg-world-volcan`, etc. quedan disponibles; se usarán en tareas siguientes.)
 
-- [ ] **Step 4: Verificación visual rápida (opcional pero recomendada)** — arranca el dev server y confirma el fondo degradado nuevo.
+- [x] **Step 4: Verificación visual rápida (opcional pero recomendada)** — arranca el dev server y confirma el fondo degradado nuevo.
 
 Run: `npm run dev` → abre http://localhost:5173 → el fondo ya no es gris plano sino el cielo degradado. Ctrl+C al terminar.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add public/fonts/fredoka-variable.woff2 src/index.css
@@ -241,7 +243,7 @@ git commit -m "feat: tokens glossy (colores de mundo, vidrio, cielo) + fuente di
   - `adjacentBlock(pathname) -> { prev: {path,label}|null, next: {path,label}|null }` (puro).
 - Consumes: `gameState.completedLevels: string[]` (de `gameStore`), donde las claves son `"<worldId>/<levelId>"`.
 
-- [ ] **Step 1: Escribir el test que falla** — `src/content/__tests__/worldMap.test.js`:
+- [x] **Step 1: Escribir el test que falla** — `src/content/__tests__/worldMap.test.js`:
 
 ```js
 import { describe, it, expect } from 'vitest'
@@ -325,12 +327,12 @@ describe('worldMap: navegación de bloques', () => {
 })
 ```
 
-- [ ] **Step 2: Ejecutar el test para verlo fallar**
+- [x] **Step 2: Ejecutar el test para verlo fallar**
 
 Run: `npx vitest run src/content/__tests__/worldMap.test.js`
 Expected: FAIL — `Failed to resolve import '../worldMap'`.
 
-- [ ] **Step 3: Implementar `src/content/worldMap.js`**
+- [x] **Step 3: Implementar `src/content/worldMap.js`**
 
 ```js
 // Fuente de verdad única del mapa de mundos. Alimenta la escena 3D, el
@@ -428,12 +430,12 @@ export function adjacentBlock(pathname) {
 }
 ```
 
-- [ ] **Step 4: Ejecutar los tests para verlos pasar**
+- [x] **Step 4: Ejecutar los tests para verlos pasar**
 
 Run: `npx vitest run src/content/__tests__/worldMap.test.js`
 Expected: PASS (todos).
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add src/content/worldMap.js src/content/__tests__/worldMap.test.js
@@ -454,7 +456,7 @@ git commit -m "feat: modelo de datos del mapa de mundos (fuente única) + tests"
 - Produces: `hudStats(state) -> { level, title, xp, coins, intoLevel, span, progress, xpToNext }` (puro); componente `<Hud />`.
 - Consumes: `useGame()` (de `gameStore`), `xpForLevel`/`levelForXp`/`titleForLevel` (de `xpCurve`), `motion` (de `motion/react`).
 
-- [ ] **Step 1: Escribir el test que falla** — `src/state/__tests__/hudStats.test.js`:
+- [x] **Step 1: Escribir el test que falla** — `src/state/__tests__/hudStats.test.js`:
 
 ```js
 import { describe, it, expect } from 'vitest'
@@ -497,12 +499,12 @@ describe('hudStats', () => {
 })
 ```
 
-- [ ] **Step 2: Ejecutar el test para verlo fallar**
+- [x] **Step 2: Ejecutar el test para verlo fallar**
 
 Run: `npx vitest run src/state/__tests__/hudStats.test.js`
 Expected: FAIL — `Failed to resolve import '../hudStats'`.
 
-- [ ] **Step 3: Implementar `src/state/hudStats.js`**
+- [x] **Step 3: Implementar `src/state/hudStats.js`**
 
 ```js
 import { xpForLevel, levelForXp, titleForLevel } from './xpCurve'
@@ -529,12 +531,12 @@ export function hudStats(state) {
 }
 ```
 
-- [ ] **Step 4: Ejecutar los tests para verlos pasar**
+- [x] **Step 4: Ejecutar los tests para verlos pasar**
 
 Run: `npx vitest run src/state/__tests__/hudStats.test.js`
 Expected: PASS.
 
-- [ ] **Step 5: Implementar `src/components/Hud.jsx`** — barra de XP animada + monedas con pop, leyendo el estado real:
+- [x] **Step 5: Implementar `src/components/Hud.jsx`** — barra de XP animada + monedas con pop, leyendo el estado real:
 
 ```jsx
 import { Link } from 'react-router-dom'
@@ -591,7 +593,7 @@ export default function Hud() {
 }
 ```
 
-- [ ] **Step 6: Montar el HUD en `src/components/Layout.jsx`** — reemplaza el nav de "Bloque 1..6" por el HUD, y cambia la fuente de prev/next a `worldMap.js`. Reemplaza el archivo entero:
+- [x] **Step 6: Montar el HUD en `src/components/Layout.jsx`** — reemplaza el nav de "Bloque 1..6" por el HUD, y cambia la fuente de prev/next a `worldMap.js`. Reemplaza el archivo entero:
 
 ```jsx
 import { Outlet, Link, useLocation } from 'react-router-dom'
@@ -643,13 +645,13 @@ export default function Layout() {
 }
 ```
 
-- [ ] **Step 7: Verificar build + tests + HUD en vivo**
+- [x] **Step 7: Verificar build + tests + HUD en vivo**
 
 Run: `npm run build && npm test`
 Expected: build OK; todos los tests verdes (incluye `hudStats` y `worldMap`).
 Manual: `npm run dev` → en cualquier `/bloqueN` el HUD superior muestra "Nv. 1 · Aprendiz", barra de XP y monedas. Completa un nivel del Volcán → la barra de XP y las monedas animan su cambio.
 
-- [ ] **Step 8: Commit**
+- [x] **Step 8: Commit**
 
 ```bash
 git add src/state/hudStats.js src/state/__tests__/hudStats.test.js src/components/Hud.jsx src/components/Layout.jsx
@@ -673,7 +675,7 @@ Entrega una home funcional y accesible ANTES de meter WebGL: el mapa 2D es la ba
 - Produces: `useDeviceTier() -> { use3D: boolean, reduce: boolean }`; `<WorldMap2D />`; `<WorldMap />` (ruta `/`).
 - Consumes: `worldMapNodes`, `nodeState` (de `worldMap.js`), `useGame()`.
 
-- [ ] **Step 1: Implementar `src/three/useDeviceTier.js`** — decide si activar el 3D (WebGL disponible + no reduced-motion + no equipo mínimo):
+- [x] **Step 1: Implementar `src/three/useDeviceTier.js`** — decide si activar el 3D (WebGL disponible + no reduced-motion + no equipo mínimo):
 
 ```js
 import { useMemo } from 'react'
@@ -701,7 +703,7 @@ export function useDeviceTier() {
 }
 ```
 
-- [ ] **Step 2: Implementar `src/components/WorldMap2D.jsx`** — tarjetas glossy como enlaces reales (esta es la capa accesible):
+- [x] **Step 2: Implementar `src/components/WorldMap2D.jsx`** — tarjetas glossy como enlaces reales (esta es la capa accesible):
 
 ```jsx
 import { Link } from 'react-router-dom'
@@ -771,7 +773,7 @@ export default function WorldMap2D() {
 
 > Nota: como `THEME_GRADIENT` contiene los nombres de clase completos y literales (`from-world-volcan`, `to-world-volcan/70`, …), el escáner de Tailwind v4 los detecta y genera esas utilidades — sin necesidad de safelist. Todas dependen de los tokens `--color-world-*` definidos en la Task 2.
 
-- [ ] **Step 3: Implementar `src/pages/WorldMap.jsx`** — baseline: por ahora SIEMPRE renderiza el 2D (el canvas 3D se enchufa en la Task 6). Incluye el "consejo" reubicado:
+- [x] **Step 3: Implementar `src/pages/WorldMap.jsx`** — baseline: por ahora SIEMPRE renderiza el 2D (el canvas 3D se enchufa en la Task 6). Incluye el "consejo" reubicado:
 
 ```jsx
 import WorldMap2D from '../components/WorldMap2D'
@@ -802,7 +804,7 @@ export default function WorldMap() {
 }
 ```
 
-- [ ] **Step 4: Enrutar `/` a WorldMap en `src/App.jsx`** — cambia el import y la ruta index:
+- [x] **Step 4: Enrutar `/` a WorldMap en `src/App.jsx`** — cambia el import y la ruta index:
 
 ```jsx
 // línea 3: reemplazar
@@ -813,18 +815,18 @@ import WorldMap from './pages/WorldMap'
 <Route path="/" element={<WorldMap />} />
 ```
 
-- [ ] **Step 5: Eliminar la Home vieja**
+- [x] **Step 5: Eliminar la Home vieja**
 
 Run: `git rm src/pages/Home.jsx`
 Expected: se elimina. Verifica que nada más la importa: `grep -rn "pages/Home" src` → sin resultados.
 
-- [ ] **Step 6: Verificar**
+- [x] **Step 6: Verificar**
 
 Run: `npm run build && npm test`
 Expected: build OK; tests verdes.
 Manual: `npm run dev` → `/` muestra el mapa 2D glossy con los 8 mundos (2 "Próximamente" en gris), tilt al pasar el cursor, y navega al hacer click. Tab por el teclado enfoca cada mundo activo.
 
-- [ ] **Step 7: Commit**
+- [x] **Step 7: Commit**
 
 ```bash
 git add src/three/useDeviceTier.js src/components/WorldMap2D.jsx src/pages/WorldMap.jsx src/App.jsx src/index.css
@@ -846,7 +848,7 @@ git commit -m "feat: home = mapa de mundos 2D glossy accesible (fallback/baselin
 - Consumes: `worldMapNodes`, `nodeState`; `useGame()`; `useDeviceTier()`; drei (`Float`, `RoundedBox`, `PerformanceMonitor`, `Html`, `useCursor`, `Environment`, `Lightformer`); `@react-three/postprocessing` (`EffectComposer`, `Bloom`); `useNavigate` (react-router).
 - Produces: `<WorldMapCanvas />` (default export, lazy-cargable).
 
-- [ ] **Step 1: Implementar `src/three/lighting.jsx`** — iluminación 100% offline (sin `preset`):
+- [x] **Step 1: Implementar `src/three/lighting.jsx`** — iluminación 100% offline (sin `preset`):
 
 ```jsx
 import { Environment, Lightformer } from '@react-three/drei'
@@ -868,7 +870,7 @@ export default function Lighting() {
 }
 ```
 
-- [ ] **Step 2: Implementar `src/three/WorldObject.jsx`** — un mundo glossy con forma temática, label DOM, hover y click→navegar. Materiales `meshStandardMaterial` pulidos (baratos) con `emissive` para que el Bloom los haga brillar:
+- [x] **Step 2: Implementar `src/three/WorldObject.jsx`** — un mundo glossy con forma temática, label DOM, hover y click→navegar. Materiales `meshStandardMaterial` pulidos (baratos) con `emissive` para que el Bloom los haga brillar:
 
 ```jsx
 import { useRef, useState } from 'react'
@@ -948,7 +950,7 @@ export default function WorldObject({ node, state, spin }) {
 }
 ```
 
-- [ ] **Step 3: Implementar `src/three/Effects.jsx`** — Bloom en su propio módulo con **default export** (para poder `lazy()`):
+- [x] **Step 3: Implementar `src/three/Effects.jsx`** — Bloom en su propio módulo con **default export** (para poder `lazy()`):
 
 ```jsx
 import { EffectComposer, Bloom } from '@react-three/postprocessing'
@@ -963,7 +965,7 @@ export default function Effects() {
 }
 ```
 
-- [ ] **Step 4: Implementar `src/three/WorldMapCanvas.jsx`** — el Canvas, DPR adaptativo, PerformanceMonitor, y el Bloom lazy:
+- [x] **Step 4: Implementar `src/three/WorldMapCanvas.jsx`** — el Canvas, DPR adaptativo, PerformanceMonitor, y el Bloom lazy:
 
 ```jsx
 import { lazy, Suspense, useState } from 'react'
@@ -1000,7 +1002,7 @@ export default function WorldMapCanvas({ spin = true }) {
 }
 ```
 
-- [ ] **Step 5: Enchufar el canvas en `src/pages/WorldMap.jsx`** — si el equipo lo soporta, canvas (decorativo, `aria-hidden`) + lista `sr-only` accesible; si no, el 2D visible. Reemplaza el archivo:
+- [x] **Step 5: Enchufar el canvas en `src/pages/WorldMap.jsx`** — si el equipo lo soporta, canvas (decorativo, `aria-hidden`) + lista `sr-only` accesible; si no, el 2D visible. Reemplaza el archivo:
 
 ```jsx
 import { lazy, Suspense } from 'react'
@@ -1051,16 +1053,16 @@ export default function WorldMap() {
 }
 ```
 
-- [ ] **Step 6: Verificar build, tamaño del chunk, y la escena en vivo**
+- [x] **Step 6: Verificar build, tamaño del chunk, y la escena en vivo**
 
 Run: `npm run build`
 Expected: build OK. En el resumen de Vite verás chunks separados para el canvas y para el Bloom (three/postprocessing NO están en el bundle de entrada). 
 Manual: `npm run dev` → `/` muestra los mundos 3D glossy flotando y girando; hover agranda + brilla + resalta el label; click navega. Prueba en una ventana normal (equipo con WebGL). Verifica en la pestaña Network del navegador que **no hay peticiones a dominios externos** (ni googleapis, ni raw.githubusercontent, ni drei-assets).
 Encuadre: si algún mundo queda fuera de cuadro (los `position` van de x≈−4.2 a 5.4), ajusta la `position`/`fov` de la cámara en `WorldMapCanvas.jsx` (p. ej. alejar a `z: 9` o subir `fov`) hasta que los 8 quepan cómodos. Es un ajuste puramente visual.
 
-- [ ] **Step 7: Verificar el fallback** — fuerza reduced-motion (DevTools → Rendering → "Emulate prefers-reduced-motion: reduce") y recarga: debe verse el mapa 2D, no el canvas. 
+- [x] **Step 7: Verificar el fallback** — fuerza reduced-motion (DevTools → Rendering → "Emulate prefers-reduced-motion: reduce") y recarga: debe verse el mapa 2D, no el canvas. 
 
-- [ ] **Step 8: Commit**
+- [x] **Step 8: Commit**
 
 ```bash
 git add src/three/lighting.jsx src/three/WorldObject.jsx src/three/Effects.jsx src/three/WorldMapCanvas.jsx src/pages/WorldMap.jsx
@@ -1079,7 +1081,7 @@ git commit -m "feat: mapa de mundos 3D (react-three-fiber) lazy, offline, con bl
 - Consumes: `motion`, `AnimatePresence`, `useReducedMotion` (de `motion/react`); `useLocation` (react-router).
 - Produces: `<PageTransition>{children}</PageTransition>`.
 
-- [ ] **Step 1: Implementar `src/components/PageTransition.jsx`**
+- [x] **Step 1: Implementar `src/components/PageTransition.jsx`**
 
 ```jsx
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
@@ -1107,7 +1109,7 @@ export default function PageTransition({ children }) {
 }
 ```
 
-- [ ] **Step 2: Envolver el `<Outlet>` en `src/components/Layout.jsx`** — importa y usa:
+- [x] **Step 2: Envolver el `<Outlet>` en `src/components/Layout.jsx`** — importa y usa:
 
 ```jsx
 // añadir import
@@ -1121,13 +1123,13 @@ import PageTransition from './PageTransition'
 
 > Nota: `AnimatePresence mode="wait"` necesita una `key` estable (aquí `location.pathname`) y que el elemento animado envuelva el contenido que cambia — por eso va dentro de `<main>`, alrededor del `<Outlet>`.
 
-- [ ] **Step 3: Verificar**
+- [x] **Step 3: Verificar**
 
 Run: `npm run build && npm test`
 Expected: build OK; tests verdes.
 Manual: `npm run dev` → navegar entre mundos/bloques hace un fade+slide suave. Con reduced-motion emulado, los cambios son instantáneos (sin animación).
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 ```bash
 git add src/components/PageTransition.jsx src/components/Layout.jsx
@@ -1148,18 +1150,18 @@ Solo estilos. NO cambies textos, quizzes, generadores ni la máquina de estados.
 **Interfaces:**
 - Consumes: tokens glossy de `index.css` (`.glass`, `rounded-[1.75rem]`, `font-display`).
 
-- [ ] **Step 1: Reskin `WorldView.jsx`** — tarjetas de nivel glossy. Cambia solo `className`s:
+- [x] **Step 1: Reskin `WorldView.jsx`** — tarjetas de nivel glossy. Cambia solo `className`s:
   - El contenedor de cada nivel desbloqueado: de `bg-white rounded-2xl border-2 border-gray-100 p-4 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all` → `glass rounded-[1.5rem] p-4 shadow-md hover:shadow-xl hover:-translate-y-0.5 transition-all`.
   - El título del mundo `h1`: añade `font-display`.
   - La caja de stats del jugador: `bg-white rounded-xl border` → `glass rounded-2xl`.
 
-- [ ] **Step 2: Reskin `LevelPlayer.jsx`** — cambia solo `className`s (no la lógica):
+- [x] **Step 2: Reskin `LevelPlayer.jsx`** — cambia solo `className`s (no la lógica):
   - Paneles `bg-white rounded-2xl shadow p-6/p-8` → `glass rounded-[1.75rem] shadow-lg p-6/p-8`.
   - Títulos `h1/h2`: añade `font-display`.
   - Botones primarios `bg-primary`/`bg-green-500`: mantenerlos, pero añade `rounded-xl font-display` donde falte para consistencia.
   - (El bloque `phase === 'completado'` se ampliará con la celebración 3D en la Task 9 — por ahora solo reskin.)
 
-- [ ] **Step 3: Reskin de las páginas de bloque** — en `Bloque1.jsx`…`Bloque6.jsx`, el patrón repetido es el contenedor de sección y los títulos. Aplica de forma consistente:
+- [x] **Step 3: Reskin de las páginas de bloque** — en `Bloque1.jsx`…`Bloque6.jsx`, el patrón repetido es el contenedor de sección y los títulos. Aplica de forma consistente:
   - Encabezados de página (`h1`/`h2` de título de bloque): añade `font-display`.
   - Contenedores tipo tarjeta `bg-white rounded-xl/2xl shadow`: cámbialos a `glass rounded-[1.5rem] shadow-md`.
   - No cambies el contenido interno (MathTex, MiniQuiz, widgets, textos).
@@ -1169,7 +1171,7 @@ Para localizar los patrones exactos por archivo:
 Run: `grep -rn "bg-white rounded" src/pages/Bloque*.jsx src/engine/*.jsx`
 Sustituye cada `bg-white rounded-xl`/`bg-white rounded-2xl` por `glass rounded-[1.5rem]` (ajusta el radio si el original era más pequeño).
 
-- [ ] **Step 4: Verificar que nada de lógica se rompió**
+- [x] **Step 4: Verificar que nada de lógica se rompió**
 
 Run: `npm test`
 Expected: los 28 tests + los nuevos siguen verdes (el reskin no toca lógica).
@@ -1179,7 +1181,7 @@ Expected: OK.
 
 Manual: `npm run dev` → recorre `/bloque1..6`, `/mundo/volcan-potencias` y un nivel: todo comparte el look glossy (vidrio, `font-display`, radios grandes) y el contenido está intacto.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add src/engine/WorldView.jsx src/engine/LevelPlayer.jsx src/pages/Bloque1.jsx src/pages/Bloque2.jsx src/pages/Bloque3.jsx src/pages/Bloque4.jsx src/pages/Bloque5.jsx src/pages/Bloque6.jsx
@@ -1198,7 +1200,7 @@ git commit -m "style: reskin glossy de bloques y modo juego (sin cambios de cont
 - Consumes: `@react-three/fiber` (`Canvas`, `useFrame`), drei (`Float`); `useReducedMotion` (motion) para el gate.
 - Produces: `<Celebration />` (default export, lazy).
 
-- [ ] **Step 1: Implementar `src/three/Celebration.jsx`** — un estallido corto: partículas de estrella + un objeto girando. Sin CDN, geometría procedural:
+- [x] **Step 1: Implementar `src/three/Celebration.jsx`** — un estallido corto: partículas de estrella + un objeto girando. Sin CDN, geometría procedural:
 
 ```jsx
 import { useMemo, useRef } from 'react'
@@ -1263,7 +1265,7 @@ export default function Celebration() {
 }
 ```
 
-- [ ] **Step 2: Montar la celebración en el estado `completado` de `LevelPlayer.jsx`** — añade el import lazy arriba del componente y renderiza el canvas sobre el panel, gated por reduced-motion:
+- [x] **Step 2: Montar la celebración en el estado `completado` de `LevelPlayer.jsx`** — añade el import lazy arriba del componente y renderiza el canvas sobre el panel, gated por reduced-motion:
 
 ```jsx
 // imports (arriba del archivo)
@@ -1297,13 +1299,13 @@ En el bloque `phase === 'completado'`, envuelve el contenido para superponer la 
 </div>
 ```
 
-- [ ] **Step 3: Verificar**
+- [x] **Step 3: Verificar**
 
 Run: `npm run build && npm test`
 Expected: build OK (nuevo chunk lazy para la celebración); tests verdes.
 Manual: `npm run dev` → juega y completa un nivel del Volcán → aparece la celebración 3D (trofeo girando + confeti) tras el panel de "¡Nivel superado!". Con reduced-motion emulado, el panel se ve sin el canvas.
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 ```bash
 git add src/three/Celebration.jsx src/engine/LevelPlayer.jsx
@@ -1317,27 +1319,27 @@ git commit -m "feat: celebración 3D al completar nivel (lazy, gated por reduced
 **Files:**
 - Modify: `README.md`, `TODO.md`
 
-- [ ] **Step 1: Auditoría offline** — ninguna referencia a recursos remotos en runtime:
+- [x] **Step 1: Auditoría offline** — ninguna referencia a recursos remotos en runtime:
 
 Run: `grep -rniE "https?://|googleapis|githubusercontent|drei-assets|preset=" src`
 Expected: sin resultados problemáticos. Cualquier `preset=` en un `<Environment>` es un fallo (debe usar Lightformer/local). URLs solo permitidas en comentarios/docs, no en código que se ejecute.
 
-- [ ] **Step 2: Auditoría de red en el navegador** — `npm run dev`, abre DevTools → Network, recarga `/` y navega. Filtra por dominio: **cero** peticiones a hosts externos (solo `localhost`). Confirma que la fuente `fredoka-variable.woff2` se sirve desde `localhost`.
+- [x] **Step 2: Auditoría de red en el navegador** — `npm run dev`, abre DevTools → Network, recarga `/` y navega. Filtra por dominio: **cero** peticiones a hosts externos (solo `localhost`). Confirma que la fuente `fredoka-variable.woff2` se sirve desde `localhost`.
 
-- [ ] **Step 3: Auditoría reduced-motion** — con "Emulate prefers-reduced-motion: reduce": el mapa cae a 2D, no hay transiciones de página, no hay celebración 3D, la barra de XP salta sin spring. Todo navegable.
+- [x] **Step 3: Auditoría reduced-motion** — con "Emulate prefers-reduced-motion: reduce": el mapa cae a 2D, no hay transiciones de página, no hay celebración 3D, la barra de XP salta sin spring. Todo navegable.
 
-- [ ] **Step 4: Auditoría de teclado/a11y** — solo con Tab/Enter: desde `/` se puede enfocar y entrar a cada mundo activo (via la lista `sr-only` cuando el 3D está activo, o las tarjetas 2D). Los teasers no son enfocables como enlace.
+- [x] **Step 4: Auditoría de teclado/a11y** — solo con Tab/Enter: desde `/` se puede enfocar y entrar a cada mundo activo (via la lista `sr-only` cuando el 3D está activo, o las tarjetas 2D). Los teasers no son enfocables como enlace.
 
-- [ ] **Step 5: Suite completa + build de producción**
+- [x] **Step 5: Suite completa + build de producción**
 
 Run: `npm test && npm run build && npm run preview`
 Expected: todos los tests verdes; build OK; `preview` sirve la app de producción sin errores en consola. Repite el spot-check en `preview`.
 
-- [ ] **Step 6: Actualizar `README.md` y `TODO.md`**
+- [x] **Step 6: Actualizar `README.md` y `TODO.md`**
   - README: en "Estado", añade una línea sobre el rediseño (mapa de mundos 3D + HUD + reskin glossy) y en "Stack" añade three.js/react-three-fiber/drei/motion.
   - TODO: marca en Fase 5 "Animaciones y celebraciones" el avance de la celebración de nivel; añade una nota de que el rediseño visual (Spec 1) está completo y que la migración de contenido de bloques (Fase 2) sigue pendiente como follow-on.
 
-- [ ] **Step 7: Commit**
+- [x] **Step 7: Commit**
 
 ```bash
 git add README.md TODO.md

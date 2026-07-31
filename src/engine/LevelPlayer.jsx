@@ -1,12 +1,13 @@
-import { lazy, Suspense, useMemo, useState } from 'react'
+import { lazy, Suspense, useMemo, useRef, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { findWorld } from '../content/worlds'
 import { widgets } from '../widgets'
 import { buildReto } from './generators'
-import { useGame, XP_PER_CORRECT, XP_LEVEL_COMPLETE, COINS_PER_STAR } from '../state/gameStore'
+import { useGame, XP_PER_CORRECT, XP_LEVEL_COMPLETE, coinsForCompletion } from '../state/gameStore'
 import WhySection from '../components/WhySection'
 import CommonMistakes from '../components/CommonMistakes'
 import InteractiveBox from '../components/InteractiveBox'
+import Chest from './Chest'
 import { useDeviceTier } from '../three/useDeviceTier'
 
 const Celebration = lazy(() => import('../three/Celebration'))
@@ -31,7 +32,7 @@ export default function LevelPlayer() {
 
 function LevelPlayerView() {
   const { slug, levelId } = useParams()
-  const { dispatch } = useGame()
+  const { state, dispatch } = useGame()
   const world = findWorld(slug)
   const level = world?.levels.find(l => l.id === levelId)
 
@@ -43,7 +44,9 @@ function LevelPlayerView() {
   const [firstTryHits, setFirstTryHits] = useState(0)
   const [selected, setSelected] = useState(null)   // índice elegido en la pregunta actual
   const [failedThis, setFailedThis] = useState(false)
-  const [result, setResult] = useState(null)   // { stars, coins } de esta partida
+  const [hintShown, setHintShown] = useState(false)  // pista comprada en la pregunta actual
+  const [result, setResult] = useState(null)   // { stars, coins, primeraVez } de esta partida
+  const startRef = useRef(null)                // inicio del reto, para el logro Speedrunner
 
   const questions = useMemo(
     () => (level ? buildReto(level.reto.factories, level.reto.pick) : []),
@@ -76,21 +79,29 @@ function LevelPlayerView() {
   const nextQuestion = () => {
     setSelected(null)
     setFailedThis(false)
+    setHintShown(false)
     if (qIndex + 1 < questions.length) {
       setQIndex(qIndex + 1)
     } else {
       const ratio = firstTryHits / questions.length
       const stars = ratio >= 1 ? 3 : ratio >= 0.66 ? 2 : 1
-      const coins = stars * COINS_PER_STAR
-      dispatch({ type: 'LEVEL_COMPLETED', levelKey, stars, xp: XP_LEVEL_COMPLETE, coins })
-      setResult({ stars, coins })
+      const coins = coinsForCompletion(state.stars[levelKey], stars)
+      // Se calcula antes del dispatch: después, stars[levelKey] ya existe.
+      const primeraVez = state.stars[levelKey] === undefined
+      const seconds = startRef.current ? (Date.now() - startRef.current) / 1000 : null
+      dispatch({
+        type: 'LEVEL_COMPLETED', levelKey, stars, xp: XP_LEVEL_COMPLETE,
+        perfectLives: lives === 3, seconds,   // datos para los logros
+      })
+      setResult({ stars, coins, primeraVez })
       setPhase('completado')
     }
   }
 
   const retry = () => {
     setAttempt(a => a + 1)
-    setQIndex(0); setLives(3); setFirstTryHits(0); setSelected(null); setFailedThis(false)
+    setQIndex(0); setLives(3); setFirstTryHits(0); setSelected(null); setFailedThis(false); setHintShown(false)
+    startRef.current = Date.now()
     setPhase('reto')
   }
 
@@ -109,7 +120,7 @@ function LevelPlayerView() {
             <span className="text-sm text-gray-400 self-center">{stepIndex + 1} / {level.briefing.length}</span>
             {stepIndex + 1 < level.briefing.length
               ? <button onClick={() => setStepIndex(i => i + 1)} className="px-4 py-2 rounded-xl font-display bg-primary text-white">Siguiente →</button>
-              : <button onClick={() => setPhase('reto')} className="px-4 py-2 rounded-xl font-display bg-green-500 text-white font-bold">⚔️ ¡Al reto!</button>}
+              : <button onClick={() => { startRef.current = Date.now(); setPhase('reto') }} className="px-4 py-2 rounded-xl font-display bg-green-500 text-white font-bold">⚔️ ¡Al reto!</button>}
           </div>
         </div>
       )}
@@ -121,6 +132,17 @@ function LevelPlayerView() {
             <span>{'❤️'.repeat(lives)}{'🖤'.repeat(3 - lives)}</span>
           </div>
           <p className="font-medium text-gray-800 mb-3">{q.question}</p>
+          {selected === null && !hintShown && (
+            state.hints > 0
+              ? <button onClick={() => { dispatch({ type: 'USE_HINT' }); setHintShown(true) }}
+                  className="mb-3 px-3 py-1.5 rounded-lg bg-yellow-100 border border-yellow-300 text-xs font-bold text-yellow-700">
+                  💡 Pedir pista ({state.hints} {state.hints === 1 ? 'token' : 'tokens'})
+                </button>
+              : <p className="mb-3"><Link to="/tienda" className="text-xs text-primary underline">Consigue pistas en la tienda</Link></p>
+          )}
+          {hintShown && selected === null && (
+            <div className="mb-3 p-3 rounded-lg bg-yellow-50 border border-yellow-200 text-sm">💡 {q.hint}</div>
+          )}
           <div className="space-y-2">
             {q.options.map((opt, i) => {
               const isCorrect = selected !== null && i === q.correctAnswer
@@ -167,6 +189,7 @@ function LevelPlayerView() {
             <h2 className="font-display text-xl font-bold mb-1">¡Nivel superado!</h2>
             <p className="text-2xl my-2">{'⭐'.repeat(result?.stars ?? 1)}</p>
             <p className="text-sm text-gray-500 mb-4">+{XP_LEVEL_COMPLETE} XP · +{result?.coins ?? 0} 🪙</p>
+            {result?.primeraVez && <Chest />}
             <Link to={`/mundo/${world.slug}`} className="px-6 py-3 rounded-xl bg-primary text-white font-display font-bold inline-block">Volver al mundo</Link>
           </div>
         </div>
