@@ -5,9 +5,21 @@ on:
     branches: [main]
   pull_request:
 
+# Cancela la ejecución anterior del mismo PR (o de la misma rama en push) en
+# cuanto llega un commit nuevo: sin esto, dos pushes seguidos gastan minutos
+# de CI corriendo por duplicado un resultado que ya no importa.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   verificar:
     runs-on: ubuntu-latest
+    # Mínimo privilegio: este job solo necesita leer el repo (checkout), no
+    # escribir nada. Por defecto GITHUB_TOKEN trae más permisos de los que
+    # hacen falta aquí.
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@v4
 
