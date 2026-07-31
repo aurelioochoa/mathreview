@@ -20,7 +20,7 @@ export default function Toast({ toast, onDismiss }) {
     // `fixed` ya crea el contexto de posicionamiento que necesita el canvas de
     // dentro, así que NO se añade `relative`: convivirían dos position en la
     // misma caja y ganaría el que Tailwind emita último, no el que se lea antes.
-    <div role="status" className="fixed bottom-4 left-1/2 -translate-x-1/2 z-[100] glass rounded-2xl shadow-xl overflow-hidden min-w-[18rem]">
+    <div role="status" className={`fixed bottom-4 left-1/2 -translate-x-1/2 z-[100] glass rounded-2xl shadow-xl overflow-hidden ${use3D ? 'min-w-[18rem]' : ''}`}>
       {use3D && (
         <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
           <Suspense fallback={null}><Celebration variant="logro" /></Suspense>
