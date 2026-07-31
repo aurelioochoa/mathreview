@@ -7,19 +7,18 @@ Hoja de ruta por fases. Lo pendiente va arriba; el historial, al final.
 
 ## Estado — 2026-07-30
 
-- **Rama:** `feat/fase3-gamificacion` (9 commits sobre `main`), árbol limpio.
-- **Suite:** `npm test` → 26 archivos, 161 tests en verde.
-- **Jugable hoy:** 6 mundos (3-8) con niveles + modo estudio, jefe en cada uno, sidequests en los Mundos 3/4/5, mapa 3D con fallback 2D, HUD, guardado v2 con migración.
-- **Fase en curso:** Fase 3 — **7 de 18 tasks completas** (Capas A y B cerradas, Capa C a mitad).
-- **Siguiente paso:** Task 8 (sidequests del Mundo 6 🚀). Alternativa si se prefiere impacto jugable antes que contenido: saltar a la Capa D (cofres/tienda/pistas), que no depende de las Tasks 8-9.
+- **Rama:** `feat/fase3-gamificacion`.
+- **Suite:** `npm test` → 28 archivos, 165 tests en verde; `build` y `lint` limpios.
+- **Jugable hoy:** 6 mundos (3-8) con niveles + modo estudio, jefe en cada uno, sidequests en los Mundos 3/4/5/6/7, mapa 3D con fallback 2D, HUD, guardado v2 con migración.
+- **Fase en curso:** Fase 3 — **9 de 18 tasks completas** (Capas A y B cerradas, Capa C con 5 de 6 mundos).
+- **Siguiente paso:** Task 10 (Mundo 8 🎡 + validación de quests), y con eso la Capa D (cofres/tienda/pistas).
 
 ---
 
 # 🔴 En curso — Fase 3: Gamificación completa (→ MVP jugable)
 
-## Capa C — Sidequests (4 de 6 mundos)
+## Capa C — Sidequests (5 de 6 mundos)
 
-- [ ] **Task 9** — Mundo 7 ⛰️ Montañas de Geometría (2 quests: Pitágoras, trigonometría 30/60, cilindro)
 - [ ] **Task 10** — Mundo 8 🎡 Feria de Datos (3 quests: media/mediana, conteo, probabilidad) + extender `validateContent` para exigir ≥1 sidequest por mundo
 
 ## Capa D — Economía visible
@@ -43,7 +42,7 @@ Hoja de ruta por fases. Lo pendiente va arriba; el historial, al final.
 
 - [x] **Capa A** — estado v2 (jefes, quests, logros, cosméticos, pistas, racha) + migración de guardado v1 → v2 + economía por estrellas nuevas (`coinsForCompletion`)
 - [x] **Capa B** — `buildBossPool`, campo `boss` en los 6 mundos + validación, `BossArena` con barra de vida, acceso al jefe y ⭐ de maestría en `WorldView`
-- [x] **Capa C (parcial)** — `QuestPlayer` + esquema/índice de quests + sidequests bespoke de los Mundos 3 🌋, 4 🏰, 5 🌀 y 6 🚀
+- [x] **Capa C (parcial)** — `QuestPlayer` + esquema/índice de quests + sidequests bespoke de los Mundos 3 🌋, 4 🏰, 5 🌀, 6 🚀 y 7 ⛰️
 
 ---
 

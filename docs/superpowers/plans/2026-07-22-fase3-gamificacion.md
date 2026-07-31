@@ -22,7 +22,7 @@
 
 ## Progreso (actualizado 2026-07-30)
 
-**8 de 18 tasks completas.** Capas A y B cerradas; Capa C con 4 de 6 mundos. Suite en verde: 27 archivos, 163 tests.
+**9 de 18 tasks completas.** Capas A y B cerradas; Capa C con 5 de 6 mundos. Suite en verde: 28 archivos, 165 tests.
 
 | Capa | Task | Estado | Commit |
 |---|---|---|---|
@@ -34,7 +34,7 @@
 | C | 6 · Sidequests Mundo 4 🏰 | ✅ | `6c96add` |
 | C | 7 · Sidequests Mundo 5 🌀 | ✅ | `eb95248` |
 | C | 8 · Sidequests Mundo 6 🚀 | ✅ | — |
-| C | 9 · Sidequests Mundo 7 ⛰️ | ⬜ | — |
+| C | 9 · Sidequests Mundo 7 ⛰️ | ✅ | — |
 | C | 10 · Sidequests Mundo 8 🎡 + validación de quests | ⬜ | — |
 | D | 11 · Cofres (`rollChest` + `Chest` + `shop.js`) | ⬜ | — |
 | D | 12 · Tienda `/tienda` | ⬜ | — |
@@ -1220,14 +1220,14 @@ function repartoBotin(rng = Math.random) {
 - `laberinto-quest-2` — "La cerradura de Cramer" (NPC: Cerrajero). Fábricas: (a) **determinante** `D = a₁b₂ − a₂b₁` (garantizar `D ≠ 0` como en el contenido del mundo); (b) estática: `x = Dx/D`; (c) estática: `D = 0` significa sin solución única.
 
 ### Task 8: Mundo 6 — 🚀 Estación de Funciones (2 quests)
-- [x] **Task 8 completa** — commit `pendiente` · quests bespoke (nave/cohete), no reutiliza las fábricas del mundo
+- [x] **Task 8 completa** — commit `82efbc7` · quests bespoke (nave/cohete), no reutiliza las fábricas del mundo
 **Files:** Create `src/content/quests/mundo6-quests.jsx`, test; Modify `index.js`.
 **Contenido** (temas: pendiente/ordenada, corte con ejes, vértice de parábola):
 - `estacion-quest-1` — "Trayectoria de la nave" (NPC: Piloto). Fábricas: (a) **pendiente de** `f(x)=mx+b`; (b) **corte eje Y** `(0,b)`; (c) estática: `m<0 → la recta baja`.
 - `estacion-quest-2` — "El salto del cohete" (NPC: Ingeniera). Fábricas: (a) **vértice de parábola** `f(x)=x²+bx+c → (h,k)` con `h=−b/2`, `k=f(h)`; (b) estática: `a<0 → abre hacia abajo`; (c) estática: discriminante `Δ<0 → sin raíces reales`.
 
 ### Task 9: Mundo 7 — ⛰️ Montañas de Geometría (2 quests)
-- [ ] **Task 9 completa** (contenido + test de 300 tiradas + `index.js` + build)
+- [x] **Task 9 completa** — quests bespoke (tirolesa/refugio) sobre tripletas pitagóricas
 **Files:** Create `src/content/quests/mundo7-quests.jsx`, test; Modify `index.js`.
 **Contenido** (temas: Pitágoras, trigonometría 30/60, cilindro/prisma):
 - `montanas-quest-1` — "La escalada segura" (NPC: Sherpa). Fábricas: (a) **hipotenusa** con tripletas pitagóricas `[3,4,5]…`; (b) **cateto faltante** `b=√(c²−a²)`; (c) estática: `√(9+16)=5` (no 7).
