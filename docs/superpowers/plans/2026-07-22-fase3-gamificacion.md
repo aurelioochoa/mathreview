@@ -1582,7 +1582,7 @@ git commit -m "feat: pistas compradas (token) en retos y jefes"
   - `ACHIEVEMENTS` — array de `{ id, name, emoji, description, secret?, check(state, event) }`.
   - `evaluateAchievements(state, event) → string[]` (ids recién desbloqueados, excluyendo los ya presentes en `state.achievements`).
 
-- [ ] **Step 1: Escribir los tests (fallan)**
+- [x] **Step 1: Escribir los tests (fallan)**
 
 Create `src/state/__tests__/achievements.test.js`:
 ```js
@@ -1612,9 +1612,9 @@ describe('evaluateAchievements', () => {
 })
 ```
 
-- [ ] **Step 2: Ejecutar — falla.** Run: `npm test -- achievements` → FAIL.
+- [x] **Step 2: Ejecutar — falla.** Run: `npm test -- achievements` → FAIL.
 
-- [ ] **Step 3: Definir `src/content/achievements.js`**
+- [x] **Step 3: Definir `src/content/achievements.js`**
 
 Lista de ~18 logros. Cada `check(state, event)` devuelve boolean. Los dependientes de un suceso puntual usan `event`. **Contenido completo:**
 ```js
@@ -1653,7 +1653,7 @@ export const ACHIEVEMENTS = [
 ]
 ```
 
-- [ ] **Step 4: Motor `src/state/achievements.js`**
+- [x] **Step 4: Motor `src/state/achievements.js`**
 ```js
 import { ACHIEVEMENTS } from '../content/achievements'
 
@@ -1671,9 +1671,9 @@ export function evaluateAchievements(state, event) {
 }
 ```
 
-- [ ] **Step 5: Ejecutar — pasa.** Run: `npm test -- achievements` → PASS.
+- [x] **Step 5: Ejecutar — pasa.** Run: `npm test -- achievements` → PASS.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 ```bash
 git add src/content/achievements.js src/state/achievements.js src/state/__tests__/achievements.test.js
 git commit -m "feat: definición de logros + motor evaluateAchievements"
