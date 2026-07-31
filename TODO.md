@@ -2,26 +2,19 @@
 
 Hoja de ruta por fases. Lo pendiente va arriba; el historial, al final.
 
-**Specs:** [base](docs/superpowers/specs/2026-07-18-math-quest-design.md) · [worldmap 3D](docs/superpowers/specs/2026-07-19-rediseno-worldmap-3d-design.md) · [Fase 2](docs/superpowers/specs/2026-07-21-fase2-migracion-completa-design.md) · [Fase 3](docs/superpowers/specs/2026-07-22-fase3-gamificacion-design.md)
-**Planes:** [Fases 0-1](docs/superpowers/plans/2026-07-18-math-quest-fase0-fase1.md) · [worldmap 3D](docs/superpowers/plans/2026-07-19-rediseno-worldmap-3d.md) · [Fase 2](docs/superpowers/plans/2026-07-21-fase2-migracion-completa.md) · [Fase 3](docs/superpowers/plans/2026-07-22-fase3-gamificacion.md)
+**Specs:** [base](docs/superpowers/specs/2026-07-18-math-quest-design.md) · [worldmap 3D](docs/superpowers/specs/2026-07-19-rediseno-worldmap-3d-design.md) · [Fase 2](docs/superpowers/specs/2026-07-21-fase2-migracion-completa-design.md) · [Fase 3](docs/superpowers/specs/2026-07-22-fase3-gamificacion-design.md) · [Fase 4](docs/superpowers/specs/2026-07-31-fase4-contenido-nuevo-design.md)
+**Planes:** [Fases 0-1](docs/superpowers/plans/2026-07-18-math-quest-fase0-fase1.md) · [worldmap 3D](docs/superpowers/plans/2026-07-19-rediseno-worldmap-3d.md) · [Fase 2](docs/superpowers/plans/2026-07-21-fase2-migracion-completa.md) · [Fase 3](docs/superpowers/plans/2026-07-22-fase3-gamificacion.md) · [Fase 4](docs/superpowers/plans/2026-07-31-fase4-contenido-nuevo.md)
 
-## Estado — 2026-07-30
+## Estado — 2026-07-31
 
-- **Rama:** `feat/fase3-gamificacion` (sin mergear a `main` todavía).
-- **Suite:** `npm test` → 35 archivos, 209 tests en verde; `build` y `lint` limpios.
-- **🎮 MVP jugable completo.** El bucle está cerrado: 6 mundos (3-8) con niveles y modo estudio, jefe y sidequests en cada uno, cofres, tienda, pistas, logros con aviso, racha diaria y perfil, sobre mapa 3D con fallback 2D y guardado v2 con migración.
-- **Fase 3 completa** (18/18 tasks). **Siguiente:** Fase 4 — contenido nuevo (Mundos 1 y 2).
+- **Rama:** `feat/fase4-contenido-nuevo` (Fase 3 ya mergeada en `main` y publicada).
+- **Suite:** `npm test` → 41 archivos, 249 tests en verde; `build` y `lint` limpios.
+- **🎮 Escalera 8-15 años completa.** Los 8 mundos son jugables, con desbloqueo secuencial por jefe y portal de teletransporte para saltárselo. Cada mundo: niveles, jefe y sidequests; más cofres, tienda, pistas, logros, racha y perfil, sobre mapa 3D con fallback 2D y guardado v3 con migración.
+- **Fase 4 completa** (12/12 tasks). **Siguiente:** Fase 5 — pulido.
 
 ---
 
-# 🔴 Siguiente — Fase 4: Contenido nuevo
-
-- [ ] Mundo 1 🏝️ Isla Numérica (operaciones básicas, orden, múltiplos) — tono 8-11 años. Ya existe como teaser bloqueado en `worldMap.js`.
-- [ ] Mundo 2 🍕 Reino de las Fracciones (fracciones, decimales, porcentajes) — ídem.
-- [ ] Portal de teletransporte (prueba de dominio para saltar mundos)
-- [ ] `content/season.js` con referencias pop de temporada (julio 2026)
-
-# ⬜ Fase 5 — Pulido
+# 🔴 Siguiente — Fase 5: Pulido
 
 - [ ] Celebración de logro desbloqueado y de jefe derrotado (la de nivel ya existe)
 - [ ] Export/import de partida (base64 + checksum)
@@ -32,8 +25,8 @@ Hoja de ruta por fases. Lo pendiente va arriba; el historial, al final.
 
 # Deuda y cabos sueltos
 
-- [ ] **Verificación e2e interactiva en navegador** (arrastrada desde Fase 1: la extensión de Chrome no estaba conectada). Checklist en el plan de Fases 0-1, Task 14 · Step 4. Cubierta parcialmente por los tests de integración.
-- [x] ~~README desactualizado~~ — actualizado el 2026-07-30 (estructura, rutas y estado real).
+- [x] ~~Verificación e2e interactiva en navegador~~ — hecha el 2026-07-31 al cerrar Fase 4, arrastrada desde Fase 1. Destapó tres bugs que ningún test veía: el bono de racha cobrado dos veces con StrictMode, el gate entre mundos ausente en el mapa 3D, y un logro mal nombrado.
+- [x] ~~README desactualizado~~ — actualizado el 2026-07-30 y el 2026-07-31.
 - [ ] ⚠️ **Rotar el token del túnel de Cloudflare** en el dashboard — vivió en texto plano en `docker-compose.yml` antes de moverse a `.env`.
 
 # Ideas futuras (fuera de alcance actual)
@@ -69,3 +62,11 @@ Widgets de los Bloques 2-6 extraídos, Mundos 4 🏰 / 5 🌀 / 6 🚀 / 7 ⛰�
 18 tasks en seis capas. **A:** estado v2 (jefes, quests, logros, cosméticos, pistas, racha) con migración desde v1 y economía por estrellas nuevas — rejugar sin mejorar la marca paga 0. **B:** `buildBossPool` y un jefe con barra de vida en cada mundo, con ⭐ de maestría. **C:** `QuestPlayer` y 13 sidequests narrativas bespoke repartidas por los seis mundos, más validación de quests. **D:** cofres sorpresa ponderados en el primer completado de cada nivel y la primera victoria de cada jefe, tienda `/tienda` y pistas compradas. **E:** 18 logros con motor puro, aviso efímero y página `/logros`. **F:** racha diaria con bono y 🔥 en el HUD, y perfil `/perfil` para equipar cosméticos.
 
 Desviaciones conscientes del plan, todas anotadas en sus commits: el cofre del jefe cae solo en la primera victoria (si no, rejugar era una fuente infinita de cosméticos); los logros se evalúan en un efecto sobre el estado ya aplicado en vez de recalcular el reducer con el `state` del render; y `validateContent` solo valida sidequests cuando recibe `questsByWorld`, para seguir sirviendo con mundos sueltos.
+
+## Fase 4 — Contenido nuevo ✅ (2026-07-31) — escalera 8-15 años completa
+
+12 tasks en cinco capas. **A:** `content/season.js`, único sitio con referencias caducables, con test que prohíbe cifras dentro de las entradas. **B:** Mundo 1 🏝️ Isla Numérica (operaciones, orden, múltiplos y divisores, jerarquía) con el Kraken Contador y 2 sidequests, más tres widgets nuevos. **C:** Mundo 2 🍕 Reino de las Fracciones (fracciones, sumas, decimales, porcentajes) con el Chef Mitades, 2 sidequests y dos widgets. **D:** desbloqueo secuencial entre mundos y portal de teletransporte, con estado v3 (`portalPasses`). **E:** verificación y cierre.
+
+Tono 8-11 años, nuevo en el proyecto: frases cortas, sin incógnitas ni exponentes, divisiones exactas y referencias infantiles. Hay tests que lo vigilan, no solo la convención: ningún enunciado usa notación algebraica y las cantidades de porcentajes son siempre enteras (antes salía "9.6 cromos").
+
+El gating fue la parte delicada, porque cambia las reglas con partidas ya en marcha. Se resolvió por regla y no migrando datos: un mundo también está abierto si el jugador ya tiene progreso en él, así que nadie se encontró una puerta nueva. Los mundos 1-2 no tienen modo estudio (no vienen de ningún Bloque) y el enlace se oculta.

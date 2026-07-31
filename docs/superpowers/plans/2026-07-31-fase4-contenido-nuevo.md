@@ -20,7 +20,7 @@
 
 ## Progreso
 
-**4 de 12 tasks.** Punto de partida: 35 archivos, 209 tests → ahora 38 archivos, 222 tests.
+**12 de 12 tasks — plan ejecutado y cerrado ✅ (2026-07-31).** 209 → 249 tests (41 archivos); build y lint limpios; recorrido e2e en navegador hecho.
 
 | Capa | Task | Estado |
 |---|---|---|
@@ -35,7 +35,7 @@
 | C | 9 · Activar `reino-fracciones` en el mapa | ✅ |
 | D | 10 · Estado v3 + regla de desbloqueo (pura) | ✅ |
 | D | 11 · `PortalTrial` + ruta + UI de bloqueo en el mapa | ✅ |
-| E | 12 · Verificación final + cierre en `TODO.md` / `README.md` | ⬜ |
+| E | 12 · Verificación final + cierre en `TODO.md` / `README.md` | ✅ |
 
 ---
 
