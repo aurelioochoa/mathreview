@@ -22,7 +22,7 @@
 
 ## Progreso (actualizado 2026-07-30)
 
-**9 de 18 tasks completas.** Capas A y B cerradas; Capa C con 5 de 6 mundos. Suite en verde: 28 archivos, 165 tests.
+**10 de 18 tasks completas.** Capas A, B y C cerradas. Suite en verde: 29 archivos, 173 tests.
 
 | Capa | Task | Estado | Commit |
 |---|---|---|---|
@@ -35,7 +35,7 @@
 | C | 7 · Sidequests Mundo 5 🌀 | ✅ | `eb95248` |
 | C | 8 · Sidequests Mundo 6 🚀 | ✅ | — |
 | C | 9 · Sidequests Mundo 7 ⛰️ | ✅ | — |
-| C | 10 · Sidequests Mundo 8 🎡 + validación de quests | ⬜ | — |
+| C | 10 · Sidequests Mundo 8 🎡 + validación de quests | ✅ | — |
 | D | 11 · Cofres (`rollChest` + `Chest` + `shop.js`) | ⬜ | — |
 | D | 12 · Tienda `/tienda` | ⬜ | — |
 | D | 13 · Pistas compradas en reto y jefe | ⬜ | — |
@@ -45,7 +45,7 @@
 | F | 17 · Perfil `/perfil` + accesos en el HUD | ⬜ | — |
 | — | 18 · Verificación final + cierre en `TODO.md` | ⬜ | — |
 
-> **Siguiente:** Task 8 (Mundo 6 🚀). Alternativa si se quiere impacto jugable antes que contenido: saltar a la Capa D (Tasks 11-13) — no depende de las Tasks 8-10 salvo por el paso de validación de quests de la Task 10.
+> **Siguiente:** Capa D (Tasks 11-13): cofres, tienda y pistas compradas.
 
 ---
 
@@ -1234,7 +1234,7 @@ function repartoBotin(rng = Math.random) {
 - `montanas-quest-2` — "El refugio cilíndrico" (NPC: Arquitecta). Fábricas: (a) **seno de 30°** → opuesto = hip/2 (usar hipotenusa par); (b) estática: área lateral del cilindro `2πrh` con valores fijos; (c) estática: caras de un prisma = `n+2`.
 
 ### Task 10: Mundo 8 — 🎡 Feria de Datos (3 quests) + validación de quests
-- [ ] **Task 10 completa** (contenido + test + `index.js` + los 2 pasos de validación de abajo)
+- [x] **Task 10 completa** — 3 quests + `validateContent` valida sidequests cuando recibe `questsByWorld`
 **Files:** Create `src/content/quests/mundo8-quests.jsx`, test; Modify `index.js`, `src/content/validateContent.js`, `src/content/__tests__/validateContent.test.js`.
 **Contenido** (temas: media/mediana, conteo, permutaciones/combinaciones, probabilidad):
 - `feria-quest-1` — "El promedio del squad" (NPC: Capitán). Fábricas: (a) **media** de un set generado (K/D del squad); (b) estática: mediana de una lista impar; (c) estática: rango = máx − mín.

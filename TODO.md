@@ -8,18 +8,14 @@ Hoja de ruta por fases. Lo pendiente va arriba; el historial, al final.
 ## Estado — 2026-07-30
 
 - **Rama:** `feat/fase3-gamificacion`.
-- **Suite:** `npm test` → 28 archivos, 165 tests en verde; `build` y `lint` limpios.
-- **Jugable hoy:** 6 mundos (3-8) con niveles + modo estudio, jefe en cada uno, sidequests en los Mundos 3/4/5/6/7, mapa 3D con fallback 2D, HUD, guardado v2 con migración.
-- **Fase en curso:** Fase 3 — **9 de 18 tasks completas** (Capas A y B cerradas, Capa C con 5 de 6 mundos).
-- **Siguiente paso:** Task 10 (Mundo 8 🎡 + validación de quests), y con eso la Capa D (cofres/tienda/pistas).
+- **Suite:** `npm test` → 29 archivos, 173 tests en verde; `build` y `lint` limpios.
+- **Jugable hoy:** 6 mundos (3-8) con niveles + modo estudio, jefe y sidequests en cada uno, mapa 3D con fallback 2D, HUD, guardado v2 con migración.
+- **Fase en curso:** Fase 3 — **10 de 18 tasks completas** (Capas A, B y C cerradas).
+- **Siguiente paso:** Capa D — Task 11 (cofres), 12 (tienda) y 13 (pistas compradas).
 
 ---
 
 # 🔴 En curso — Fase 3: Gamificación completa (→ MVP jugable)
-
-## Capa C — Sidequests (5 de 6 mundos)
-
-- [ ] **Task 10** — Mundo 8 🎡 Feria de Datos (3 quests: media/mediana, conteo, probabilidad) + extender `validateContent` para exigir ≥1 sidequest por mundo
 
 ## Capa D — Economía visible
 
@@ -42,7 +38,7 @@ Hoja de ruta por fases. Lo pendiente va arriba; el historial, al final.
 
 - [x] **Capa A** — estado v2 (jefes, quests, logros, cosméticos, pistas, racha) + migración de guardado v1 → v2 + economía por estrellas nuevas (`coinsForCompletion`)
 - [x] **Capa B** — `buildBossPool`, campo `boss` en los 6 mundos + validación, `BossArena` con barra de vida, acceso al jefe y ⭐ de maestría en `WorldView`
-- [x] **Capa C (parcial)** — `QuestPlayer` + esquema/índice de quests + sidequests bespoke de los Mundos 3 🌋, 4 🏰, 5 🌀, 6 🚀 y 7 ⛰️
+- [x] **Capa C** — `QuestPlayer` + esquema/índice de quests + sidequests bespoke en los seis mundos (13 misiones) + `validateContent` exige ≥1 sidequest por mundo
 
 ---
 

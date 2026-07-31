@@ -1,6 +1,8 @@
 // Validador puro de contenido de mundos. Devuelve una lista de problemas (vacía = OK).
 // Ejecuta cada fábrica una vez para comprobar la forma de las preguntas generadas.
-export function validateContent({ worlds, widgets, worldMapNodes }) {
+// `questsByWorld` es opcional: si no se pasa, no se valida nada de sidequests
+// (así el validador sigue sirviendo para comprobar mundos sueltos).
+export function validateContent({ worlds, widgets, worldMapNodes, questsByWorld }) {
   const problems = []
   const slugs = new Set()
   const idsPorMundo = {}
@@ -12,6 +14,23 @@ export function validateContent({ worlds, widgets, worldMapNodes }) {
     slugs.add(w.slug)
     if (!w.boss || typeof w.boss.name !== 'string' || typeof w.boss.emoji !== 'string')
       problems.push(`mundo ${w.id}: falta boss bien formado { name, emoji, intro }`)
+    if (questsByWorld) {
+      const quests = questsByWorld[w.id] ?? []
+      if (quests.length === 0) problems.push(`mundo ${w.id}: sin sidequests (≥1 requerida)`)
+      for (const quest of quests) {
+        const etiqueta = `${w.id}/${quest.id ?? '¿?'}`
+        if (!Array.isArray(quest.questions) || quest.questions.length < 3 || quest.questions.length > 5)
+          problems.push(`${etiqueta}: la quest necesita 3-5 fábricas`)
+        for (const [i, f] of (quest.questions ?? []).entries()) {
+          let q
+          try { q = f() } catch (e) { problems.push(`${etiqueta}: fábrica ${i} lanzó: ${e.message}`); continue }
+          if (!Array.isArray(q?.options) || q.options.length !== 4 || new Set(q.options).size !== 4)
+            problems.push(`${etiqueta}: fábrica ${i} no tiene 4 opciones distintas`)
+          if (!(q?.correctAnswer >= 0 && q?.correctAnswer < 4))
+            problems.push(`${etiqueta}: fábrica ${i} correctAnswer inválido`)
+        }
+      }
+    }
     if (!Array.isArray(w.levels) || w.levels.length === 0) {
       problems.push(`mundo ${w.id} sin niveles`)
       continue
