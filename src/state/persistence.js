@@ -5,7 +5,7 @@ export const BACKUP_KEY = 'mathquest-save-v1-backup'
 
 // Lleva cualquier save reconocido (v1 o v2) al estado v2 completo, rellenando
 // defaults. Devuelve null si no es un objeto reconocible.
-function migrate(data) {
+export function migrate(data) {
   if (!data || typeof data !== 'object') return null
   const base = defaultState()
   // v2 y v3 comparten forma: los campos que faltan se rellenan con los defaults,
