@@ -3,7 +3,7 @@
 Hoja de ruta por fases. Lo pendiente va arriba; el historial, al final.
 
 **Specs:** [base](docs/superpowers/specs/2026-07-18-math-quest-design.md) · [worldmap 3D](docs/superpowers/specs/2026-07-19-rediseno-worldmap-3d-design.md) · [Fase 2](docs/superpowers/specs/2026-07-21-fase2-migracion-completa-design.md) · [Fase 3](docs/superpowers/specs/2026-07-22-fase3-gamificacion-design.md) · [Fase 4](docs/superpowers/specs/2026-07-31-fase4-contenido-nuevo-design.md) · [Fase 5](docs/superpowers/specs/2026-07-31-fase5-pulido-design.md)
-**Planes:** [Fases 0-1](docs/superpowers/plans/2026-07-18-math-quest-fase0-fase1.md) · [worldmap 3D](docs/superpowers/plans/2026-07-19-rediseno-worldmap-3d.md) · [Fase 2](docs/superpowers/plans/2026-07-21-fase2-migracion-completa.md) · [Fase 3](docs/superpowers/plans/2026-07-22-fase3-gamificacion.md) · [Fase 4](docs/superpowers/plans/2026-07-31-fase4-contenido-nuevo.md)
+**Planes:** [Fases 0-1](docs/superpowers/plans/2026-07-18-math-quest-fase0-fase1.md) · [worldmap 3D](docs/superpowers/plans/2026-07-19-rediseno-worldmap-3d.md) · [Fase 2](docs/superpowers/plans/2026-07-21-fase2-migracion-completa.md) · [Fase 3](docs/superpowers/plans/2026-07-22-fase3-gamificacion.md) · [Fase 4](docs/superpowers/plans/2026-07-31-fase4-contenido-nuevo.md) · [Fase 5](docs/superpowers/plans/2026-07-31-fase5-pulido.md)
 
 ## Estado — 2026-07-31
 
@@ -16,7 +16,7 @@ Hoja de ruta por fases. Lo pendiente va arriba; el historial, al final.
 
 # 🔴 En curso — Fase 5: Pulido
 
-Spec: [Fase 5](docs/superpowers/specs/2026-07-31-fase5-pulido-design.md) (escrito el 2026-07-31).
+Spec: [Fase 5](docs/superpowers/specs/2026-07-31-fase5-pulido-design.md) · Plan: [Fase 5](docs/superpowers/plans/2026-07-31-fase5-pulido.md) — 9 tasks.
 
 - [ ] Celebración con variante: `nivel` / `jefe` / `logro` sobre el `Celebration` que ya existe
 - [ ] Traspaso de partida por código, fichero y QR (gzip + checksum FNV-1a)

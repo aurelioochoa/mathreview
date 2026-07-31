@@ -83,8 +83,10 @@ MQ1.<base64url( gzip( JSON({ c: <checksum>, s: <partida> }) ) )>
   | `reason` | Cuándo | Mensaje |
   |---|---|---|
   | `formato` | prefijo ausente o base64 ilegible | «Esto no parece un código de Math Quest» |
-  | `corrupto` | el checksum no cuadra | «El código está incompleto. ¿Se copió entero?» |
+  | `corrupto` | falla el descomprimido, el JSON o el checksum | «El código está incompleto. ¿Se copió entero?» |
   | `incompatible` | `migrate` devuelve `null` | «Este código es de una versión que ya no se reconoce» |
+
+  **Quién caza qué.** El gzip lleva su propio CRC32, así que un código truncado o con un carácter cambiado revienta ya al descomprimir. Ese es el detector primario, y por eso el fallo de descompresión se reporta como `corrupto` y no como `formato`: cuando el prefijo era correcto y el base64 se decodificó, la causa casi segura es un código mal copiado. El FNV-1a es la segunda red — cubre un sobre que descomprime bien pero cuyo contenido no cuadra — y cuesta seis líneas.
 
 - Antes de dar la partida por buena, `decodeSave` **la pasa por el `migrate` que ya vive en `persistence.js`**. Hoy eso no cambia nada, porque el formato nace ahora y todo código lleva un guardado v3 dentro. Sirve para el caso que llegará: un código exportado hoy y pegado dentro de un año, cuando el estado vaya por v4 o v5. Un código de partida es un guardado que viaja en el tiempo, y debe entrar por el mismo tubo de migración que el de `localStorage`, no por uno paralelo. Eso obliga a exportar `migrate`, hoy privado del módulo.
 
@@ -93,8 +95,10 @@ MQ1.<base64url( gzip( JSON({ c: <checksum>, s: <partida> }) ) )>
 | formato | tamaño | ¿cabe en un QR? |
 |---|---|---|
 | JSON | 3 265 B | — |
-| base64 a pelo | 4 356 B | **no** (tope byte-mode: 2 953 B) |
+| base64 a pelo | 4 356 B | **no** |
 | gzip + base64 | **800 B** | sí, de sobra |
+
+El tope es **2 331 B**: un QR versión 40 en modo byte con corrección de errores **M**, que es la que trae `qrcode` por defecto y la que conviene para escanear de una pantalla (el nivel L da 2 953 B pero tolera peor los reflejos y el moiré). Con 800 B de peor caso sobra margen para quedarse en M.
 
 Sin compresión el QR es imposible y el código de texto es un ladrillo de cuatro mil caracteres.
 
@@ -135,7 +139,7 @@ Componente nuevo `src/components/SaveTransfer.jsx`, montado en `Profile.jsx`. Tr
 
 Ambas mitades van en chunks `lazy()`, siguiendo el patrón que `Celebration` ya usa. Sin eso, el decodificador engordaría el bundle inicial justo en la fase en que se ha decidido no tocarlo.
 
-- **Generar** — `src/components/QrPanel.jsx`, con `qrcode` (1.5.4, MIT). Si un código superase la capacidad del QR, el panel lo dice y remite a las otras dos vías, en vez de pintar un código ilegible. El peor caso medido son 800 B sobre un tope de 2 953, así que es una guarda, no un camino habitual: se cubre con test, no con UI elaborada.
+- **Generar** — `src/components/QrPanel.jsx`, con `qrcode` (1.5.4, MIT). Si un código superase la capacidad del QR, se dice y se remite a las otras dos vías, en vez de pintar un código ilegible. Como el código es ASCII, su longitud en caracteres es su tamaño en bytes, así que la guarda es una comparación contra `QR_MAX_BYTES = 2331` y **vive en el códec, no en el panel**: así se testea sin cargar la librería. El peor caso medido son 800 B, así que es una guarda, no un camino habitual.
 - **Escanear** — `src/components/QrScanner.jsx`. Usa **`BarcodeDetector` nativo cuando existe** y **jsQR (1.4.0, Apache-2.0) de reserva**, porque Safari en iOS no trae la API nativa.
 
   Se eligió jsQR sobre `@zxing/browser` por una razón concreta: la vía nativa ya obliga a montar `getUserMedia` y un `<video>` a mano, así que jsQR comparte toda esa fontanería y solo cambia el paso de detección (`jsQR(imageData, w, h)` sobre un canvas). `@zxing/browser` se adueña del ciclo de vida de la cámara, lo que forzaría dos implementaciones paralelas del escáner, y pesa bastante más.
