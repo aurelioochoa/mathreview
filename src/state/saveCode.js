@@ -157,6 +157,12 @@ export async function decodeSave(code) {
     return { ok: false, reason: 'formato' }
   }
 
+  // Sin DecompressionStream (Safari < 16.4, WebViews viejos de Android) el
+  // código nunca es el problema: es el navegador el que no puede leerlo. Se
+  // distingue de 'corrupto' para no mandar al jugador a comprobar diez veces
+  // un código que está perfectamente bien.
+  if (typeof DecompressionStream === 'undefined') return { ok: false, reason: 'sinSoporte' }
+
   // A partir de aquí el prefijo era correcto y el base64 se decodificó, así
   // que un fallo apunta a un código mal copiado, no a otra cosa.
   let sobre

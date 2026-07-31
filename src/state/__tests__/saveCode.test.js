@@ -145,6 +145,23 @@ describe('saveCode — formas envenenadas (decodeSave valida de verdad)', () => 
   })
 })
 
+describe('saveCode — sin soporte de descompresión en el navegador', () => {
+  it('si falta DecompressionStream, lo distingue de un código corrupto', async () => {
+    const code = await encodeSave(defaultState())
+    const original = globalThis.DecompressionStream
+    // Se borra a propósito para simular un navegador sin soporte (Safari iOS
+    // < 16.4, WebViews viejos de Android).
+    delete globalThis.DecompressionStream
+    try {
+      const res = await decodeSave(code)
+      expect(res).toEqual({ ok: false, reason: 'sinSoporte' })
+      expect(res.reason).not.toBe('corrupto')
+    } finally {
+      globalThis.DecompressionStream = original
+    }
+  })
+})
+
 describe('saveCode — tamaño', () => {
   it('el peor caso realista cabe en un QR', async () => {
     const code = await encodeSave(partidaPesada())

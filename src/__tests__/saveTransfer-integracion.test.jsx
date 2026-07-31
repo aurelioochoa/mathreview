@@ -114,6 +114,51 @@ describe('integración: SaveTransfer — QR', () => {
   })
 })
 
+describe('integración: SaveTransfer — exportar sin creer que se hizo una copia inexistente', () => {
+  beforeEach(() => localStorage.clear())
+
+  it('"Copiar" y "Descargar fichero" están deshabilitados hasta que el código está listo', async () => {
+    montar({ xp: 100 })
+    // Justo tras el render síncrono, el efecto que llama a encodeSave todavía
+    // no ha resuelto su promesa (es asíncrono incluso en el caso rápido), así
+    // que codigo sigue vacío en este instante: es la ventana real del bug.
+    const copiarBtn = screen.getByRole('button', { name: /^Copiar$/i })
+    const descargarBtn = screen.getByRole('button', { name: /Descargar fichero/i })
+    expect(copiarBtn.disabled).toBe(true)
+    expect(descargarBtn.disabled).toBe(true)
+
+    await waitFor(() => expect(copiarBtn.disabled).toBe(false))
+    expect(descargarBtn.disabled).toBe(false)
+  })
+})
+
+describe('integración: SaveTransfer — código corrupto vs. navegador sin soporte', () => {
+  beforeEach(() => localStorage.clear())
+
+  it('un código corrupto y un navegador sin DecompressionStream dan mensajes distintos', async () => {
+    montar()
+    const codigo = await encodeSave({ ...defaultState(), xp: 1 })
+
+    // Primero, con la API presente: un código truncado es 'corrupto'.
+    fireEvent.change(screen.getByLabelText(/Pega aquí un código/i), { target: { value: codigo.slice(0, -8) } })
+    fireEvent.click(screen.getByRole('button', { name: /Revisar código/i }))
+    expect(await screen.findByText(/incompleto/i)).toBeTruthy()
+
+    // Ahora, sin DecompressionStream: el mismo código (esta vez entero, uno
+    // que decodificaría bien) da un mensaje distinto, que no culpa al código.
+    const original = globalThis.DecompressionStream
+    delete globalThis.DecompressionStream
+    try {
+      fireEvent.change(screen.getByLabelText(/Pega aquí un código/i), { target: { value: codigo } })
+      fireEvent.click(screen.getByRole('button', { name: /Revisar código/i }))
+      expect(await screen.findByText(/este navegador no puede leer/i)).toBeTruthy()
+      expect(screen.queryByText(/incompleto/i)).toBeNull()
+    } finally {
+      globalThis.DecompressionStream = original
+    }
+  })
+})
+
 describe('integración: SaveTransfer — deshacer un import', () => {
   beforeEach(() => localStorage.clear())
 

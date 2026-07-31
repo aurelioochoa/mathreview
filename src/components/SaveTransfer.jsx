@@ -13,6 +13,10 @@ const MENSAJES = {
   formato: 'Esto no parece un código de Math Quest.',
   corrupto: 'El código está incompleto. ¿Se copió entero?',
   incompatible: 'Este código es de una versión que ya no se reconoce.',
+  // Distinto de 'corrupto' a propósito: aquí el código está bien, es el
+  // navegador el que no sabe leerlo. Si sonara igual que "código incompleto",
+  // el jugador se pondría a copiarlo diez veces buscando un fallo que no está.
+  sinSoporte: 'Este navegador no puede leer códigos de partida. Prueba con otro navegador, o usa el fichero .mathquest.',
 }
 
 // Resumen legible de una partida, para que el jugador confirme que carga la
@@ -35,11 +39,20 @@ export default function SaveTransfer() {
   const [verQr, setVerQr] = useState(false)
   const [escaneando, setEscaneando] = useState(false)
   const [hayInstantanea, setHayInstantanea] = useState(() => loadPreImportSnapshot() !== null)
+  const [errorExportar, setErrorExportar] = useState(null)
   const cabeEnQr = codigo.length > 0 && codigo.length <= QR_MAX_BYTES
 
   useEffect(() => {
     let vivo = true
-    encodeSave(state).then(c => { if (vivo) setCodigo(c) })
+    encodeSave(state)
+      .then(c => { if (vivo) { setCodigo(c); setErrorExportar(null) } })
+      .catch(() => {
+        // Sin CompressionStream (Safari iOS < 16.4, WebViews viejos de
+        // Android) encodeSave lanza. Sin este catch, el rechazo quedaba sin
+        // capturar y el código se quedaba vacío para siempre sin que nadie
+        // se enterara de por qué.
+        if (vivo) setErrorExportar('Este navegador no puede generar el código de tu partida. Prueba con otro navegador.')
+      })
     return () => { vivo = false }
   }, [state])
 
@@ -117,14 +130,15 @@ export default function SaveTransfer() {
           className="w-full text-xs font-mono border border-gray-200 rounded-lg p-2 bg-white break-all"
         />
         <div className="flex flex-wrap gap-2 mt-2">
-          <button onClick={copiar} className={`${boton} bg-primary text-white`}>Copiar</button>
-          <button onClick={descargar} className={`${boton} bg-white border border-gray-200`}>Descargar fichero</button>
+          <button onClick={copiar} disabled={!codigo} className={`${boton} bg-primary text-white disabled:opacity-50`}>Copiar</button>
+          <button onClick={descargar} disabled={!codigo} className={`${boton} bg-white border border-gray-200 disabled:opacity-50`}>Descargar fichero</button>
           {cabeEnQr && (
             <button onClick={() => setVerQr(v => !v)} className={`${boton} bg-white border border-gray-200`}>
               {verQr ? 'Ocultar QR' : 'Mostrar QR'}
             </button>
           )}
         </div>
+        {errorExportar && <p role="alert" className="text-sm text-red-600 mt-2">{errorExportar}</p>}
         {codigo.length > QR_MAX_BYTES && (
           <p className="text-xs text-gray-500 mt-2">
             Tu partida es demasiado grande para un QR. Usa el código o el fichero.
