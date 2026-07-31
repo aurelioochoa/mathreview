@@ -1,6 +1,6 @@
 # Math Quest — Plan de implementación Fases 0-1 (base segura + motor piloto)
 
-> **Estado: ejecutado ✅ (2026-07-18)** — 46/47 pasos hechos. Único pendiente: la verificación e2e manual en navegador (Task 14 · Step 4), bloqueada en su momento porque la extensión de Chrome no estaba conectada; cubierta parcialmente por los tests de integración.
+> **Estado: ejecutado y cerrado ✅** — 47/47 pasos. La verificación e2e manual (Task 14 · Step 4) quedó pendiente desde 2026-07-18 porque la extensión de Chrome no estaba conectada, y se completó el 2026-07-31 junto al cierre de Fase 4.
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
@@ -1245,7 +1245,7 @@ Añadir en `math-review/src/pages/Home.jsx`, justo encima del grid de bloques:
       </Link>
 ```
 
-- [ ] **Step 4: Verificación end-to-end manual**
+- [x] **Step 4: Verificación end-to-end manual** — hecho el 2026-07-31, al cerrar Fase 4 (ver su Task 12).
 
 ```bash
 npm run dev
