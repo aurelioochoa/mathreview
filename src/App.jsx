@@ -6,6 +6,7 @@ import LevelPlayer from './engine/LevelPlayer'
 import StudyView from './engine/StudyView'
 import BossArena from './engine/BossArena'
 import QuestPlayer from './engine/QuestPlayer'
+import PortalTrial from './engine/PortalTrial'
 import Shop from './pages/Shop'
 import Achievements from './pages/Achievements'
 import Profile from './pages/Profile'
@@ -22,6 +23,7 @@ export default function App() {
         <Route path="/mundo/:slug/estudio" element={<StudyView />} />
         <Route path="/mundo/:slug/jefe" element={<BossArena />} />
         <Route path="/mundo/:slug/quest/:questId" element={<QuestPlayer />} />
+        <Route path="/mundo/:slug/portal" element={<PortalTrial />} />
         <Route path="/tienda" element={<Shop />} />
         <Route path="/logros" element={<Achievements />} />
         <Route path="/perfil" element={<Profile />} />

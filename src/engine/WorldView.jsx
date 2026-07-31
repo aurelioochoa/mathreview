@@ -1,7 +1,7 @@
 import { Link, useParams } from 'react-router-dom'
 import { findWorld } from '../content/worlds'
 import { questsForWorld } from '../content/quests'
-import { studyTargetFor } from '../content/worldMap'
+import { studyTargetFor, isWorldUnlocked, portalTargetFor } from '../content/worldMap'
 import { useGame } from '../state/gameStore'
 import { levelForXp, titleForLevel } from '../state/xpCurve'
 
@@ -10,6 +10,26 @@ export default function WorldView() {
   const { state } = useGame()
   const world = findWorld(slug)
   if (!world) return <p className="text-center py-12">Mundo no encontrado. <Link className="text-primary underline" to="/">Volver</Link></p>
+
+  // La puerta también aquí, no solo en el mapa: si no, basta con teclear la URL.
+  if (!isWorldUnlocked(world.slug, state)) {
+    const portalSlug = portalTargetFor(world.slug)
+    return (
+      <div className="max-w-xl mx-auto text-center glass rounded-[1.75rem] shadow-lg p-8">
+        <p className="text-5xl mb-2">🔒</p>
+        <h1 className="font-display text-xl font-bold mb-1">{world.emoji} {world.name} está cerrado</h1>
+        <p className="text-sm text-gray-500 mb-4">
+          Derrota al jefe del mundo anterior para abrirlo. Y si ya te sabes ese mundo, sáltatelo con el portal.
+        </p>
+        <div className="flex flex-wrap gap-3 justify-center">
+          <Link to="/" className="px-5 py-2.5 rounded-xl bg-primary text-white font-display font-bold">Volver al mapa</Link>
+          {portalSlug && (
+            <Link to={`/mundo/${portalSlug}/portal`} className="px-5 py-2.5 rounded-xl bg-indigo-500 text-white font-display font-bold">🌀 Probar el portal</Link>
+          )}
+        </div>
+      </div>
+    )
+  }
 
   const playerLevel = levelForXp(state.xp)
   const allLevelsDone = world.levels.every(l => state.completedLevels.includes(`${world.id}/${l.id}`))

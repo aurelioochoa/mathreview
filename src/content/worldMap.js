@@ -140,6 +140,14 @@ export function isWorldUnlocked(nodeId, gameState) {
     || (gameState?.portalPasses ?? []).includes(anterior)
 }
 
+// Qué mundo hay que demostrar en el portal para abrir `nodeId`: el anterior del
+// camino, que es justamente el que el jugador se quiere saltar. null si es el
+// primero (no hay nada que saltarse). Puro.
+export function portalTargetFor(nodeId) {
+  const i = pathOrder.indexOf(nodeId)
+  return i > 0 ? pathOrder[i - 1] : null
+}
+
 // Estado de un nodo dado el estado del juego. Puro.
 export function nodeState(node, gameState) {
   if (node.status === 'coming-soon') return 'coming-soon'

@@ -34,7 +34,7 @@
 | C | 8 · Sidequests del Mundo 2 (2) | ✅ |
 | C | 9 · Activar `reino-fracciones` en el mapa | ✅ |
 | D | 10 · Estado v3 + regla de desbloqueo (pura) | ✅ |
-| D | 11 · `PortalTrial` + ruta + UI de bloqueo en el mapa | ⬜ |
+| D | 11 · `PortalTrial` + ruta + UI de bloqueo en el mapa | ✅ |
 | E | 12 · Verificación final + cierre en `TODO.md` / `README.md` | ⬜ |
 
 ---

@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom'
 import { Lock } from 'lucide-react'
 import { motion, useReducedMotion } from 'motion/react'
-import { worldMapNodes, nodeState, worldProgress } from '../content/worldMap'
+import { worldMapNodes, nodeState, worldProgress, portalTargetFor } from '../content/worldMap'
 import { useGame } from '../state/gameStore'
 
 // Clases de gradiente LITERALES por tema (Tailwind escanea substrings literales;
@@ -20,7 +20,11 @@ const THEME_GRADIENT = {
 function WorldCard({ node, state }) {
   const reduce = useReducedMotion()
   const st = nodeState(node, state)
-  const locked = st === 'coming-soon'
+  const proximamente = st === 'coming-soon'
+  const cerrado = st === 'locked'          // existe, pero falta el jefe anterior
+  const locked = proximamente || cerrado
+  const portalSlug = cerrado ? portalTargetFor(node.id) : null
+  const superadoPorPortal = (state?.portalPasses ?? []).includes(node.levelKeys?.[0]?.split('/')[0])
   const progress = worldProgress(node, state)
 
   const inner = (
@@ -29,6 +33,7 @@ function WorldCard({ node, state }) {
       <h3 className="font-display font-bold text-white text-lg leading-tight">{node.title}</h3>
       <p className="text-white/85 text-sm mt-1">{node.subtitle}</p>
       {st === 'completed' && <span className="inline-block mt-2 text-amber-200 text-sm font-bold">⭐ Completado</span>}
+      {superadoPorPortal && st !== 'completed' && <span className="inline-block mt-2 text-white/90 text-sm font-bold">🌀 Superado por portal</span>}
       {progress && (
         <div className="mt-2">
           <div className="flex items-center justify-between text-xs font-bold text-white/90">
@@ -40,9 +45,14 @@ function WorldCard({ node, state }) {
           </div>
         </div>
       )}
-      {locked && (
+      {proximamente && (
         <span className="inline-flex items-center gap-1 mt-2 text-white/90 text-xs font-semibold">
           <Lock size={12} /> Próximamente
+        </span>
+      )}
+      {cerrado && (
+        <span className="inline-flex items-center gap-1 mt-2 text-white/90 text-xs font-semibold">
+          <Lock size={12} /> Derrota al jefe del mundo anterior
         </span>
       )}
     </>
@@ -53,7 +63,15 @@ function WorldCard({ node, state }) {
 
   if (locked) {
     return (
-      <div className={cls} aria-disabled="true" style={{ transformPerspective: 700 }}>{inner}</div>
+      <div>
+        <div className={cls} aria-disabled="true" style={{ transformPerspective: 700 }}>{inner}</div>
+        {/* Vía de escape para quien ya se sabe el mundo anterior. */}
+        {portalSlug && (
+          <Link to={`/mundo/${portalSlug}/portal`} className="mt-2 block text-center text-xs font-semibold text-primary underline">
+            🌀 Sáltatelo con el portal
+          </Link>
+        )}
+      </div>
     )
   }
   return (
