@@ -16,6 +16,8 @@ npm run build    # build de producción a dist/
 npm run lint     # ESLint
 ```
 
+Los comandos `lint`, `test` y `build` corren automáticamente en GitHub Actions cada vez que haces push a `main` o abres un pull request.
+
 También hay un flujo con Docker en el `Makefile` (`make dev`, `make up`, `make production`) y un servicio de generación de PDF (`make pdf`).
 
 ## Estructura
