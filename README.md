@@ -33,13 +33,12 @@ docs/          análisis, investigación, specs de diseño y planes de implement
 TODO.md        hoja de ruta por fases
 ```
 
-Rutas: `/` (mapa) · `/mundo/:slug` · `/mundo/:slug/nivel/:levelId` · `/mundo/:slug/estudio` · `/mundo/:slug/jefe` · `/mundo/:slug/quest/:questId`. Las rutas originales `/bloqueN` redirigen a su mundo.
+Rutas: `/` (mapa) · `/mundo/:slug` · `/mundo/:slug/nivel/:levelId` · `/mundo/:slug/estudio` · `/mundo/:slug/jefe` · `/mundo/:slug/quest/:questId` · `/tienda` · `/logros` · `/perfil`. Las rutas originales `/bloqueN` redirigen a su mundo.
 
 ## Estado
 
-- **Fases 0-1, rediseño visual y Fase 2: completas.** Base saneada, motor de juego data-driven, mapa de mundos 3D con fallback 2D accesible + HUD glossy + transiciones y celebración de nivel (lazy, offline, respetando `prefers-reduced-motion` y el device-tier), y los seis mundos 3-8 migrados desde los Bloques 1-6 con modo juego y modo estudio.
-- **Fase 3 (en curso):** gamificación completa. Ya hay estado v2 con migración de guardado, economía por estrellas nuevas, jefe con barra de vida en los seis mundos y sidequests narrativas en los Mundos 3, 4 y 5.
-- **Siguiente:** completar las sidequests de los Mundos 6-8 y añadir cofres, tienda, pistas, logros, racha diaria y perfil. Ver [`TODO.md`](TODO.md) y [`docs/superpowers/specs`](docs/superpowers/specs).
+- **MVP jugable (Fases 0-3 completas).** Base saneada, motor de juego data-driven, mapa de mundos 3D con fallback 2D accesible + HUD glossy + transiciones y celebración de nivel (lazy, offline, respetando `prefers-reduced-motion` y el device-tier), los seis mundos 3-8 migrados desde los Bloques 1-6 con modo juego y modo estudio, y el bucle de juego cerrado: jefes con barra de vida, 13 sidequests narrativas, cofres sorpresa, tienda, pistas, 18 logros con aviso, racha diaria y perfil con cosméticos.
+- **Siguiente (Fase 4):** contenido nuevo — Mundo 1 🏝️ Isla Numérica y Mundo 2 🍕 Reino de las Fracciones, hoy teasers bloqueados en el mapa. Ver [`TODO.md`](TODO.md) y [`docs/superpowers/specs`](docs/superpowers/specs).
 
 ## Despliegue
 

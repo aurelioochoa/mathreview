@@ -3,41 +3,18 @@
 Hoja de ruta por fases. Lo pendiente va arriba; el historial, al final.
 
 **Specs:** [base](docs/superpowers/specs/2026-07-18-math-quest-design.md) · [worldmap 3D](docs/superpowers/specs/2026-07-19-rediseno-worldmap-3d-design.md) · [Fase 2](docs/superpowers/specs/2026-07-21-fase2-migracion-completa-design.md) · [Fase 3](docs/superpowers/specs/2026-07-22-fase3-gamificacion-design.md)
-**Planes:** [Fases 0-1](docs/superpowers/plans/2026-07-18-math-quest-fase0-fase1.md) · [worldmap 3D](docs/superpowers/plans/2026-07-19-rediseno-worldmap-3d.md) · [Fase 2](docs/superpowers/plans/2026-07-21-fase2-migracion-completa.md) · [**Fase 3 (en curso)**](docs/superpowers/plans/2026-07-22-fase3-gamificacion.md)
+**Planes:** [Fases 0-1](docs/superpowers/plans/2026-07-18-math-quest-fase0-fase1.md) · [worldmap 3D](docs/superpowers/plans/2026-07-19-rediseno-worldmap-3d.md) · [Fase 2](docs/superpowers/plans/2026-07-21-fase2-migracion-completa.md) · [Fase 3](docs/superpowers/plans/2026-07-22-fase3-gamificacion.md)
 
 ## Estado — 2026-07-30
 
-- **Rama:** `feat/fase3-gamificacion`.
-- **Suite:** `npm test` → 31 archivos, 181 tests en verde; `build` y `lint` limpios.
-- **Jugable hoy:** 6 mundos (3-8) con niveles + modo estudio, jefe y sidequests en cada uno, mapa 3D con fallback 2D, HUD, guardado v2 con migración.
-- **Fase en curso:** Fase 3 — **13 de 18 tasks completas** (Capas A, B, C y D cerradas).
-- **Siguiente paso:** Capa E — Task 14 (motor de logros) y 15 (toast + `/logros`).
+- **Rama:** `feat/fase3-gamificacion` (sin mergear a `main` todavía).
+- **Suite:** `npm test` → 35 archivos, 209 tests en verde; `build` y `lint` limpios.
+- **🎮 MVP jugable completo.** El bucle está cerrado: 6 mundos (3-8) con niveles y modo estudio, jefe y sidequests en cada uno, cofres, tienda, pistas, logros con aviso, racha diaria y perfil, sobre mapa 3D con fallback 2D y guardado v2 con migración.
+- **Fase 3 completa** (18/18 tasks). **Siguiente:** Fase 4 — contenido nuevo (Mundos 1 y 2).
 
 ---
 
-# 🔴 En curso — Fase 3: Gamificación completa (→ MVP jugable)
-
-## Capa E — Logros
-
-- [ ] **Task 14** — `content/achievements.js` (definiciones) + `state/achievements.js` (`evaluateAchievements`, puro y testeado)
-- [ ] **Task 15** — `Toast.jsx` + wiring en `GameProvider` (evaluar tras cada dispatch + cola de avisos) + página `/logros` + cronómetro para el logro "Speedrunner"
-
-## Capa F — Racha + Perfil
-
-- [ ] **Task 16** — Racha diaria: `state/streak.js` (`nextStreak`/`dailyBonus`/`todayStr`), disparo diario en `GameProvider`, indicador 🔥 en el HUD
-- [ ] **Task 17** — Perfil `/perfil` (equipar avatar/marco/título, stats) + accesos a perfil/tienda/logros en el HUD
-- [ ] **Task 18** — Verificación final (`npm test` + `build` + `lint`) y cierre de Fase 3 en este archivo
-
-## ✅ Ya cerrado en Fase 3
-
-- [x] **Capa A** — estado v2 (jefes, quests, logros, cosméticos, pistas, racha) + migración de guardado v1 → v2 + economía por estrellas nuevas (`coinsForCompletion`)
-- [x] **Capa B** — `buildBossPool`, campo `boss` en los 6 mundos + validación, `BossArena` con barra de vida, acceso al jefe y ⭐ de maestría en `WorldView`
-- [x] **Capa C** — `QuestPlayer` + esquema/índice de quests + sidequests bespoke en los seis mundos (13 misiones) + `validateContent` exige ≥1 sidequest por mundo
-- [x] **Capa D** — cofres sorpresa (`rollChest` ponderado + `Chest`) en primer completado de nivel y primera victoria de jefe, tienda `/tienda` con catálogo `content/shop.js`, y pistas compradas en retos y jefes
-
----
-
-# ⬜ Fase 4 — Contenido nuevo
+# 🔴 Siguiente — Fase 4: Contenido nuevo
 
 - [ ] Mundo 1 🏝️ Isla Numérica (operaciones básicas, orden, múltiplos) — tono 8-11 años. Ya existe como teaser bloqueado en `worldMap.js`.
 - [ ] Mundo 2 🍕 Reino de las Fracciones (fracciones, decimales, porcentajes) — ídem.
@@ -86,3 +63,9 @@ Mapa de mundos 3D con react-three-fiber (lazy, offline, bloom) y fallback 2D acc
 ## Fase 2 — Migración completa de contenido ✅ (2026-07-21/22)
 
 Widgets de los Bloques 2-6 extraídos, Mundos 4 🏰 / 5 🌀 / 6 🚀 / 7 ⛰️ / 8 🎡 migrados, nivel de probabilidad básica añadido al Mundo 8, `WorldMap` reemplaza Home, redirects `/bloqueN` → mundo, ruta 404, modo estudio y script de validación de contenido.
+
+## Fase 3 — Gamificación completa ✅ (2026-07-22/30) — MVP jugable
+
+18 tasks en seis capas. **A:** estado v2 (jefes, quests, logros, cosméticos, pistas, racha) con migración desde v1 y economía por estrellas nuevas — rejugar sin mejorar la marca paga 0. **B:** `buildBossPool` y un jefe con barra de vida en cada mundo, con ⭐ de maestría. **C:** `QuestPlayer` y 13 sidequests narrativas bespoke repartidas por los seis mundos, más validación de quests. **D:** cofres sorpresa ponderados en el primer completado de cada nivel y la primera victoria de cada jefe, tienda `/tienda` y pistas compradas. **E:** 18 logros con motor puro, aviso efímero y página `/logros`. **F:** racha diaria con bono y 🔥 en el HUD, y perfil `/perfil` para equipar cosméticos.
+
+Desviaciones conscientes del plan, todas anotadas en sus commits: el cofre del jefe cae solo en la primera victoria (si no, rejugar era una fuente infinita de cosméticos); los logros se evalúan en un efecto sobre el estado ya aplicado en vez de recalcular el reducer con el `state` del render; y `validateContent` solo valida sidequests cuando recibe `questsByWorld`, para seguir sirviendo con mundos sueltos.

@@ -22,7 +22,7 @@
 
 ## Progreso (actualizado 2026-07-30)
 
-**15 de 18 tasks completas.** Capas A, B, C, D y E cerradas. Suite en verde: 33 archivos, 192 tests.
+**18 de 18 tasks completas — plan ejecutado y cerrado ✅ (2026-07-30).** Suite en verde: 35 archivos, 209 tests; `build` y `lint` limpios.
 
 | Capa | Task | Estado | Commit |
 |---|---|---|---|
@@ -41,11 +41,11 @@
 | D | 13 · Pistas compradas en reto y jefe | ✅ | — |
 | E | 14 · Definiciones de logros + `evaluateAchievements` | ✅ | — |
 | E | 15 · Toast + wiring en `GameProvider` + `/logros` | ✅ | — |
-| F | 16 · Racha diaria + 🔥 en el HUD | ⬜ | — |
-| F | 17 · Perfil `/perfil` + accesos en el HUD | ⬜ | — |
-| — | 18 · Verificación final + cierre en `TODO.md` | ⬜ | — |
+| F | 16 · Racha diaria + 🔥 en el HUD | ✅ | — |
+| F | 17 · Perfil `/perfil` + accesos en el HUD | ✅ | — |
+| — | 18 · Verificación final + cierre en `TODO.md` | ✅ | — |
 
-> **Siguiente:** Capa F (Tasks 16-17): racha diaria y perfil. Luego la Task 18 (cierre).
+> **Fase 3 cerrada.** Lo siguiente es la Fase 4 (contenido nuevo: Mundos 1 y 2). Ver `TODO.md`.
 
 ---
 
@@ -1242,7 +1242,7 @@ function repartoBotin(rng = Math.random) {
 - `feria-quest-3` — "La ruleta de la feria" (NPC: Croupier). Fábricas: (a) **probabilidad básica** `casos favorables / casos totales` (fracción simplificada — cuidar 4 opciones distintas); (b) estática: probabilidad complementaria; (c) estática: evento seguro = 1.
 
 **Además**, extender `validateContent` para exigir ≥1 quest por mundo (ahora que todos los mundos las tienen):
-- [ ] En `src/content/validateContent.js`, añadir un parámetro opcional `questsByWorld` y, dentro del bucle de mundos, validar:
+- [x] En `src/content/validateContent.js`, añadir un parámetro opcional `questsByWorld` y, dentro del bucle de mundos, validar:
 ```js
     const qs = questsByWorld?.[w.id] ?? []
     if (qs.length === 0) problems.push(`mundo ${w.id}: sin sidequests (≥1 requerida)`)
@@ -1258,7 +1258,7 @@ function repartoBotin(rng = Math.random) {
       }
     }
 ```
-- [ ] En `src/content/__tests__/validateContent.test.js`, pasar el nuevo argumento en la llamada real:
+- [x] En `src/content/__tests__/validateContent.test.js`, pasar el nuevo argumento en la llamada real:
 ```js
 import { questsByWorld } from '../quests'
 // …
@@ -2096,7 +2096,7 @@ git commit -m "feat: perfil /perfil (equipar cosméticos + stats) y accesos en e
 **Files:**
 - Modify: `TODO.md`
 
-- [ ] **Step 1: Suite completa + build + lint**
+- [x] **Step 1: Suite completa + build + lint**
 
 Run:
 ```bash
@@ -2106,11 +2106,11 @@ npm run lint
 ```
 Expected: todos verdes (tests, build sin errores, lint limpio). Si `lint` marca imports no usados (p. ej. `COINS_PER_STAR` en `LevelPlayer`), limpiarlos.
 
-- [ ] **Step 2: Marcar la Fase 3 como completa en `TODO.md`**
+- [x] **Step 2: Marcar la Fase 3 como completa en `TODO.md`**
 
 En `TODO.md`, marcar los 5 ítems de "Fase 3 — Gamificación completa" como `[x]`, cambiar el encabezado a `## Fase 3 — Gamificación completa ✅ (→ MVP jugable)`, marcar el follow-up de economía (línea 26) como `[x]` con nota "resuelto: pago por estrellas nuevas", y actualizar el párrafo de estado del principio para reflejar el MVP jugable. Añadir referencia al spec/plan de Fase 3.
 
-- [ ] **Step 3: Commit final**
+- [x] **Step 3: Commit final**
 ```bash
 git add TODO.md
 git commit -m "docs: cerrar Fase 3 (MVP jugable) — jefes, sidequests, logros, economía, racha y perfil"
