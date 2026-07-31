@@ -108,9 +108,42 @@ export function worldProgress(node, gameState) {
   }
 }
 
+// El worldId ('mundoN') se deriva de los propios levelKeys ('mundoN/nivel'),
+// que es donde ya vive esa relación: sin campo nuevo que mantener a mano.
+function worldIdDe(node) {
+  return node?.levelKeys?.[0]?.split('/')[0] ?? null
+}
+
+const nodoPorId = (id) => worldMapNodes.find(n => n.id === id) ?? null
+
+// ¿Está abierto este mundo? Puro. Cuatro vías, cualquiera basta:
+//   1. es el primero del camino,
+//   2. el anterior tiene jefe derrotado,
+//   3. el anterior se superó por portal,
+//   4. el jugador YA tiene progreso aquí.
+//
+// La cuarta es el grandfathering: el desbloqueo secuencial llega en Fase 4, con
+// partidas ya en marcha, y sin ella un jugador que venía por el Mundo 7 se
+// encontraría su mundo cerrado de un día para otro. Va antes que nada porque no
+// depende del camino.
+export function isWorldUnlocked(nodeId, gameState) {
+  const i = pathOrder.indexOf(nodeId)
+  if (i <= 0) return true // el primero, o un nodo fuera del camino
+
+  const node = nodoPorId(nodeId)
+  const hechos = new Set(gameState?.completedLevels ?? [])
+  if (node?.levelKeys?.some(k => hechos.has(k))) return true
+
+  const anterior = worldIdDe(nodoPorId(pathOrder[i - 1]))
+  if (!anterior) return true
+  return (gameState?.bossDefeats ?? []).includes(anterior)
+    || (gameState?.portalPasses ?? []).includes(anterior)
+}
+
 // Estado de un nodo dado el estado del juego. Puro.
 export function nodeState(node, gameState) {
   if (node.status === 'coming-soon') return 'coming-soon'
+  if (!isWorldUnlocked(node.id, gameState)) return 'locked'
   if (node.mode === 'game' && Array.isArray(node.levelKeys)) {
     const done = new Set(gameState?.completedLevels ?? [])
     if (node.levelKeys.every(k => done.has(k))) return 'completed'

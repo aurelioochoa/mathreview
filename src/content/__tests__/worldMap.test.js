@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import {
   worldMapNodes, nodeState, blockRoutes, adjacentBlock,
-  pathOrder, worldProgress, studyTargetFor,
+  pathOrder, worldProgress, studyTargetFor, isWorldUnlocked,
 } from '../worldMap'
 
 describe('worldMap: modelo de nodos', () => {
@@ -113,6 +113,9 @@ describe('worldMap: nodeState', () => {
   const volcan = worldMapNodes.find(n => n.id === 'volcan-potencias')
   const castillo = worldMapNodes.find(n => n.id === 'castillo-algebra')
   const isla = worldMapNodes.find(n => n.id === 'isla-numerica')
+  // Con el desbloqueo secuencial, para mirar un mundo del medio hay que llegar
+  // a él: se dan por derrotados los jefes anteriores.
+  const abierto = { completedLevels: [], bossDefeats: ['mundo1', 'mundo2', 'mundo3'] }
 
   it('sigue soportando coming-soon para futuros teasers, aunque hoy no haya', () => {
     expect(nodeState({ id: 'x', status: 'coming-soon' }, { completedLevels: [] })).toBe('coming-soon')
@@ -123,21 +126,20 @@ describe('worldMap: nodeState', () => {
     expect(nodeState(isla, { completedLevels: [] })).toBe('available')
   })
 
-  it('mundo jugable -> available si no está completo', () => {
-    expect(nodeState(castillo, { completedLevels: [] })).toBe('available')
-    expect(nodeState(castillo, { completedLevels: ['mundo3/aproximacion'] })).toBe('available')
+  it('mundo abierto -> available si no está completo', () => {
+    expect(nodeState(castillo, abierto)).toBe('available')
+    expect(nodeState(castillo, { ...abierto, completedLevels: ['mundo4/mcd'] })).toBe('available')
   })
 
-  it('mundo jugable -> available si no está todo completo', () => {
-    expect(nodeState(volcan, { completedLevels: [] })).toBe('available')
-    expect(nodeState(volcan, { completedLevels: ['mundo3/aproximacion'] })).toBe('available')
-  })
-
-  it('mundo jugable -> completed cuando TODOS sus niveles están en completedLevels', () => {
+  it('mundo abierto -> completed cuando TODOS sus niveles están en completedLevels', () => {
     const all = [
       'mundo3/aproximacion', 'mundo3/potenciacion', 'mundo3/notacion', 'mundo3/radicacion',
     ]
-    expect(nodeState(volcan, { completedLevels: all })).toBe('completed')
+    expect(nodeState(volcan, { ...abierto, completedLevels: all })).toBe('completed')
+  })
+
+  it('mundo cerrado -> locked (partida nueva, sin jefes derrotados)', () => {
+    expect(nodeState(volcan, { completedLevels: [], bossDefeats: [] })).toBe('locked')
   })
 })
 
@@ -165,5 +167,48 @@ describe('worldMap: navegación de bloques', () => {
       expect(b.slug, b.path).toBeTruthy()
       expect(activeSlugs.has(b.slug), `${b.path} -> ${b.slug}`).toBe(true)
     }
+  })
+})
+
+
+describe('worldMap: desbloqueo entre mundos', () => {
+  const vacio = { completedLevels: [], bossDefeats: [], portalPasses: [] }
+
+  it('el primer mundo siempre está abierto', () => {
+    expect(isWorldUnlocked('isla-numerica', vacio)).toBe(true)
+  })
+
+  it('en partida nueva, el resto está cerrado', () => {
+    expect(isWorldUnlocked('reino-fracciones', vacio)).toBe(false)
+    expect(isWorldUnlocked('feria-datos', vacio)).toBe(false)
+  })
+
+  it('derrotar al jefe anterior abre el siguiente', () => {
+    expect(isWorldUnlocked('reino-fracciones', { ...vacio, bossDefeats: ['mundo1'] })).toBe(true)
+    // ...pero solo el siguiente, no todos.
+    expect(isWorldUnlocked('volcan-potencias', { ...vacio, bossDefeats: ['mundo1'] })).toBe(false)
+  })
+
+  it('superar el anterior por portal también abre el siguiente', () => {
+    expect(isWorldUnlocked('reino-fracciones', { ...vacio, portalPasses: ['mundo1'] })).toBe(true)
+  })
+
+  // Grandfathering: el gating llega en Fase 4, con partidas ya empezadas. Quien
+  // venía jugando los Mundos 3-8 no puede encontrarse la puerta cerrada de
+  // golpe, y esto lo resuelve sin migrar datos.
+  it('un guardado antiguo conserva abierto todo mundo en el que ya jugó', () => {
+    const viejo = {
+      completedLevels: ['mundo3/aproximacion', 'mundo7/pitagoras'],
+      bossDefeats: [], portalPasses: [],
+    }
+    expect(isWorldUnlocked('volcan-potencias', viejo)).toBe(true)
+    expect(isWorldUnlocked('montanas-geometria', viejo)).toBe(true)
+    // Un mundo que nunca tocó sigue la regla normal.
+    expect(isWorldUnlocked('feria-datos', viejo)).toBe(false)
+  })
+
+  it('tolera un estado incompleto sin lanzar', () => {
+    expect(() => isWorldUnlocked('volcan-potencias', {})).not.toThrow()
+    expect(isWorldUnlocked('isla-numerica', undefined)).toBe(true)
   })
 })

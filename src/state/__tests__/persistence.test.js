@@ -50,14 +50,14 @@ describe('persistence', () => {
   })
 })
 
-describe('migración v1 → v2', () => {
+describe('migración de guardados', () => {
   beforeEach(() => localStorage.clear())
 
-  it('un save v1 se migra a v2 conservando xp/coins/stars/completedLevels', () => {
+  it('un save v1 se migra a la última versión conservando xp/coins/stars/completedLevels', () => {
     const v1 = { version: 1, xp: 120, coins: 30, stars: { 'mundo3/aproximacion': 2 }, completedLevels: ['mundo3/aproximacion'] }
     localStorage.setItem('mathquest-save-v1', JSON.stringify(v1))
     const s = loadSave()
-    expect(s.version).toBe(2)
+    expect(s.version).toBe(3)
     expect(s.xp).toBe(120)
     expect(s.coins).toBe(30)
     expect(s.stars).toEqual({ 'mundo3/aproximacion': 2 })
@@ -66,6 +66,21 @@ describe('migración v1 → v2', () => {
     expect(s.bossDefeats).toEqual([])
     expect(s.cosmetics.avatar).toBe('avatar-default')
     expect(s.streak).toEqual({ count: 0, best: 0, lastDate: null })
+  })
+
+  it('un save v2 (partida de Fase 3) sube a v3 con portalPasses vacío y sin perder nada', () => {
+    const v2 = {
+      ...defaultState(), version: 2, xp: 500, coins: 80,
+      completedLevels: ['mundo3/aproximacion'], bossDefeats: ['mundo3'],
+    }
+    delete v2.portalPasses
+    localStorage.setItem('mathquest-save-v1', JSON.stringify(v2))
+    const s = loadSave()
+    expect(s.version).toBe(3)
+    expect(s.xp).toBe(500)
+    expect(s.coins).toBe(80)
+    expect(s.bossDefeats).toEqual(['mundo3'])
+    expect(s.portalPasses).toEqual([])
   })
 
   it('un save v2 parcial (sin cosmetics) se completa con defaults', () => {

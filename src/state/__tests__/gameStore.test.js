@@ -8,10 +8,11 @@ describe('gameReducer — base', () => {
   it('acción desconocida devuelve el mismo estado', () => {
     expect(gameReducer(initialState, { type: 'NOPE' })).toBe(initialState)
   })
-  it('defaultState trae los campos v2 con sus valores por defecto', () => {
+  it('defaultState trae los campos v3 con sus valores por defecto', () => {
     const s = defaultState()
-    expect(s.version).toBe(2)
+    expect(s.version).toBe(3)
     expect(s.bossDefeats).toEqual([])
+    expect(s.portalPasses).toEqual([])
     expect(s.questsCompleted).toEqual([])
     expect(s.achievements).toEqual([])
     expect(s.hints).toBe(0)
@@ -101,6 +102,15 @@ describe('acciones nuevas del reducer', () => {
     expect(s.streak).toEqual({ count: 1, best: 1, lastDate: '2026-07-22' })
     expect(s.coins).toBe(7)
   })
+  it('PORTAL_PASSED registra el mundo una sola vez', () => {
+    let s = gameReducer(defaultState(), { type: 'PORTAL_PASSED', worldId: 'mundo1' })
+    expect(s.portalPasses).toEqual(['mundo1'])
+    // No da estrellas ni maestría: solo abre paso.
+    expect(s.stars).toEqual({})
+    expect(s.bossDefeats).toEqual([])
+    expect(gameReducer(s, { type: 'PORTAL_PASSED', worldId: 'mundo1' })).toBe(s)
+  })
+
   it('UNLOCK_ACHIEVEMENTS une ids nuevos sin duplicar', () => {
     let s = gameReducer(defaultState(), { type: 'UNLOCK_ACHIEVEMENTS', ids: ['sin-dano'] })
     expect(s.achievements).toEqual(['sin-dano'])

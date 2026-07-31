@@ -12,12 +12,13 @@ export const XP_QUEST = 40
 // Fuente única de defaults del estado v2. La migración de persistencia reusa esto.
 export function defaultState() {
   return {
-    version: 2,
+    version: 3,
     xp: 0,
     coins: 0,
     stars: {},            // levelKey -> 1..3 (mejor marca)
     completedLevels: [],  // levelKey[]
     bossDefeats: [],      // worldId[]
+    portalPasses: [],     // worldId[] superados por la prueba del portal
     questsCompleted: [],  // questKey[]
     achievements: [],     // achievementId[]
     hints: 0,             // tokens de pista
@@ -64,6 +65,12 @@ export function gameReducer(state, action) {
           ? state.bossDefeats
           : [...state.bossDefeats, action.worldId],
       }
+
+    case 'PORTAL_PASSED':
+      // Abre paso al siguiente mundo, sin estrellas ni maestría: el jugador
+      // puede volver luego a por ellas.
+      if (state.portalPasses.includes(action.worldId)) return state
+      return { ...state, portalPasses: [...state.portalPasses, action.worldId] }
 
     case 'QUEST_COMPLETED':
       if (state.questsCompleted.includes(action.questKey)) return state
