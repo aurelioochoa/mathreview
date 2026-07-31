@@ -22,7 +22,7 @@
 
 ## Progreso (actualizado 2026-07-30)
 
-**13 de 18 tasks completas.** Capas A, B, C y D cerradas. Suite en verde: 31 archivos, 181 tests.
+**15 de 18 tasks completas.** Capas A, B, C, D y E cerradas. Suite en verde: 33 archivos, 192 tests.
 
 | Capa | Task | Estado | Commit |
 |---|---|---|---|
@@ -39,13 +39,13 @@
 | D | 11 · Cofres (`rollChest` + `Chest` + `shop.js`) | ✅ | — |
 | D | 12 · Tienda `/tienda` | ✅ | — |
 | D | 13 · Pistas compradas en reto y jefe | ✅ | — |
-| E | 14 · Definiciones de logros + `evaluateAchievements` | ⬜ | — |
-| E | 15 · Toast + wiring en `GameProvider` + `/logros` | ⬜ | — |
+| E | 14 · Definiciones de logros + `evaluateAchievements` | ✅ | — |
+| E | 15 · Toast + wiring en `GameProvider` + `/logros` | ✅ | — |
 | F | 16 · Racha diaria + 🔥 en el HUD | ⬜ | — |
 | F | 17 · Perfil `/perfil` + accesos en el HUD | ⬜ | — |
 | — | 18 · Verificación final + cierre en `TODO.md` | ⬜ | — |
 
-> **Siguiente:** Capa E (Tasks 14-15): logros y toasts.
+> **Siguiente:** Capa F (Tasks 16-17): racha diaria y perfil. Luego la Task 18 (cierre).
 
 ---
 
@@ -1693,7 +1693,7 @@ git commit -m "feat: definición de logros + motor evaluateAchievements"
 - Consumes: `evaluateAchievements`, `ACHIEVEMENTS`, `useGame`.
 - Produces: `GameProvider` expone también `notify` opcional; los toasts de logro aparecen al desbloquear. Página `/logros` lista todos.
 
-- [ ] **Step 1: Test de la página (falla)**
+- [x] **Step 1: Test de la página (falla)**
 
 Create `src/__tests__/achievements-page.test.jsx`:
 ```jsx
@@ -1716,9 +1716,9 @@ describe('página /logros', () => {
 })
 ```
 
-- [ ] **Step 2: Ejecutar — falla.** Run: `npm test -- achievements-page` → FAIL.
+- [x] **Step 2: Ejecutar — falla.** Run: `npm test -- achievements-page` → FAIL.
 
-- [ ] **Step 3: `src/pages/Achievements.jsx`**
+- [x] **Step 3: `src/pages/Achievements.jsx`**
 ```jsx
 import { useGame } from '../state/gameStore'
 import { ACHIEVEMENTS } from '../content/achievements'
@@ -1750,7 +1750,7 @@ export default function Achievements() {
 }
 ```
 
-- [ ] **Step 4: `src/components/Toast.jsx`** (aviso efímero, sin dependencias nuevas)
+- [x] **Step 4: `src/components/Toast.jsx`** (aviso efímero, sin dependencias nuevas)
 ```jsx
 import { useEffect } from 'react'
 
@@ -1773,7 +1773,7 @@ export default function Toast({ toast, onDismiss }) {
 }
 ```
 
-- [ ] **Step 5: Wiring en `GameProvider.jsx`** — envolver `dispatch` para evaluar logros y encolar toasts. Reescribir:
+- [x] **Step 5: Wiring en `GameProvider.jsx`** — envolver `dispatch` para evaluar logros y encolar toasts. Reescribir:
 ```jsx
 import { useCallback, useEffect, useReducer, useState } from 'react'
 import { loadSave, persistSave } from './persistence'
@@ -1823,13 +1823,13 @@ function achievementEvent(action) {
 > - `BossArena` `BOSS_DEFEATED`: añadir `livesLeft: lives`.
 > - `GameProvider` `TICK_STREAK` (Task 16): añadir `hour` (hora local).
 
-- [ ] **Step 6: Cronómetro ligero para "Speedrunner" en `LevelPlayer`** — al entrar en fase `reto` por primera vez, guardar `const startRef = useRef(null)` y setear `startRef.current = Date.now()` cuando `phase` pasa a `reto` (en el botón "¡Al reto!" y en `retry`). En `nextQuestion`, calcular `const seconds = startRef.current ? (Date.now() - startRef.current) / 1000 : null` y pasarlo en el dispatch junto a `perfectLives: lives === 3`.
+- [x] **Step 6: Cronómetro ligero para "Speedrunner" en `LevelPlayer`** — al entrar en fase `reto` por primera vez, guardar `const startRef = useRef(null)` y setear `startRef.current = Date.now()` cuando `phase` pasa a `reto` (en el botón "¡Al reto!" y en `retry`). En `nextQuestion`, calcular `const seconds = startRef.current ? (Date.now() - startRef.current) / 1000 : null` y pasarlo en el dispatch junto a `perfectLives: lives === 3`.
 
-- [ ] **Step 7: Ruta `/logros`** en `App.jsx`: `import Achievements from './pages/Achievements'` + `<Route path="/logros" element={<Achievements />} />`.
+- [x] **Step 7: Ruta `/logros`** en `App.jsx`: `import Achievements from './pages/Achievements'` + `<Route path="/logros" element={<Achievements />} />`.
 
-- [ ] **Step 8: Ejecutar — pasa; build.** `npm test` (todo) → PASS. `npm run build`.
+- [x] **Step 8: Ejecutar — pasa; build.** `npm test` (todo) → PASS. `npm run build`.
 
-- [ ] **Step 9: Commit**
+- [x] **Step 9: Commit**
 ```bash
 git add src/components/Toast.jsx src/pages/Achievements.jsx src/state/GameProvider.jsx src/engine/LevelPlayer.jsx src/engine/BossArena.jsx src/App.jsx src/__tests__/achievements-page.test.jsx
 git commit -m "feat: logros en vivo (toast + /logros) enganchados al dispatch"

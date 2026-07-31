@@ -64,7 +64,7 @@ function BossArenaView() {
       // El cofre solo cae la primera vez que se derrota a este jefe: rejugarlo
       // sigue pagando XP y monedas, pero no es una fuente infinita de cosméticos.
       setCofre(!state.bossDefeats.includes(world.id))
-      dispatch({ type: 'BOSS_DEFEATED', worldId: world.id, coins: COINS_BOSS, xp: XP_BOSS })
+      dispatch({ type: 'BOSS_DEFEATED', worldId: world.id, coins: COINS_BOSS, xp: XP_BOSS, livesLeft: lives })
       setPhase('victoria')
     }
   }

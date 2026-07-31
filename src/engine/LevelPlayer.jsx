@@ -1,4 +1,4 @@
-import { lazy, Suspense, useMemo, useState } from 'react'
+import { lazy, Suspense, useMemo, useRef, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { findWorld } from '../content/worlds'
 import { widgets } from '../widgets'
@@ -46,6 +46,7 @@ function LevelPlayerView() {
   const [failedThis, setFailedThis] = useState(false)
   const [hintShown, setHintShown] = useState(false)  // pista comprada en la pregunta actual
   const [result, setResult] = useState(null)   // { stars, coins, primeraVez } de esta partida
+  const startRef = useRef(null)                // inicio del reto, para el logro Speedrunner
 
   const questions = useMemo(
     () => (level ? buildReto(level.reto.factories, level.reto.pick) : []),
@@ -87,7 +88,11 @@ function LevelPlayerView() {
       const coins = coinsForCompletion(state.stars[levelKey], stars)
       // Se calcula antes del dispatch: después, stars[levelKey] ya existe.
       const primeraVez = state.stars[levelKey] === undefined
-      dispatch({ type: 'LEVEL_COMPLETED', levelKey, stars, xp: XP_LEVEL_COMPLETE })
+      const seconds = startRef.current ? (Date.now() - startRef.current) / 1000 : null
+      dispatch({
+        type: 'LEVEL_COMPLETED', levelKey, stars, xp: XP_LEVEL_COMPLETE,
+        perfectLives: lives === 3, seconds,   // datos para los logros
+      })
       setResult({ stars, coins, primeraVez })
       setPhase('completado')
     }
@@ -96,6 +101,7 @@ function LevelPlayerView() {
   const retry = () => {
     setAttempt(a => a + 1)
     setQIndex(0); setLives(3); setFirstTryHits(0); setSelected(null); setFailedThis(false); setHintShown(false)
+    startRef.current = Date.now()
     setPhase('reto')
   }
 
@@ -114,7 +120,7 @@ function LevelPlayerView() {
             <span className="text-sm text-gray-400 self-center">{stepIndex + 1} / {level.briefing.length}</span>
             {stepIndex + 1 < level.briefing.length
               ? <button onClick={() => setStepIndex(i => i + 1)} className="px-4 py-2 rounded-xl font-display bg-primary text-white">Siguiente →</button>
-              : <button onClick={() => setPhase('reto')} className="px-4 py-2 rounded-xl font-display bg-green-500 text-white font-bold">⚔️ ¡Al reto!</button>}
+              : <button onClick={() => { startRef.current = Date.now(); setPhase('reto') }} className="px-4 py-2 rounded-xl font-display bg-green-500 text-white font-bold">⚔️ ¡Al reto!</button>}
           </div>
         </div>
       )}
