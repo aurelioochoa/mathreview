@@ -114,6 +114,32 @@ describe('integración: SaveTransfer — QR', () => {
   })
 })
 
+describe('integración: SaveTransfer — el panel de confirmación se anuncia', () => {
+  beforeEach(() => localStorage.clear())
+
+  it('el panel que aparece tras revisar un código válido es una región anunciada (role="alert")', async () => {
+    montar({ xp: 10 })
+    const codigo = await encodeSave({ ...defaultState(), xp: 9000, coins: 777 })
+
+    fireEvent.change(screen.getByLabelText(/Pega aquí un código/i), { target: { value: codigo } })
+    fireEvent.click(screen.getByRole('button', { name: /Revisar código/i }))
+
+    const panel = await screen.findByRole('alert')
+    expect(panel.textContent).toMatch(/777 monedas/)
+  })
+
+  it('el foco se mueve al botón de confirmar cuando aparece el panel', async () => {
+    montar({ xp: 10 })
+    const codigo = await encodeSave({ ...defaultState(), xp: 9000, coins: 777 })
+
+    fireEvent.change(screen.getByLabelText(/Pega aquí un código/i), { target: { value: codigo } })
+    fireEvent.click(screen.getByRole('button', { name: /Revisar código/i }))
+
+    const botonCargar = await screen.findByRole('button', { name: /Cargar esta partida/i })
+    await waitFor(() => expect(document.activeElement).toBe(botonCargar))
+  })
+})
+
 describe('integración: SaveTransfer — exportar sin creer que se hizo una copia inexistente', () => {
   beforeEach(() => localStorage.clear())
 

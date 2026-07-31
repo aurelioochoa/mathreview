@@ -1,4 +1,4 @@
-import { lazy, Suspense, useCallback, useEffect, useState } from 'react'
+import { lazy, Suspense, useCallback, useEffect, useRef, useState } from 'react'
 import { useGame } from '../state/gameStore'
 import { hudStats } from '../state/hudStats'
 import { encodeSave, decodeSave, QR_MAX_BYTES } from '../state/saveCode'
@@ -41,6 +41,7 @@ export default function SaveTransfer() {
   const [hayInstantanea, setHayInstantanea] = useState(() => loadPreImportSnapshot() !== null)
   const [errorExportar, setErrorExportar] = useState(null)
   const cabeEnQr = codigo.length > 0 && codigo.length <= QR_MAX_BYTES
+  const botonCargarRef = useRef(null)
 
   useEffect(() => {
     let vivo = true
@@ -55,6 +56,14 @@ export default function SaveTransfer() {
       })
     return () => { vivo = false }
   }, [state])
+
+  // El panel de confirmación reemplaza la partida entera si se pulsa
+  // "Cargar esta partida": con lector de pantalla debe notarse en cuanto
+  // aparece (el role="alert" del div se encarga) y el foco debe ir al botón
+  // que de verdad importa, no quedarse perdido en el textarea de pegar.
+  useEffect(() => {
+    if (pendiente) botonCargarRef.current?.focus()
+  }, [pendiente])
 
   const revisar = useCallback(async (texto) => {
     setError(null)
@@ -182,13 +191,13 @@ export default function SaveTransfer() {
         {error && <p role="alert" className="text-sm text-red-600 mt-3">{error}</p>}
 
         {pendiente && (
-          <div className="mt-3 border-t border-gray-200 pt-3">
+          <div role="alert" className="mt-3 border-t border-gray-200 pt-3">
             <p className="text-sm text-gray-700">Vas a cargar: <strong>{resumenDe(pendiente)}</strong></p>
             <p className="text-xs text-gray-500 mt-1">
               Esto reemplaza tu partida actual ({resumenDe(state)}).
             </p>
             <div className="flex gap-2 mt-3">
-              <button onClick={confirmar} className={`${boton} bg-primary text-white`}>Cargar esta partida</button>
+              <button ref={botonCargarRef} onClick={confirmar} className={`${boton} bg-primary text-white`}>Cargar esta partida</button>
               <button onClick={() => setPendiente(null)} className={`${boton} bg-white border border-gray-200`}>Cancelar</button>
             </div>
           </div>
