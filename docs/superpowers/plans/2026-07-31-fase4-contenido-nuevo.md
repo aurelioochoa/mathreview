@@ -20,14 +20,14 @@
 
 ## Progreso
 
-**0 de 12 tasks.** Punto de partida: 35 archivos de test, 209 tests.
+**4 de 12 tasks.** Punto de partida: 35 archivos, 209 tests → ahora 38 archivos, 222 tests.
 
 | Capa | Task | Estado |
 |---|---|---|
 | A | 1 · `content/season.js` + test | ✅ |
 | B | 2 · Widgets del Mundo 1 (`recta-numerica`, `divisores-explorer`, `jerarquia-pasos`) | ✅ |
-| B | 3 · Contenido del Mundo 1 🏝️ (4 niveles + jefe) | ⬜ |
-| B | 4 · Sidequests del Mundo 1 (2) | ⬜ |
+| B | 3 · Contenido del Mundo 1 🏝️ (4 niveles + jefe) | ✅ |
+| B | 4 · Sidequests del Mundo 1 (2) | ✅ |
 | B | 5 · Activar `isla-numerica` en el mapa + ocultar modo estudio | ⬜ |
 | C | 6 · Widgets del Mundo 2 (`pizza-fracciones`, `porcentaje-barra`) | ⬜ |
 | C | 7 · Contenido del Mundo 2 🍕 (4 niveles + jefe) | ⬜ |

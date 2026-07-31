@@ -11,7 +11,8 @@ export const SEASON = {
   etiqueta: 'julio 2026',
   juegos: ['Minecraft', 'Roblox', 'Mario Kart', 'Pokémon', 'Among Us', 'Stumble Guys'],
   criaturas: ['dragón', 'slime', 'fénix', 'gato ninja', 'perro cohete', 'pulpo bailarín'],
-  snacks: ['pizza', 'galletas', 'helados', 'donas', 'palomitas', 'chocolates'],
+  // En plural: se insertan tras una cantidad ("42 pizzas entre 7 amigos").
+  snacks: ['pizzas', 'galletas', 'helados', 'donas', 'palomitas', 'chocolates'],
   deportes: ['fútbol', 'baloncesto', 'natación', 'ciclismo', 'atletismo'],
   tesoros: ['monedas de oro', 'gemas', 'cofres', 'perlas', 'cromos', 'medallas'],
 }
