@@ -2,7 +2,7 @@
 
 Hoja de ruta por fases. Lo pendiente va arriba; el historial, al final.
 
-**Specs:** [base](docs/superpowers/specs/2026-07-18-math-quest-design.md) · [worldmap 3D](docs/superpowers/specs/2026-07-19-rediseno-worldmap-3d-design.md) · [Fase 2](docs/superpowers/specs/2026-07-21-fase2-migracion-completa-design.md) · [Fase 3](docs/superpowers/specs/2026-07-22-fase3-gamificacion-design.md) · [Fase 4](docs/superpowers/specs/2026-07-31-fase4-contenido-nuevo-design.md)
+**Specs:** [base](docs/superpowers/specs/2026-07-18-math-quest-design.md) · [worldmap 3D](docs/superpowers/specs/2026-07-19-rediseno-worldmap-3d-design.md) · [Fase 2](docs/superpowers/specs/2026-07-21-fase2-migracion-completa-design.md) · [Fase 3](docs/superpowers/specs/2026-07-22-fase3-gamificacion-design.md) · [Fase 4](docs/superpowers/specs/2026-07-31-fase4-contenido-nuevo-design.md) · [Fase 5](docs/superpowers/specs/2026-07-31-fase5-pulido-design.md)
 **Planes:** [Fases 0-1](docs/superpowers/plans/2026-07-18-math-quest-fase0-fase1.md) · [worldmap 3D](docs/superpowers/plans/2026-07-19-rediseno-worldmap-3d.md) · [Fase 2](docs/superpowers/plans/2026-07-21-fase2-migracion-completa.md) · [Fase 3](docs/superpowers/plans/2026-07-22-fase3-gamificacion.md) · [Fase 4](docs/superpowers/plans/2026-07-31-fase4-contenido-nuevo.md)
 
 ## Estado — 2026-07-31
@@ -14,12 +14,15 @@ Hoja de ruta por fases. Lo pendiente va arriba; el historial, al final.
 
 ---
 
-# 🔴 Siguiente — Fase 5: Pulido
+# 🔴 En curso — Fase 5: Pulido
 
-- [ ] Celebración de logro desbloqueado y de jefe derrotado (la de nivel ya existe)
-- [ ] Export/import de partida (base64 + checksum)
-- [ ] Validación de contenido + suite de tests en CI
-- [ ] Revisar rendimiento: lazy loading por mundo
+Spec: [Fase 5](docs/superpowers/specs/2026-07-31-fase5-pulido-design.md) (escrito el 2026-07-31).
+
+- [ ] Celebración con variante: `nivel` / `jefe` / `logro` sobre el `Celebration` que ya existe
+- [ ] Traspaso de partida por código, fichero y QR (gzip + checksum FNV-1a)
+- [ ] CI en GitHub Actions: lint + tests + build sobre Node 20
+
+**Aplazado** — lazy loading. Al medirlo, el peso no estaba en los mundos sino en `StudyView`, que importa los seis `Bloque*.jsx` y con ellos `mafs` y `recharts`. Se hará cuando entren más funciones 3D y el arranque importe de verdad. Línea base para entonces: `index.js` 1 321 KB (385 KB gzip), con `react-three-fiber` (860 KB) ya fuera.
 
 ---
 
