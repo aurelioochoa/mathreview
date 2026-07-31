@@ -5,6 +5,8 @@ import { encodeSave, decodeSave, QR_MAX_BYTES } from '../state/saveCode'
 
 // Va aparte y en lazy: `qrcode` no puede acabar en el bundle inicial.
 const QrPanel = lazy(() => import('./QrPanel'))
+// Igual que QrPanel: `jsqr` tampoco puede acabar en el bundle inicial.
+const QrScanner = lazy(() => import('./QrScanner'))
 
 const MENSAJES = {
   formato: 'Esto no parece un código de Math Quest.',
@@ -30,6 +32,7 @@ export default function SaveTransfer() {
   const [pendiente, setPendiente] = useState(null)
   const [error, setError] = useState(null)
   const [verQr, setVerQr] = useState(false)
+  const [escaneando, setEscaneando] = useState(false)
   const cabeEnQr = codigo.length > 0 && codigo.length <= QR_MAX_BYTES
 
   useEffect(() => {
@@ -45,6 +48,11 @@ export default function SaveTransfer() {
     if (res.ok) setPendiente(res.save)
     else setError(MENSAJES[res.reason])
   }, [])
+
+  const escaneado = useCallback(async (texto) => {
+    setEscaneando(false)
+    await revisar(texto)
+  }, [revisar])
 
   const copiar = () => navigator.clipboard?.writeText(codigo)
 
@@ -120,7 +128,16 @@ export default function SaveTransfer() {
             Abrir fichero
             <input type="file" accept=".mathquest,text/plain" onChange={subir} className="sr-only" />
           </label>
+          <button onClick={() => setEscaneando(true)} className={`${boton} bg-white border border-gray-200`}>
+            Escanear QR
+          </button>
         </div>
+
+        {escaneando && (
+          <Suspense fallback={null}>
+            <QrScanner onCode={escaneado} onCancel={() => setEscaneando(false)} />
+          </Suspense>
+        )}
 
         {error && <p role="alert" className="text-sm text-red-600 mt-3">{error}</p>}
 
