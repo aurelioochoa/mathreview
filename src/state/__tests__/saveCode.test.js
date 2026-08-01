@@ -133,6 +133,25 @@ describe('saveCode — formas envenenadas (decodeSave valida de verdad)', () => 
     expect(await decodeSave(code)).toEqual({ ok: false, reason: 'corrupto' })
   })
 
+  // Sin validar los valores, un `stars` con un texto dentro pasaba y el HUD
+  // acababa enseñando "0tres" estrellas (hudStats los suma tal cual).
+  it('stars con un valor que no es un número da corrupto', async () => {
+    const code = await encodeSave({ ...defaultState(), stars: { 'mundo1/nivel1': 'tres' } })
+    expect(await decodeSave(code)).toEqual({ ok: false, reason: 'corrupto' })
+  })
+
+  it('stars con un número fuera del rango del juego da corrupto', async () => {
+    const code = await encodeSave({ ...defaultState(), stars: { 'mundo1/nivel1': 7 } })
+    expect(await decodeSave(code)).toEqual({ ok: false, reason: 'corrupto' })
+  })
+
+  it('stars con estrellas de las que el juego escribe (0 a 3) entra bien', async () => {
+    const stars = { 'mundo1/nivel1': 0, 'mundo1/nivel2': 1, 'mundo2/nivel1': 2, 'mundo2/nivel2': 3 }
+    const res = await decodeSave(await encodeSave({ ...defaultState(), stars }))
+    expect(res.ok).toBe(true)
+    expect(res.save.stars).toEqual(stars)
+  })
+
   it('un numérico que no es un número finito da corrupto', async () => {
     // JSON no tiene NaN: al serializar se convierte en null (es lo que de
     // verdad llegaría si alguien intentara colar NaN a mano), y null tampoco

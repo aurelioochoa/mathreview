@@ -82,6 +82,19 @@ function esStringONull(v) {
   return v === null || typeof v === 'string'
 }
 
+// Estrellas de un nivel. LEVEL_COMPLETED (gameStore.js) escribe
+// `Math.max(previa, action.stars)` con action.stars ∈ {1, 2, 3}, así que
+// cualquier otra cosa no la ha escrito este juego. El 0 se acepta porque es lo
+// que ya vale un nivel que no está en el objeto, y no rompe nada.
+const MAX_ESTRELLAS = 3
+
+// Sin esto, `{'mundo1/nivel1': 'tres'}` pasaba la validación y el HUD acababa
+// enseñando "0tres" estrellas: hudStats suma los valores tal cual.
+function formaValidaStars(stars) {
+  if (!stars || typeof stars !== 'object' || Array.isArray(stars)) return false
+  return Object.values(stars).every(v => Number.isInteger(v) && v >= 0 && v <= MAX_ESTRELLAS)
+}
+
 // De cosmetics y streak se comprueban los tipos de los campos que este juego
 // conoce, y nada más. Un campo de más NO invalida el código: en cuanto una
 // versión futura añada algo a cosmetics, sus códigos tienen que seguir
@@ -131,7 +144,7 @@ function formaValida(save) {
     }
   }
 
-  if (!save.stars || typeof save.stars !== 'object' || Array.isArray(save.stars)) return false
+  if (!formaValidaStars(save.stars)) return false
   if (!formaValidaCosmetics(save.cosmetics)) return false
   if (!formaValidaStreak(save.streak)) return false
 
