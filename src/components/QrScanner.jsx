@@ -15,8 +15,13 @@ const ERRORES = {
   otro: 'No se ha podido abrir la cámara. Usa el código o el fichero.',
 }
 
-const AVISO_OCULTO = 'Se apagó la cámara porque cambiaste de pantalla. Pulsa "Escanear QR" para volver a intentarlo.'
-const AVISO_INACTIVIDAD = 'Se apagó la cámara porque llevaba un rato sin encontrar ningún código. Pulsa "Escanear QR" para volver a intentarlo.'
+// Los dos avisos nombran el botón que de verdad reenciende la cámara, el de
+// aquí abajo. Antes decían "Escanear QR" (el del perfil), que con el escáner
+// ya montado no hacía nada: el jugador pulsaba y no pasaba nada.
+const AVISO_OCULTO = 'Se apagó la cámara porque cambiaste de pantalla. Pulsa "Volver a intentar" para encenderla otra vez.'
+const AVISO_INACTIVIDAD = 'Se apagó la cámara porque llevaba un rato sin encontrar ningún código. Pulsa "Volver a intentar" para seguir buscando.'
+
+const boton = 'px-4 py-2 rounded-xl font-display font-bold text-sm'
 
 function motivoDe(error) {
   if (error?.name === 'NotAllowedError' || error?.name === 'SecurityError') return 'permiso'
@@ -55,6 +60,11 @@ export default function QrScanner({ onCode, onCancel }) {
   // cámara sigue encendida. Distinto de `error`: aquí no ha fallado nada, es
   // el propio escáner el que decide apagarse.
   const [cerrado, setCerrado] = useState(null)
+  // Contador de arranques. Es dependencia del efecto a propósito: subirlo es
+  // lo que vuelve a lanzar arrancar() cuando el jugador pide reintentar. Sin
+  // él, el escáner ya montado se quedaba con su estado `cerrado` para siempre
+  // y la cámara no se reencendía por ningún camino.
+  const [intento, setIntento] = useState(0)
 
   useEffect(() => {
     let vivo = true
@@ -133,7 +143,14 @@ export default function QrScanner({ onCode, onCancel }) {
       vivo = false
       detener()
     }
-  }, [onCode])
+  }, [onCode, intento])
+
+  // Reencender la cámara sigue exigiendo un gesto del jugador: se hace desde
+  // aquí, nunca sola al volver a la pestaña.
+  const reintentar = () => {
+    setCerrado(null)
+    setIntento(n => n + 1)
+  }
 
   return (
     <div className="mt-3">
@@ -148,8 +165,13 @@ export default function QrScanner({ onCode, onCancel }) {
         </>
       )}
       <canvas ref={canvasRef} className="hidden" />
-      <div className="flex justify-center mt-2">
-        <button onClick={onCancel} className="px-4 py-2 rounded-xl font-display font-bold text-sm bg-white border border-gray-200">
+      <div className="flex justify-center gap-2 mt-2">
+        {cerrado && (
+          <button onClick={reintentar} className={`${boton} bg-primary text-white`}>
+            Volver a intentar
+          </button>
+        )}
+        <button onClick={onCancel} className={`${boton} bg-white border border-gray-200`}>
           Cerrar
         </button>
       </div>

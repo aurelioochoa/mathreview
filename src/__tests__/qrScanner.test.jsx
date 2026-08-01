@@ -1,5 +1,5 @@
 import { describe, it, expect, afterEach, vi } from 'vitest'
-import { render, screen, waitFor, act } from '@testing-library/react'
+import { render, screen, waitFor, act, fireEvent } from '@testing-library/react'
 import QrScanner from '../components/QrScanner'
 
 // jsdom no trae mediaDevices. Estos tests cubren los caminos de fallo, que son
@@ -102,8 +102,9 @@ describe('QrScanner — la cámara no se queda encendida sola', () => {
   function fingirCamaraLista() {
     const detener = vi.fn()
     const stream = { getTracks: () => [{ stop: detener }] }
-    fingirCamara(vi.fn().mockResolvedValue(stream))
-    return { detener }
+    const getUserMedia = vi.fn().mockResolvedValue(stream)
+    fingirCamara(getUserMedia)
+    return { detener, getUserMedia }
   }
 
   it('si la pestaña deja de estar visible, suelta la cámara y lo dice en pantalla', async () => {
@@ -128,6 +129,64 @@ describe('QrScanner — la cámara no se queda encendida sola', () => {
       expect(await screen.findByText(/se apagó la cámara.*cambiaste de pantalla/i)).toBeTruthy()
       expect(detener).toHaveBeenCalled()
       expect(video.srcObject).toBeNull()
+    } finally {
+      window.HTMLMediaElement.prototype.play = playOriginal
+    }
+  })
+
+  // El aviso de autocierre manda pulsar un botón: ese botón tiene que
+  // encender la cámara de verdad. Antes el único camino que funcionaba era
+  // "Cerrar" y volver a abrir el escáner desde el perfil.
+  it('tras apagarse sola, "Volver a intentar" vuelve a encender la cámara', async () => {
+    const { getUserMedia } = fingirCamaraLista()
+    const playOriginal = window.HTMLMediaElement.prototype.play
+    window.HTMLMediaElement.prototype.play = vi.fn().mockResolvedValue(undefined)
+
+    try {
+      const { container } = render(<QrScanner onCode={() => {}} onCancel={() => {}} />)
+
+      await waitFor(() => expect(window.HTMLMediaElement.prototype.play).toHaveBeenCalled())
+      await new Promise(resolve => setTimeout(resolve, 0))
+
+      Object.defineProperty(document, 'hidden', { value: true, configurable: true })
+      document.dispatchEvent(new Event('visibilitychange'))
+      expect(await screen.findByText(/se apagó la cámara/i)).toBeTruthy()
+      expect(container.querySelector('video')).toBeNull()
+
+      // Volver a la pestaña NO reenciende la cámara sola: hace falta el gesto
+      // explícito del jugador.
+      Object.defineProperty(document, 'hidden', { value: false, configurable: true })
+      document.dispatchEvent(new Event('visibilitychange'))
+      await new Promise(resolve => setTimeout(resolve, 0))
+      expect(getUserMedia).toHaveBeenCalledTimes(1)
+
+      // Y el botón que nombra el aviso es el que la enciende.
+      fireEvent.click(screen.getByRole('button', { name: /Volver a intentar/i }))
+
+      await waitFor(() => expect(getUserMedia).toHaveBeenCalledTimes(2))
+      expect(screen.queryByText(/se apagó la cámara/i)).toBeNull()
+      await waitFor(() => expect(container.querySelector('video')?.srcObject).toBeTruthy())
+    } finally {
+      window.HTMLMediaElement.prototype.play = playOriginal
+    }
+  })
+
+  it('el texto del aviso nombra al botón que existe en pantalla', async () => {
+    fingirCamaraLista()
+    const playOriginal = window.HTMLMediaElement.prototype.play
+    window.HTMLMediaElement.prototype.play = vi.fn().mockResolvedValue(undefined)
+
+    try {
+      render(<QrScanner onCode={() => {}} onCancel={() => {}} />)
+      await waitFor(() => expect(window.HTMLMediaElement.prototype.play).toHaveBeenCalled())
+      await new Promise(resolve => setTimeout(resolve, 0))
+
+      Object.defineProperty(document, 'hidden', { value: true, configurable: true })
+      document.dispatchEvent(new Event('visibilitychange'))
+
+      const aviso = await screen.findByText(/se apagó la cámara/i)
+      const nombreDelBoton = screen.getByRole('button', { name: /Volver a intentar/i }).textContent.trim()
+      expect(aviso.textContent).toContain(`"${nombreDelBoton}"`)
     } finally {
       window.HTMLMediaElement.prototype.play = playOriginal
     }
