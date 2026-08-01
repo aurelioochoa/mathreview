@@ -192,7 +192,37 @@ describe('QrScanner — la cámara no se queda encendida sola', () => {
     }
   })
 
-  it('si nadie encuentra un código en el plazo de inactividad, se apaga sola y lo dice', async () => {
+  // Hueco real: la pestaña se oculta mientras arrancar() está colgada del
+  // `await video.play()`, antes de registrar el listener de visibilidad. El
+  // evento no llega a nadie, así que hay que mirar document.hidden a mano.
+  it('si la pestaña se oculta mientras la cámara arranca, no se queda encendida', async () => {
+    const { detener } = fingirCamaraLista()
+    let resolverPlay
+    const playPendiente = new Promise(resolve => { resolverPlay = resolve })
+    const playOriginal = window.HTMLMediaElement.prototype.play
+    const playSpy = vi.fn(() => playPendiente)
+    window.HTMLMediaElement.prototype.play = playSpy
+
+    try {
+      const { container } = render(<QrScanner onCode={() => {}} onCancel={() => {}} />)
+      await waitFor(() => expect(playSpy).toHaveBeenCalled())
+
+      // Se oculta sin disparar el evento: nadie lo está escuchando todavía.
+      Object.defineProperty(document, 'hidden', { value: true, configurable: true })
+      await act(async () => {
+        resolverPlay()
+        await new Promise(resolve => setTimeout(resolve, 0))
+      })
+
+      expect(detener).toHaveBeenCalled()
+      expect(screen.getByText(/se apagó la cámara.*cambiaste de pantalla/i)).toBeTruthy()
+      expect(container.querySelector('video')).toBeNull()
+    } finally {
+      window.HTMLMediaElement.prototype.play = playOriginal
+    }
+  })
+
+  it('si nadie encuentra un código antes del tope de tiempo encendida, se apaga sola y lo dice', async () => {
     vi.useFakeTimers()
     const { detener } = fingirCamaraLista()
     const playOriginal = window.HTMLMediaElement.prototype.play
@@ -203,12 +233,12 @@ describe('QrScanner — la cámara no se queda encendida sola', () => {
 
       // Con temporizadores falsos, getUserMedia/video.play() (ya resueltos)
       // solo necesitan que se vacíen los microtasks para que arrancar()
-      // continúe y registre el temporizador de inactividad. act() asegura
-      // que React aplique esos cambios de estado antes de seguir.
+      // continúe y registre el temporizador del tope. act() asegura que React
+      // aplique esos cambios de estado antes de seguir.
       await act(async () => { await vi.advanceTimersByTimeAsync(0) })
-      // 45 s sin encontrar ningún código (el vídeo de jsdom nunca alcanza
+      // 3 minutos sin encontrar ningún código (el vídeo de jsdom nunca alcanza
       // HAVE_ENOUGH_DATA, así que el sondeo nunca "encuentra" nada él solo).
-      await act(async () => { await vi.advanceTimersByTimeAsync(45000) })
+      await act(async () => { await vi.advanceTimersByTimeAsync(180000) })
 
       expect(screen.getByText(/se apagó la cámara.*sin encontrar/i)).toBeTruthy()
       expect(detener).toHaveBeenCalled()

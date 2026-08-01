@@ -2,11 +2,16 @@ import { useEffect, useRef, useState } from 'react'
 
 const INTERVALO_MS = 250
 
-// Si en este tiempo no se ha encontrado ningún QR, la cámara se apaga sola.
-// 45 s da margen de sobra para apuntar y centrar el código a mano sin dejar
-// la cámara encendida indefinidamente si el jugador se distrae con la
-// tablet abierta.
-const INACTIVIDAD_MS = 45000
+// Tope duro de tiempo con la cámara encendida, contado desde que arranca. NO
+// es un temporizador de inactividad y no se reinicia con nada: el escáner no
+// tiene ninguna señal de "actividad" que valga (mira fotogramas cada 250 ms y
+// lo único que puede encontrar -- un código -- lo apaga igualmente), así que
+// lo honesto es un tope y llamarlo por su nombre.
+//
+// 3 minutos: los 45 s de antes se quedaban muy cortos para un niño de 8 años
+// apuntando con una tablet a un código pequeño, y el tope solo está para no
+// dejar la cámara viva si el jugador se va y deja la pantalla abierta.
+const TOPE_ENCENDIDA_MS = 180000
 
 const ERRORES = {
   sinApi: 'Este navegador no puede usar la cámara aquí. Prueba con el código o el fichero.',
@@ -19,7 +24,7 @@ const ERRORES = {
 // aquí abajo. Antes decían "Escanear QR" (el del perfil), que con el escáner
 // ya montado no hacía nada: el jugador pulsaba y no pasaba nada.
 const AVISO_OCULTO = 'Se apagó la cámara porque cambiaste de pantalla. Pulsa "Volver a intentar" para encenderla otra vez.'
-const AVISO_INACTIVIDAD = 'Se apagó la cámara porque llevaba un rato sin encontrar ningún código. Pulsa "Volver a intentar" para seguir buscando.'
+const AVISO_TOPE = 'Se apagó la cámara porque llevaba mucho rato encendida sin encontrar ningún código. Pulsa "Volver a intentar" para seguir buscando.'
 
 const boton = 'px-4 py-2 rounded-xl font-display font-bold text-sm'
 
@@ -56,9 +61,9 @@ export default function QrScanner({ onCode, onCancel }) {
   const videoRef = useRef(null)
   const canvasRef = useRef(null)
   const [error, setError] = useState(null)
-  // Mensaje de autocierre (inactividad o pestaña oculta), o null si la
-  // cámara sigue encendida. Distinto de `error`: aquí no ha fallado nada, es
-  // el propio escáner el que decide apagarse.
+  // Mensaje de autocierre (tope de tiempo encendida o pestaña oculta), o null
+  // si la cámara sigue encendida. Distinto de `error`: aquí no ha fallado
+  // nada, es el propio escáner el que decide apagarse.
   const [cerrado, setCerrado] = useState(null)
   // Contador de arranques. Es dependencia del efecto a propósito: subirlo es
   // lo que vuelve a lanzar arrancar() cuando el jugador pide reintentar. Sin
@@ -70,7 +75,7 @@ export default function QrScanner({ onCode, onCancel }) {
     let vivo = true
     let stream = null
     let timer = null
-    let inactividad = null
+    let topeEncendida = null
 
     // Punto único de apagado: para el sondeo, quita el aviso de visibilidad,
     // suelta la cámara física y desengancha el vídeo. Se usa al desmontar,
@@ -78,7 +83,7 @@ export default function QrScanner({ onCode, onCancel }) {
     // la cámara viva por olvido.
     function detener() {
       if (timer) { clearInterval(timer); timer = null }
-      if (inactividad) { clearTimeout(inactividad); inactividad = null }
+      if (topeEncendida) { clearTimeout(topeEncendida); topeEncendida = null }
       document.removeEventListener('visibilitychange', alCambiarVisibilidad)
       if (stream) { stream.getTracks().forEach(t => t.stop()); stream = null }
       if (videoRef.current) videoRef.current.srcObject = null
@@ -91,7 +96,7 @@ export default function QrScanner({ onCode, onCancel }) {
 
     function alCambiarVisibilidad() {
       // Solo importa que se oculte: al volver a primer plano no se reabre
-      // sola la cámara (el jugador vuelve a pulsar "Escanear QR" si quiere).
+      // sola la cámara (el jugador pulsa "Volver a intentar" si quiere).
       if (document.hidden) cerrarPor(AVISO_OCULTO)
     }
 
@@ -120,12 +125,22 @@ export default function QrScanner({ onCode, onCancel }) {
       await video.play().catch(() => {})
       if (!vivo) return
 
+      // El listener de visibilidad se registra unas líneas más abajo, así que
+      // una pestaña que se oculte durante el arranque no dispara nada: sin
+      // esta comprobación, la cámara se quedaría encendida en segundo plano
+      // hasta el tope de tiempo. Se mira el estado real, que es lo que el
+      // evento que no llegó habría contado.
+      if (document.hidden) {
+        cerrarPor(AVISO_OCULTO)
+        return
+      }
+
       const detector = 'BarcodeDetector' in window
         ? new window.BarcodeDetector({ formats: ['qr_code'] })
         : null
 
       document.addEventListener('visibilitychange', alCambiarVisibilidad)
-      inactividad = setTimeout(() => cerrarPor(AVISO_INACTIVIDAD), INACTIVIDAD_MS)
+      topeEncendida = setTimeout(() => cerrarPor(AVISO_TOPE), TOPE_ENCENDIDA_MS)
 
       timer = setInterval(async () => {
         if (!vivo || !videoRef.current || !canvasRef.current) return
