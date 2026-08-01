@@ -165,6 +165,28 @@ describe('integración: SaveTransfer — botón "Copiar" con reserva manual', ()
     expect(writeText).toHaveBeenCalledWith(expect.stringMatching(/^MQ1\./))
   })
 
+  // El caso real más común de la reserva manual: la API existe, pero writeText
+  // rechaza (contexto no seguro, permiso denegado, portapapeles bloqueado por
+  // el sistema). Sin este camino, el jugador se queda sin código y sin aviso.
+  it('si writeText falla, cae igualmente a la selección manual y lo dice', async () => {
+    const writeText = vi.fn().mockRejectedValue(new DOMException('denegado', 'NotAllowedError'))
+    Object.defineProperty(navigator, 'clipboard', { value: { writeText }, configurable: true })
+
+    montar({ xp: 100 })
+    const salida = await screen.findByLabelText(/Tu código de partida/i)
+    const copiarBtn = screen.getByRole('button', { name: /^Copiar$/i })
+    await waitFor(() => expect(copiarBtn.disabled).toBe(false))
+
+    fireEvent.click(copiarBtn)
+
+    expect(await screen.findByText(/ya dejamos el texto seleccionado/i)).toBeTruthy()
+    expect(writeText).toHaveBeenCalled()
+    expect(salida.selectionStart).toBe(0)
+    expect(salida.selectionEnd).toBe(salida.value.length)
+    // Y sin decir que se copió, que es lo que no pasó.
+    expect(screen.queryByText(/¡Código copiado!/)).toBeNull()
+  })
+
   it('sin navigator.clipboard, selecciona el texto a mano y lo dice', async () => {
     Object.defineProperty(navigator, 'clipboard', { value: undefined, configurable: true })
 
