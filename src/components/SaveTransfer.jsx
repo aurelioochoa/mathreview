@@ -154,11 +154,14 @@ export default function SaveTransfer() {
     // La instantánea se guarda ANTES de importar: si se guardara después,
     // el efecto de logros retroactivos ya habría cambiado el estado y
     // estaríamos guardando la partida nueva, no la que se pierde.
-    savePreImportSnapshot(state)
+    // Si localStorage no dejó guardarla (cuota llena, modo privado) no hay
+    // nada que deshacer: el aviso no debe aparecer prometiendo una vuelta
+    // atrás que no existe.
+    const hayCopia = savePreImportSnapshot(state)
     dispatch({ type: 'IMPORT_SAVE', save: pendiente })
     setPendiente(null)
     setPegado('')
-    setHayInstantanea(true)
+    setHayInstantanea(hayCopia)
   }
 
   // Primer paso de deshacer: enseñar qué partida se va a recuperar. No aplica

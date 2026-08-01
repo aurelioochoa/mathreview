@@ -371,6 +371,27 @@ describe('integración: SaveTransfer — deshacer un import', () => {
     expect(screen.getByRole('button', { name: /Deshacer la última carga/i })).toBeTruthy()
   })
 
+  // Si localStorage está lleno, la instantánea no llega a guardarse: el aviso
+  // no puede aparecer prometiendo una vuelta atrás que no existe.
+  it('sin poder guardar la instantánea, no aparece un "Deshacer" que no funcionaría', async () => {
+    montar({ xp: 10, coins: 3 })
+    await screen.findByLabelText(/Tu código de partida/i)
+    const codigo = await encodeSave({ ...defaultState(), coins: 777 })
+
+    const setItem = vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {
+      throw new DOMException('exceeded', 'QuotaExceededError')
+    })
+    try {
+      await importar(codigo)
+      // La importación se aplicó (el panel de confirmar ya no está)...
+      await waitFor(() => expect(screen.queryByRole('button', { name: /Cargar esta partida/i })).toBeNull())
+      // ...pero sin instantánea no se ofrece deshacer.
+      expect(screen.queryByRole('button', { name: /Deshacer/i })).toBeNull()
+    } finally {
+      setItem.mockRestore()
+    }
+  })
+
   it('una instantánea caducada no ofrece deshacer y se limpia sola', async () => {
     localStorage.setItem(PRE_IMPORT_KEY, JSON.stringify({
       guardadaEn: Date.now() - PRE_IMPORT_TTL_MS - 1000,

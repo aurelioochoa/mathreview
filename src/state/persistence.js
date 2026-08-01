@@ -83,13 +83,21 @@ export function persistSave(data) {
 // siempre.
 // La instantánea se guarda con la hora a la que se tomó, para poder caducarla
 // (ver PRE_IMPORT_TTL_MS): { guardadaEn, save }.
+//
+// Devuelve si al salir hay una instantánea con la que deshacer: la que se
+// acaba de guardar, o la que ya estaba. Si localStorage no deja escribir
+// (cuota llena, modo privado) devuelve false, y quien llama tiene que
+// enterarse: ofrecer un "Deshacer" que no puede funcionar es peor que no
+// ofrecerlo.
 export function savePreImportSnapshot(data) {
-  if (loadPreImportSnapshot() !== null) return
+  if (loadPreImportSnapshot() !== null) return true
   try {
     localStorage.setItem(PRE_IMPORT_KEY, JSON.stringify({ guardadaEn: Date.now(), save: data }))
+    return true
   } catch {
     // Igual que persistSave: sin instantánea no hay deshacer, pero el juego
     // sigue funcionando con lo que haya en memoria.
+    return false
   }
 }
 

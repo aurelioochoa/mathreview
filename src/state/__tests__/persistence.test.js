@@ -138,6 +138,21 @@ describe('instantánea previa a importar', () => {
     expect(loadPreImportSnapshot()).toBeNull()
   })
 
+  it('dice que sí cuando la guarda, y también cuando ya había una', () => {
+    expect(savePreImportSnapshot({ ...defaultState(), coins: 3 })).toBe(true)
+    expect(savePreImportSnapshot({ ...defaultState(), coins: 111 })).toBe(true)
+  })
+
+  // Sin esto, el perfil enseñaba un botón de deshacer que no podía funcionar.
+  it('dice que no si localStorage no deja escribir (cuota llena o modo privado)', () => {
+    globalThis.localStorage = {
+      getItem: () => null,
+      setItem: () => { throw new DOMException('exceeded', 'QuotaExceededError') },
+      removeItem: () => {},
+    }
+    expect(savePreImportSnapshot({ ...defaultState(), coins: 3 })).toBe(false)
+  })
+
   it('justo antes de cumplirse el plazo sigue valiendo', () => {
     vi.useFakeTimers()
     try {
