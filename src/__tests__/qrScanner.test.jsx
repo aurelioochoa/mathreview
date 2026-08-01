@@ -222,7 +222,12 @@ describe('QrScanner — la cámara no se queda encendida sola', () => {
     }
   })
 
-  it('si nadie encuentra un código antes del tope de tiempo encendida, se apaga sola y lo dice', async () => {
+  // El tope se acota por los dos lados a propósito. Con solo la mitad de
+  // arriba, el test seguía en verde con un tope de un segundo: la regresión a
+  // un tope corto -- justo el bug que se arregló, porque los 45 s de antes se
+  // quedaban cortos para un niño de 8 años apuntando con una tablet a un
+  // código pequeño -- habría pasado sin hacer ruido.
+  it('aguanta encendida hasta el tope de tiempo y solo entonces se apaga sola y lo dice', async () => {
     vi.useFakeTimers()
     const { detener } = fingirCamaraLista()
     const playOriginal = window.HTMLMediaElement.prototype.play
@@ -236,9 +241,17 @@ describe('QrScanner — la cámara no se queda encendida sola', () => {
       // continúe y registre el temporizador del tope. act() asegura que React
       // aplique esos cambios de estado antes de seguir.
       await act(async () => { await vi.advanceTimersByTimeAsync(0) })
-      // 3 minutos sin encontrar ningún código (el vídeo de jsdom nunca alcanza
-      // HAVE_ENOUGH_DATA, así que el sondeo nunca "encuentra" nada él solo).
-      await act(async () => { await vi.advanceTimersByTimeAsync(180000) })
+
+      // Justo por debajo del tope (170 s de los 180 s): el niño sigue
+      // apuntando y la cámara sigue encendida, sin ningún aviso.
+      await act(async () => { await vi.advanceTimersByTimeAsync(170000) })
+      expect(screen.queryByText(/se apagó la cámara/i)).toBeNull()
+      expect(detener).not.toHaveBeenCalled()
+
+      // Y pasados los 3 minutos sin encontrar ningún código (el vídeo de jsdom
+      // nunca alcanza HAVE_ENOUGH_DATA, así que el sondeo nunca "encuentra"
+      // nada él solo), se apaga.
+      await act(async () => { await vi.advanceTimersByTimeAsync(10000) })
 
       expect(screen.getByText(/se apagó la cámara.*sin encontrar/i)).toBeTruthy()
       expect(detener).toHaveBeenCalled()

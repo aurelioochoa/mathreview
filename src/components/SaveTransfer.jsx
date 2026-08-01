@@ -178,8 +178,16 @@ export default function SaveTransfer() {
     setPreviaDeshacer(previa)
   }
 
+  // Segundo paso: aplicar. Se vuelve a leer la instantánea en vez de aplicar la
+  // `previaDeshacer` que se cacheó al abrir el panel. Si el diálogo se queda
+  // abierto hasta que la instantánea caduca, aplicar la copia cacheada se
+  // saltaría la caducidad por la puerta de atrás; releyendo, la caducidad manda
+  // en todos los caminos. Y si ya no hay nada, no se aplica nada y el aviso se
+  // retira entero: ni una partida caducada de vuelta, ni un botón que no hace
+  // nada esperando otro clic.
   const confirmarDeshacer = () => {
-    dispatch({ type: 'IMPORT_SAVE', save: previaDeshacer })
+    const previa = loadPreImportSnapshot()
+    if (previa) dispatch({ type: 'IMPORT_SAVE', save: previa })
     clearPreImportSnapshot()
     setPreviaDeshacer(null)
     setHayInstantanea(false)

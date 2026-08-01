@@ -414,6 +414,38 @@ describe('integración: SaveTransfer — deshacer un import', () => {
     }
   })
 
+  // Rebuscado -- hace falta dejar el diálogo abierto más de un día -- pero es
+  // el único camino por el que la caducidad se podía saltar: confirmar aplicaba
+  // la instantánea que se leyó al ABRIR el panel, sin volver a mirar si seguía
+  // vigente. Se relee al confirmar, así que la caducidad manda en todos los
+  // caminos y no en casi todos.
+  it('si la instantánea caduca con el panel de confirmar abierto, no se aplica nada y el aviso se retira', async () => {
+    montar({ xp: 10, coins: 3 })
+
+    await importar(await encodeSave({ ...defaultState(), xp: 9000, coins: 777 }))
+    await waitFor(() => expect(JSON.parse(localStorage.getItem(SAVE_KEY)).coins).toBe(777))
+
+    // El jugador abre el panel: aquí es donde se leía la instantánea.
+    fireEvent.click(await screen.findByRole('button', { name: /Deshacer la última carga/i }))
+    expect(await screen.findByRole('button', { name: /Sí, recuperar esa partida/i })).toBeTruthy()
+
+    // ...y la deja abierta hasta que la instantánea caduca.
+    const sobre = JSON.parse(localStorage.getItem(PRE_IMPORT_KEY))
+    localStorage.setItem(PRE_IMPORT_KEY, JSON.stringify({
+      ...sobre, guardadaEn: Date.now() - PRE_IMPORT_TTL_MS - 1000,
+    }))
+
+    fireEvent.click(screen.getByRole('button', { name: /Sí, recuperar esa partida/i }))
+
+    // La partida caducada NO vuelve: sigue la importada.
+    await waitFor(() => expect(screen.queryByRole('button', { name: /Sí, recuperar esa partida/i })).toBeNull())
+    expect(JSON.parse(localStorage.getItem(SAVE_KEY)).coins).toBe(777)
+    // Y el aviso entero se retira: nada de dejar un botón que ya no puede hacer
+    // nada esperando otro clic.
+    expect(screen.queryByRole('button', { name: /Deshacer/i })).toBeNull()
+    expect(localStorage.getItem(PRE_IMPORT_KEY)).toBeNull()
+  })
+
   it('una instantánea caducada no ofrece deshacer y se limpia sola', async () => {
     localStorage.setItem(PRE_IMPORT_KEY, JSON.stringify({
       guardadaEn: Date.now() - PRE_IMPORT_TTL_MS - 1000,
