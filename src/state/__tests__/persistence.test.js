@@ -1,5 +1,9 @@
-import { describe, it, expect, beforeEach } from 'vitest'
-import { loadSave, persistSave, SAVE_KEY, BACKUP_KEY } from '../persistence'
+import { describe, it, expect, beforeEach, vi } from 'vitest'
+import {
+  loadSave, persistSave, SAVE_KEY, BACKUP_KEY,
+  savePreImportSnapshot, loadPreImportSnapshot, clearPreImportSnapshot,
+  PRE_IMPORT_KEY, PRE_IMPORT_TTL_MS,
+} from '../persistence'
 import { defaultState } from '../gameStore'
 
 // Fake localStorage (Vitest corre en Node, sin DOM)
@@ -97,5 +101,113 @@ describe('migración de guardados', () => {
     expect(loadSave()).toBe(null)
     localStorage.setItem('mathquest-save-v1-backup', JSON.stringify({ version: 1, xp: 7, coins: 0, stars: {}, completedLevels: [] }))
     expect(loadSave().xp).toBe(7)
+  })
+})
+
+describe('instantánea previa a importar', () => {
+  beforeEach(() => localStorage.clear())
+
+  it('sin instantánea guardada, devuelve null', () => {
+    expect(loadPreImportSnapshot()).toBeNull()
+  })
+
+  it('guarda y lee la instantánea, migrada como cualquier guardado', () => {
+    savePreImportSnapshot({ ...defaultState(), xp: 3 })
+    expect(loadPreImportSnapshot()).toEqual({ ...defaultState(), xp: 3 })
+  })
+
+  // La primera instantánea es la que tiene la partida del jugador: si una
+  // segunda importación la pisara, deshacer devolvería la partida importada
+  // por error en vez de la de verdad.
+  it('una segunda instantánea no pisa a la primera', () => {
+    savePreImportSnapshot({ ...defaultState(), coins: 3 })
+    savePreImportSnapshot({ ...defaultState(), coins: 111 })
+    expect(loadPreImportSnapshot().coins).toBe(3)
+  })
+
+  it('tras borrarla, la siguiente instantánea sí se guarda', () => {
+    savePreImportSnapshot({ ...defaultState(), coins: 3 })
+    clearPreImportSnapshot()
+    savePreImportSnapshot({ ...defaultState(), coins: 111 })
+    expect(loadPreImportSnapshot().coins).toBe(111)
+  })
+
+  it('borrarla la deja en null', () => {
+    savePreImportSnapshot({ ...defaultState(), xp: 3 })
+    clearPreImportSnapshot()
+    expect(loadPreImportSnapshot()).toBeNull()
+  })
+
+  it('dice que sí cuando la guarda, y también cuando ya había una', () => {
+    expect(savePreImportSnapshot({ ...defaultState(), coins: 3 })).toBe(true)
+    expect(savePreImportSnapshot({ ...defaultState(), coins: 111 })).toBe(true)
+  })
+
+  // Sin esto, el perfil enseñaba un botón de deshacer que no podía funcionar.
+  it('dice que no si localStorage no deja escribir (cuota llena o modo privado)', () => {
+    globalThis.localStorage = {
+      getItem: () => null,
+      setItem: () => { throw new DOMException('exceeded', 'QuotaExceededError') },
+      removeItem: () => {},
+    }
+    expect(savePreImportSnapshot({ ...defaultState(), coins: 3 })).toBe(false)
+  })
+
+  it('justo antes de cumplirse el plazo sigue valiendo', () => {
+    vi.useFakeTimers()
+    try {
+      savePreImportSnapshot({ ...defaultState(), coins: 3 })
+      vi.advanceTimersByTime(PRE_IMPORT_TTL_MS - 1000)
+      expect(loadPreImportSnapshot().coins).toBe(3)
+    } finally {
+      vi.useRealTimers()
+    }
+  })
+
+  it('pasado el plazo caduca: se lee como null y se borra sola', () => {
+    vi.useFakeTimers()
+    try {
+      savePreImportSnapshot({ ...defaultState(), coins: 3 })
+      vi.advanceTimersByTime(PRE_IMPORT_TTL_MS + 1000)
+      expect(loadPreImportSnapshot()).toBeNull()
+      expect(localStorage.getItem(PRE_IMPORT_KEY)).toBeNull()
+    } finally {
+      vi.useRealTimers()
+    }
+  })
+
+  it('una instantánea sin marca de tiempo (formato viejo) se descarta y se borra', () => {
+    localStorage.setItem(PRE_IMPORT_KEY, JSON.stringify({ ...defaultState(), coins: 3 }))
+    expect(loadPreImportSnapshot()).toBeNull()
+    expect(localStorage.getItem(PRE_IMPORT_KEY)).toBeNull()
+  })
+
+  it('una instantánea ilegible se descarta y se borra', () => {
+    localStorage.setItem(PRE_IMPORT_KEY, '{no-json')
+    expect(loadPreImportSnapshot()).toBeNull()
+    expect(localStorage.getItem(PRE_IMPORT_KEY)).toBeNull()
+  })
+
+  it('vive en su propia clave, distinta de SAVE_KEY y BACKUP_KEY', () => {
+    savePreImportSnapshot({ ...defaultState(), xp: 3 })
+    expect(PRE_IMPORT_KEY).not.toBe(SAVE_KEY)
+    expect(PRE_IMPORT_KEY).not.toBe(BACKUP_KEY)
+    expect(localStorage.getItem(PRE_IMPORT_KEY)).not.toBeNull()
+  })
+
+  // Caso real del bug: tras importar, un cambio de estado posterior (p. ej.
+  // el efecto de logros retroactivos de GameProvider) dispara persistSave(),
+  // que pisa SAVE_KEY y BACKUP_KEY. La instantánea de pre-import no debe
+  // moverse, porque persistSave() nunca toca su clave.
+  it('sobrevive a los persistSave posteriores (partida importada + otro cambio de estado)', () => {
+    persistSave({ ...defaultState(), coins: 3 }) // partida anterior, antes de importar
+    savePreImportSnapshot(loadSave())
+
+    persistSave({ ...defaultState(), coins: 777 }) // IMPORT_SAVE
+    persistSave({ ...defaultState(), coins: 777, achievements: ['cazajefes'] }) // logro retroactivo
+
+    expect(loadPreImportSnapshot()).toEqual({ ...defaultState(), coins: 3 })
+    // BACKUP_KEY, en cambio, sí quedó pisado por el segundo persistSave.
+    expect(JSON.parse(localStorage.getItem(BACKUP_KEY)).coins).toBe(777)
   })
 })

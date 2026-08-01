@@ -1,0 +1,42 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+# Cancela la ejecución anterior del mismo PR (o de la misma rama en push) en
+# cuanto llega un commit nuevo: sin esto, dos pushes seguidos gastan minutos
+# de CI corriendo por duplicado un resultado que ya no importa.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verificar:
+    runs-on: ubuntu-latest
+    # Mínimo privilegio: este job solo necesita leer el repo (checkout), no
+    # escribir nada. Por defecto GITHUB_TOKEN trae más permisos de los que
+    # hacen falta aquí.
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+
+      # Node 20 para que coincida con el Dockerfile (node:20-slim): la CI debe
+      # verificar lo que de verdad se despliega, no otra versión que
+      # casualmente también pase.
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - run: npm ci
+
+      - run: npm run lint
+
+      # La validación de contenido no lleva paso propio: validateContent.test.js
+      # ya la ejecuta dentro de la suite, sobre los ocho mundos y sus quests.
+      - run: npm test
+
+      - run: npm run build

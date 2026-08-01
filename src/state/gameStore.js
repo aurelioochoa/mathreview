@@ -129,6 +129,12 @@ export function gameReducer(state, action) {
       return { ...state, achievements: [...state.achievements, ...nuevos] }
     }
 
+    case 'IMPORT_SAVE':
+      // Sustituye el estado entero. No valida: de eso se encarga decodeSave,
+      // y tener la validación en dos sitios es tener dos sitios donde
+      // equivocarse.
+      return action.save ?? state
+
     default:
       return state
   }

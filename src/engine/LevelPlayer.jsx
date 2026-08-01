@@ -181,7 +181,7 @@ function LevelPlayerView() {
         <div className="relative text-center glass rounded-[1.75rem] shadow-lg p-8 overflow-hidden">
           {use3D && (
             <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
-              <Suspense fallback={null}><Celebration /></Suspense>
+              <Suspense fallback={null}><Celebration variant="nivel" /></Suspense>
             </div>
           )}
           <div className="relative">

@@ -154,7 +154,7 @@ function BossArenaView() {
 
       {phase === 'victoria' && (
         <div className="relative text-center glass rounded-[1.75rem] shadow-lg p-8 overflow-hidden">
-          {use3D && <div className="absolute inset-0 pointer-events-none" aria-hidden="true"><Suspense fallback={null}><Celebration /></Suspense></div>}
+          {use3D && <div className="absolute inset-0 pointer-events-none" aria-hidden="true"><Suspense fallback={null}><Celebration variant="jefe" /></Suspense></div>}
           <div className="relative">
             <p className="text-5xl mb-2">🏆</p>
             <h2 className="font-display text-xl font-bold mb-1">¡{world.boss.name} derrotado!</h2>
