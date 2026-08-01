@@ -82,23 +82,16 @@ function esStringONull(v) {
   return v === null || typeof v === 'string'
 }
 
-// migrate() no sobrescribe cosmetics/streak entero: los combina con
-// `{...base, ...(data.campo ?? {})}`. Eso significa que si `data.cosmetics`
-// es, por ejemplo, el string 'trampa', el spread lo trata como iterable y
-// añade claves '0', '1', '2'... con sus caracteres, PERO deja intactos
-// owned/avatar/frame/title de la base -- el resultado pasaría una
-// comprobación que solo mire esos cuatro campos. Por eso aquí también se
-// exige que el objeto no tenga claves de más: es la señal de que lo que
-// llegó no era el objeto que decía ser.
-function mismasClaves(obj, esperadas) {
-  const propias = Object.keys(obj)
-  return propias.length === esperadas.length && esperadas.every(k => propias.includes(k))
-}
-
+// De cosmetics y streak se comprueban los tipos de los campos que este juego
+// conoce, y nada más. Un campo de más NO invalida el código: en cuanto una
+// versión futura añada algo a cosmetics, sus códigos tienen que seguir
+// entrando aquí -- que es justo para lo que existe este códec -- igual que ya
+// se toleran campos de más en el nivel superior del estado. Exigirlo, además,
+// devolvía 'corrupto' ("El código está incompleto. ¿Se copió entero?") para un
+// código perfectamente entero: el peor diagnóstico posible.
 function formaValidaCosmetics(c) {
   return (
     !!c && typeof c === 'object' && !Array.isArray(c) &&
-    mismasClaves(c, Object.keys(defaultState().cosmetics)) &&
     Array.isArray(c.owned) &&
     esStringONull(c.avatar) && esStringONull(c.frame) && esStringONull(c.title)
   )
@@ -107,7 +100,6 @@ function formaValidaCosmetics(c) {
 function formaValidaStreak(s) {
   return (
     !!s && typeof s === 'object' && !Array.isArray(s) &&
-    mismasClaves(s, Object.keys(defaultState().streak)) &&
     Number.isFinite(s.count) && Number.isFinite(s.best) && esStringONull(s.lastDate)
   )
 }

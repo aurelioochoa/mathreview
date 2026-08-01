@@ -114,9 +114,18 @@ describe('saveCode — formas envenenadas (decodeSave valida de verdad)', () => 
     expect(await decodeSave(code)).toEqual({ ok: false, reason: 'corrupto' })
   })
 
-  it('cosmetics que en realidad es un string da corrupto', async () => {
+  // Antes se rechazaba, exigiendo que cosmetics no trajera claves de más.
+  // Esa comprobación rechazaba también los códigos legítimos de una versión
+  // futura con un campo nuevo, así que se quitó: lo que se valida son los
+  // tipos de los campos conocidos. Aquí migrate() deja owned/avatar/frame/
+  // title intactos y solo añade claves numéricas inofensivas con las letras
+  // del string, así que la partida resultante es perfectamente jugable.
+  it('cosmetics que llega como string no rompe: migrate conserva los campos buenos', async () => {
     const code = await encodeSave({ ...defaultState(), cosmetics: 'trampa' })
-    expect(await decodeSave(code)).toEqual({ ok: false, reason: 'corrupto' })
+    const res = await decodeSave(code)
+    expect(res.ok).toBe(true)
+    expect(res.save.cosmetics.owned).toEqual(defaultState().cosmetics.owned)
+    expect(res.save.cosmetics.avatar).toBe(defaultState().cosmetics.avatar)
   })
 
   it('cosmetics.owned que no es un array da corrupto', async () => {
@@ -135,6 +144,38 @@ describe('saveCode — formas envenenadas (decodeSave valida de verdad)', () => 
   it('streak con un campo numérico que no es número da corrupto', async () => {
     const code = await encodeSave({ ...defaultState(), streak: { count: 'mucho', best: 0, lastDate: null } })
     expect(await decodeSave(code)).toEqual({ ok: false, reason: 'corrupto' })
+  })
+
+  // Escenario de compatibilidad futura, que es para lo que existe el códec:
+  // una versión posterior del juego añade un campo a cosmetics (o a streak) y
+  // exporta un código. Ese código tiene que seguir entrando en esta versión,
+  // no salir con "El código está incompleto. ¿Se copió entero?".
+  it('un campo nuevo dentro de cosmetics no invalida el código', async () => {
+    const code = await encodeSave({
+      ...defaultState(),
+      cosmetics: { ...defaultState().cosmetics, mascota: 'dragon-bebe' },
+    })
+    const res = await decodeSave(code)
+    expect(res.ok).toBe(true)
+    expect(res.save.cosmetics.mascota).toBe('dragon-bebe')
+    expect(res.save.cosmetics.avatar).toBe(defaultState().cosmetics.avatar)
+  })
+
+  it('un campo nuevo dentro de streak no invalida el código', async () => {
+    const code = await encodeSave({
+      ...defaultState(),
+      streak: { ...defaultState().streak, congelaciones: 2 },
+    })
+    const res = await decodeSave(code)
+    expect(res.ok).toBe(true)
+    expect(res.save.streak.congelaciones).toBe(2)
+  })
+
+  it('un campo nuevo en el nivel superior tampoco invalida el código', async () => {
+    const code = await encodeSave({ ...defaultState(), mundosSecretos: ['mundo9'] })
+    const res = await decodeSave(code)
+    expect(res.ok).toBe(true)
+    expect(res.save.mundosSecretos).toEqual(['mundo9'])
   })
 
   it('una partida legítima sigue pasando la validación de forma', async () => {
