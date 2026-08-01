@@ -39,10 +39,14 @@ export default function SaveTransfer() {
   const [verQr, setVerQr] = useState(false)
   const [escaneando, setEscaneando] = useState(false)
   const [hayInstantanea, setHayInstantanea] = useState(() => loadPreImportSnapshot() !== null)
+  // Partida que se va a recuperar al deshacer, mientras espera confirmación.
+  // null = no se ha pedido deshacer nada.
+  const [previaDeshacer, setPreviaDeshacer] = useState(null)
   const [errorExportar, setErrorExportar] = useState(null)
   const [avisoCopiar, setAvisoCopiar] = useState(null)
   const cabeEnQr = codigo.length > 0 && codigo.length <= QR_MAX_BYTES
   const botonCargarRef = useRef(null)
+  const botonRecuperarRef = useRef(null)
   const salidaRef = useRef(null)
   // Id incremental de la última petición de "revisar" en curso. decodeSave es
   // asíncrono: si el jugador edita el texto (o lanza otra revisión) mientras
@@ -71,6 +75,12 @@ export default function SaveTransfer() {
   useEffect(() => {
     if (pendiente) botonCargarRef.current?.focus()
   }, [pendiente])
+
+  // Deshacer reemplaza la partida igual de a fondo que importar, así que su
+  // panel de confirmación se comporta igual: se anuncia y se lleva el foco.
+  useEffect(() => {
+    if (previaDeshacer) botonRecuperarRef.current?.focus()
+  }, [previaDeshacer])
 
   // El aviso de "copiado" (o de reserva manual) es informativo, no un error:
   // se retira solo al cabo de un rato para no dejarlo pegado en pantalla.
@@ -151,11 +161,24 @@ export default function SaveTransfer() {
     setHayInstantanea(true)
   }
 
-  const deshacer = () => {
+  // Primer paso de deshacer: enseñar qué partida se va a recuperar. No aplica
+  // nada todavía -- deshacer reemplaza la partida entera igual que importar, y
+  // no puede ser un clic pelado.
+  const pedirDeshacer = () => {
     const previa = loadPreImportSnapshot()
-    if (!previa) return
-    dispatch({ type: 'IMPORT_SAVE', save: previa })
+    if (!previa) {
+      // La instantánea caducó (o desapareció) con el perfil abierto: se retira
+      // el aviso en vez de dejar un botón que no hace nada.
+      setHayInstantanea(false)
+      return
+    }
+    setPreviaDeshacer(previa)
+  }
+
+  const confirmarDeshacer = () => {
+    dispatch({ type: 'IMPORT_SAVE', save: previaDeshacer })
     clearPreImportSnapshot()
+    setPreviaDeshacer(null)
     setHayInstantanea(false)
   }
 
@@ -171,9 +194,26 @@ export default function SaveTransfer() {
           <p className="text-sm text-gray-700 mb-2">
             Cargaste una partida hace poco. Si no era la tuya, puedes recuperar la de antes.
           </p>
-          <button onClick={deshacer} className={`${boton} bg-white border border-amber-300 text-amber-700`}>
-            Deshacer la última carga
-          </button>
+          {previaDeshacer ? (
+            <div role="alert">
+              <p className="text-sm text-gray-700">Vas a recuperar: <strong>{resumenDe(previaDeshacer)}</strong></p>
+              <p className="text-xs text-gray-500 mt-1">
+                Esto reemplaza tu partida actual ({resumenDe(state)}).
+              </p>
+              <div className="flex flex-wrap gap-2 mt-3">
+                <button ref={botonRecuperarRef} onClick={confirmarDeshacer} className={`${boton} bg-primary text-white`}>
+                  Sí, recuperar esa partida
+                </button>
+                <button onClick={() => setPreviaDeshacer(null)} className={`${boton} bg-white border border-gray-200`}>
+                  No, dejarlo como está
+                </button>
+              </div>
+            </div>
+          ) : (
+            <button onClick={pedirDeshacer} className={`${boton} bg-white border border-amber-300 text-amber-700`}>
+              Deshacer la última carga
+            </button>
+          )}
         </div>
       )}
 

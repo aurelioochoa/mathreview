@@ -1,7 +1,8 @@
-import { describe, it, expect, beforeEach } from 'vitest'
+import { describe, it, expect, beforeEach, vi } from 'vitest'
 import {
   loadSave, persistSave, SAVE_KEY, BACKUP_KEY,
-  savePreImportSnapshot, loadPreImportSnapshot, clearPreImportSnapshot, PRE_IMPORT_KEY,
+  savePreImportSnapshot, loadPreImportSnapshot, clearPreImportSnapshot,
+  PRE_IMPORT_KEY, PRE_IMPORT_TTL_MS,
 } from '../persistence'
 import { defaultState } from '../gameStore'
 
@@ -135,6 +136,41 @@ describe('instantánea previa a importar', () => {
     savePreImportSnapshot({ ...defaultState(), xp: 3 })
     clearPreImportSnapshot()
     expect(loadPreImportSnapshot()).toBeNull()
+  })
+
+  it('justo antes de cumplirse el plazo sigue valiendo', () => {
+    vi.useFakeTimers()
+    try {
+      savePreImportSnapshot({ ...defaultState(), coins: 3 })
+      vi.advanceTimersByTime(PRE_IMPORT_TTL_MS - 1000)
+      expect(loadPreImportSnapshot().coins).toBe(3)
+    } finally {
+      vi.useRealTimers()
+    }
+  })
+
+  it('pasado el plazo caduca: se lee como null y se borra sola', () => {
+    vi.useFakeTimers()
+    try {
+      savePreImportSnapshot({ ...defaultState(), coins: 3 })
+      vi.advanceTimersByTime(PRE_IMPORT_TTL_MS + 1000)
+      expect(loadPreImportSnapshot()).toBeNull()
+      expect(localStorage.getItem(PRE_IMPORT_KEY)).toBeNull()
+    } finally {
+      vi.useRealTimers()
+    }
+  })
+
+  it('una instantánea sin marca de tiempo (formato viejo) se descarta y se borra', () => {
+    localStorage.setItem(PRE_IMPORT_KEY, JSON.stringify({ ...defaultState(), coins: 3 }))
+    expect(loadPreImportSnapshot()).toBeNull()
+    expect(localStorage.getItem(PRE_IMPORT_KEY)).toBeNull()
+  })
+
+  it('una instantánea ilegible se descarta y se borra', () => {
+    localStorage.setItem(PRE_IMPORT_KEY, '{no-json')
+    expect(loadPreImportSnapshot()).toBeNull()
+    expect(localStorage.getItem(PRE_IMPORT_KEY)).toBeNull()
   })
 
   it('vive en su propia clave, distinta de SAVE_KEY y BACKUP_KEY', () => {

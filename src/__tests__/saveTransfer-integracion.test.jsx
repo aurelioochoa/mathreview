@@ -3,7 +3,7 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import SaveTransfer from '../components/SaveTransfer'
 import { GameProvider } from '../state/GameProvider'
 import { defaultState } from '../state/gameStore'
-import { SAVE_KEY, PRE_IMPORT_KEY } from '../state/persistence'
+import { SAVE_KEY, PRE_IMPORT_KEY, PRE_IMPORT_TTL_MS } from '../state/persistence'
 import { encodeSave } from '../state/saveCode'
 import { todayStr } from '../state/streak'
 
@@ -260,6 +260,13 @@ async function importar(codigo) {
   fireEvent.click(await screen.findByRole('button', { name: /Cargar esta partida/i }))
 }
 
+// Deshacer también son dos pasos: pedirlo y confirmarlo sobre el resumen de la
+// partida que se va a recuperar.
+async function deshacer() {
+  fireEvent.click(await screen.findByRole('button', { name: /Deshacer la última carga/i }))
+  fireEvent.click(await screen.findByRole('button', { name: /Sí, recuperar esa partida/i }))
+}
+
 describe('integración: SaveTransfer — deshacer un import', () => {
   beforeEach(() => localStorage.clear())
 
@@ -290,7 +297,9 @@ describe('integración: SaveTransfer — deshacer un import', () => {
     })
 
     expect(await screen.findByRole('button', { name: /Deshacer/i })).toBeTruthy()
-    expect(JSON.parse(localStorage.getItem(PRE_IMPORT_KEY)).coins).toBe(3)
+    // La instantánea se guarda con la hora a la que se tomó, para poder
+    // caducarla: la partida va dentro, en `save`.
+    expect(JSON.parse(localStorage.getItem(PRE_IMPORT_KEY)).save.coins).toBe(3)
   })
 
   // Secuencia real: el niño pega un código, ve que no es el suyo y, en vez de
@@ -306,7 +315,7 @@ describe('integración: SaveTransfer — deshacer un import', () => {
     await importar(await encodeSave({ ...defaultState(), coins: 222 }))
     await waitFor(() => expect(JSON.parse(localStorage.getItem(SAVE_KEY)).coins).toBe(222))
 
-    fireEvent.click(await screen.findByRole('button', { name: /Deshacer/i }))
+    await deshacer()
 
     await waitFor(() => expect(JSON.parse(localStorage.getItem(SAVE_KEY)).coins).toBe(3))
   })
@@ -315,16 +324,63 @@ describe('integración: SaveTransfer — deshacer un import', () => {
     montar({ xp: 10, coins: 3 })
     const codigo = await encodeSave({ ...defaultState(), xp: 9000, coins: 777 })
 
-    fireEvent.change(screen.getByLabelText(/Pega aquí un código/i), { target: { value: codigo } })
-    fireEvent.click(screen.getByRole('button', { name: /Revisar código/i }))
-    fireEvent.click(await screen.findByRole('button', { name: /Cargar esta partida/i }))
-
+    await importar(codigo)
     await waitFor(() => expect(JSON.parse(localStorage.getItem(SAVE_KEY)).coins).toBe(777))
 
-    fireEvent.click(await screen.findByRole('button', { name: /Deshacer/i }))
+    await deshacer()
 
     await waitFor(() => expect(JSON.parse(localStorage.getItem(SAVE_KEY)).coins).toBe(3))
     expect(localStorage.getItem(PRE_IMPORT_KEY)).toBeNull()
     expect(screen.queryByRole('button', { name: /Deshacer/i })).toBeNull()
+  })
+
+  // Deshacer reemplaza la partida entera, igual que importar: no puede aplicar
+  // nada de un clic pelado, y el jugador tiene que ver qué recupera.
+  it('"Deshacer" enseña el resumen de la partida que se recupera y no aplica nada hasta confirmar', async () => {
+    montar({ xp: 10, coins: 3 })
+
+    await importar(await encodeSave({ ...defaultState(), xp: 9000, coins: 777 }))
+    await waitFor(() => expect(JSON.parse(localStorage.getItem(SAVE_KEY)).coins).toBe(777))
+
+    fireEvent.click(await screen.findByRole('button', { name: /Deshacer la última carga/i }))
+
+    // Resumen de lo que se va a recuperar (3 monedas) y aviso de lo que se
+    // reemplaza (la partida actual, 777).
+    expect(await screen.findByText(/3 monedas/)).toBeTruthy()
+    expect(screen.getByText(/777 monedas/)).toBeTruthy()
+    // Y nada aplicado todavía.
+    expect(JSON.parse(localStorage.getItem(SAVE_KEY)).coins).toBe(777)
+    expect(localStorage.getItem(PRE_IMPORT_KEY)).not.toBeNull()
+
+    fireEvent.click(screen.getByRole('button', { name: /Sí, recuperar esa partida/i }))
+    await waitFor(() => expect(JSON.parse(localStorage.getItem(SAVE_KEY)).coins).toBe(3))
+  })
+
+  it('cancelar el deshacer deja la partida importada como está', async () => {
+    montar({ xp: 10, coins: 3 })
+
+    await importar(await encodeSave({ ...defaultState(), xp: 9000, coins: 777 }))
+    await waitFor(() => expect(JSON.parse(localStorage.getItem(SAVE_KEY)).coins).toBe(777))
+
+    fireEvent.click(await screen.findByRole('button', { name: /Deshacer la última carga/i }))
+    fireEvent.click(await screen.findByRole('button', { name: /No, dejarlo como está/i }))
+
+    expect(screen.queryByRole('button', { name: /Sí, recuperar esa partida/i })).toBeNull()
+    expect(JSON.parse(localStorage.getItem(SAVE_KEY)).coins).toBe(777)
+    // El aviso sigue ahí: cancelar no gasta la instantánea.
+    expect(screen.getByRole('button', { name: /Deshacer la última carga/i })).toBeTruthy()
+  })
+
+  it('una instantánea caducada no ofrece deshacer y se limpia sola', async () => {
+    localStorage.setItem(PRE_IMPORT_KEY, JSON.stringify({
+      guardadaEn: Date.now() - PRE_IMPORT_TTL_MS - 1000,
+      save: { ...defaultState(), coins: 3 },
+    }))
+
+    montar({ xp: 10, coins: 777 })
+    await screen.findByLabelText(/Tu código de partida/i)
+
+    expect(screen.queryByRole('button', { name: /Deshacer/i })).toBeNull()
+    expect(localStorage.getItem(PRE_IMPORT_KEY)).toBeNull()
   })
 })

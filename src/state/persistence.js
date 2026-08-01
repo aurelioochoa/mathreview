@@ -9,6 +9,15 @@ export const BACKUP_KEY = 'mathquest-save-v1-backup'
 // porque persistSave() no la toca nunca.
 export const PRE_IMPORT_KEY = 'mathquest-save-v1-pre-import'
 
+// Cuánto vale una instantánea de pre-importación. Deshacer está para el
+// arrepentimiento inmediato ("esto no es mi partida"), no para viajar en el
+// tiempo: en el caso legítimo -- llevarse la partida a una tablet nueva -- un
+// aviso eterno acaba siendo una trampa, porque meses después un clic
+// devolvería la partida vacía del dispositivo nuevo. Un día cubre de sobra el
+// "me di cuenta un rato después" e incluso el "lo vi al día siguiente", que es
+// todo lo que hace falta.
+export const PRE_IMPORT_TTL_MS = 24 * 60 * 60 * 1000
+
 // Lleva cualquier save reconocido (v1 o v2) al estado v2 completo, rellenando
 // defaults. Devuelve null si no es un objeto reconocible.
 export function migrate(data) {
@@ -72,10 +81,12 @@ export function persistSave(data) {
 // segunda importación pisara la instantánea, "Deshacer" devolvería la partida
 // equivocada de la primera importación y la suya se habría perdido para
 // siempre.
+// La instantánea se guarda con la hora a la que se tomó, para poder caducarla
+// (ver PRE_IMPORT_TTL_MS): { guardadaEn, save }.
 export function savePreImportSnapshot(data) {
   if (loadPreImportSnapshot() !== null) return
   try {
-    localStorage.setItem(PRE_IMPORT_KEY, JSON.stringify(data))
+    localStorage.setItem(PRE_IMPORT_KEY, JSON.stringify({ guardadaEn: Date.now(), save: data }))
   } catch {
     // Igual que persistSave: sin instantánea no hay deshacer, pero el juego
     // sigue funcionando con lo que haya en memoria.
@@ -83,9 +94,31 @@ export function savePreImportSnapshot(data) {
 }
 
 // Lee la instantánea previa a importar, ya migrada a la forma actual. null si
-// no hay ninguna (no se ha importado nada, o ya se deshizo).
+// no hay ninguna: no se ha importado nada, ya se deshizo, o caducó.
+//
+// Una instantánea que ya no vale se borra aquí mismo, en la lectura: así el
+// aviso de "puedes deshacer" desaparece solo del perfil, sin depender de que
+// alguien se acuerde de barrer. Lo mismo con una instantánea ilegible o sin
+// marca de tiempo (formato viejo o tocada a mano): sin saber cuándo se tomó no
+// se puede saber si sigue vigente, y el lado seguro es tratarla como caducada.
 export function loadPreImportSnapshot() {
-  return tryParse(localStorage.getItem(PRE_IMPORT_KEY))
+  const crudo = localStorage.getItem(PRE_IMPORT_KEY)
+  if (!crudo) return null
+
+  let sobre = null
+  try {
+    sobre = JSON.parse(crudo)
+  } catch {
+    // sobre se queda en null y cae en la limpieza de abajo
+  }
+  const vigente = !!sobre && typeof sobre.guardadaEn === 'number' &&
+    Date.now() - sobre.guardadaEn <= PRE_IMPORT_TTL_MS
+  const save = vigente ? migrate(sobre.save) : null
+  if (!save) {
+    clearPreImportSnapshot()
+    return null
+  }
+  return save
 }
 
 // Borra la instantánea tras usarla (o si el jugador decide que ya no la
