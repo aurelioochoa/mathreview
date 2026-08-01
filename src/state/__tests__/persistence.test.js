@@ -115,6 +115,22 @@ describe('instantánea previa a importar', () => {
     expect(loadPreImportSnapshot()).toEqual({ ...defaultState(), xp: 3 })
   })
 
+  // La primera instantánea es la que tiene la partida del jugador: si una
+  // segunda importación la pisara, deshacer devolvería la partida importada
+  // por error en vez de la de verdad.
+  it('una segunda instantánea no pisa a la primera', () => {
+    savePreImportSnapshot({ ...defaultState(), coins: 3 })
+    savePreImportSnapshot({ ...defaultState(), coins: 111 })
+    expect(loadPreImportSnapshot().coins).toBe(3)
+  })
+
+  it('tras borrarla, la siguiente instantánea sí se guarda', () => {
+    savePreImportSnapshot({ ...defaultState(), coins: 3 })
+    clearPreImportSnapshot()
+    savePreImportSnapshot({ ...defaultState(), coins: 111 })
+    expect(loadPreImportSnapshot().coins).toBe(111)
+  })
+
   it('borrarla la deja en null', () => {
     savePreImportSnapshot({ ...defaultState(), xp: 3 })
     clearPreImportSnapshot()

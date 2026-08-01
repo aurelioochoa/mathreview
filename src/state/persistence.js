@@ -65,7 +65,15 @@ export function persistSave(data) {
 // Guarda la partida actual como instantánea de "antes de importar". Se llama
 // justo antes de despachar IMPORT_SAVE, para poder deshacer si el código
 // pegado no era el que el jugador creía.
+//
+// Si YA hay una instantánea, no se pisa: la primera es la que guarda la
+// partida propia del jugador. El caso real es el niño que pega un código, ve
+// que no es el suyo y, en vez de deshacer, prueba con otro código: si la
+// segunda importación pisara la instantánea, "Deshacer" devolvería la partida
+// equivocada de la primera importación y la suya se habría perdido para
+// siempre.
 export function savePreImportSnapshot(data) {
+  if (loadPreImportSnapshot() !== null) return
   try {
     localStorage.setItem(PRE_IMPORT_KEY, JSON.stringify(data))
   } catch {

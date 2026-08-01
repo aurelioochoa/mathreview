@@ -252,6 +252,14 @@ describe('integración: SaveTransfer — código corrupto vs. navegador sin sopo
   })
 })
 
+// Pega un código, lo revisa y confirma la carga: los tres pasos que da el
+// jugador para importar una partida.
+async function importar(codigo) {
+  fireEvent.change(screen.getByLabelText(/Pega aquí un código/i), { target: { value: codigo } })
+  fireEvent.click(screen.getByRole('button', { name: /Revisar código/i }))
+  fireEvent.click(await screen.findByRole('button', { name: /Cargar esta partida/i }))
+}
+
 describe('integración: SaveTransfer — deshacer un import', () => {
   beforeEach(() => localStorage.clear())
 
@@ -283,6 +291,24 @@ describe('integración: SaveTransfer — deshacer un import', () => {
 
     expect(await screen.findByRole('button', { name: /Deshacer/i })).toBeTruthy()
     expect(JSON.parse(localStorage.getItem(PRE_IMPORT_KEY)).coins).toBe(3)
+  })
+
+  // Secuencia real: el niño pega un código, ve que no es el suyo y, en vez de
+  // deshacer, prueba directamente con otro. La instantánea que hay que poder
+  // recuperar sigue siendo la de su partida (3 monedas), no la del primer
+  // código equivocado.
+  it('importar dos veces seguidas sin deshacer conserva la partida original', async () => {
+    montar({ xp: 10, coins: 3 })
+
+    await importar(await encodeSave({ ...defaultState(), coins: 111 }))
+    await waitFor(() => expect(JSON.parse(localStorage.getItem(SAVE_KEY)).coins).toBe(111))
+
+    await importar(await encodeSave({ ...defaultState(), coins: 222 }))
+    await waitFor(() => expect(JSON.parse(localStorage.getItem(SAVE_KEY)).coins).toBe(222))
+
+    fireEvent.click(await screen.findByRole('button', { name: /Deshacer/i }))
+
+    await waitFor(() => expect(JSON.parse(localStorage.getItem(SAVE_KEY)).coins).toBe(3))
   })
 
   it('"Deshacer" restaura la partida anterior y hace desaparecer el botón', async () => {
