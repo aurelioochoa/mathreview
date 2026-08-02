@@ -18,7 +18,7 @@ npm run lint     # ESLint
 
 Los comandos `lint`, `test` y `build` corren automáticamente en GitHub Actions cada vez que haces push a `main` o abres un pull request.
 
-También hay un flujo con Docker en el `Makefile` (`make dev`, `make up`, `make production`) y un servicio de generación de PDF (`make pdf`).
+También hay un flujo con Docker en el `Makefile` (`make dev`, `make up`) y un servicio de generación de PDF (`make pdf`).
 
 ## Estructura
 
@@ -50,4 +50,9 @@ Rutas: `/` (mapa) · `/mundo/:slug` · `/mundo/:slug/nivel/:levelId` · `/mundo/
 
 ## Despliegue
 
-Se sirve en `kidtopiaplay.com` vía Cloudflare Tunnel (`make production`). El token del túnel se lee de `.env` (git-ignored) como `TUNNEL_TOKEN` — no se commitea.
+Sin despliegue propio. El Cloudflare Tunnel que servía la guía de estudio original en
+`kidtopiaplay.com` se retiró: el sitio de kidtopiaplay se publica desde su propio repo en
+Cloudflare Pages, y el plan es que Math Quest se sirva desde ahí como un juego más
+(`/g/mathreview/`) en vez de por un túnel aparte.
+
+En local, `make up` levanta el build de producción en `http://localhost:3000`.

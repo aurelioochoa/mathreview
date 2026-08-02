@@ -1,4 +1,4 @@
-.PHONY: install dev build up pdf clean stop production stop-production
+.PHONY: install dev build up pdf clean stop
 
 install:
 	npm ci
@@ -25,14 +25,3 @@ clean:
 	docker run --rm -v $(PWD)/output:/output alpine rm -rf /output/*
 	rm -rf output
 	docker compose down --rmi local --volumes
-
-production:
-	docker compose build app
-	docker compose up -d app tunnel
-	@echo "🚀 Production deployment starting..."
-	@echo "📊 Watching tunnel logs (Ctrl+C to stop watching, containers keep running):"
-	@docker compose logs -f tunnel
-
-stop-production:
-	docker compose down app tunnel
-	@echo "🛑 Production stopped"
