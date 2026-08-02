@@ -60,6 +60,65 @@ body {
 .katex { font-size: 1.1em; }
 .MafsView { --mafs-bg: transparent; }
 
+/* Marcos: el borde de la opción que tiene el ratón encima se enciende con un
+   degradado que da vueltas. El anillo es un ::before enmascarado -- se pinta la
+   caja entera y se recorta el interior, así solo queda el aro -- porque un
+   `border` de degradado no existe en CSS, y ponerlo de fondo obligaría a que la
+   opción fuese opaca por encima.
+
+   El ángulo va en una variable registrada con @property. Sin registrar, el
+   navegador trata `--marco-angulo` como texto suelto y no sabe interpolarlo:
+   el degradado saltaría de golpe en vez de girar.
+
+   Los colores los pone quien usa la clase (--marco-colores), porque salen del
+   catálogo de la tienda: cada marco los suyos. */
+@property --marco-angulo {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
+}
+
+@keyframes marco-vuelta {
+  to { --marco-angulo: 360deg; }
+}
+
+.marco { position: relative; }
+
+.marco::before {
+  content: "";
+  position: absolute;
+  /* -1px para montarse sobre el borde de 1px que ya lleva la opción, en vez de
+     quedarse por dentro y dejar dos líneas paralelas. */
+  inset: -1px;
+  border-radius: inherit;
+  padding: 2px;
+  background: conic-gradient(from var(--marco-angulo), var(--marco-colores));
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity 150ms ease;
+  /* El aro se pinta por encima del botón: sin esto se comería los clics en la
+     franja del borde. */
+  pointer-events: none;
+}
+
+/* Encendido: con el ratón encima, con el foco de teclado (quien juega con
+   tabulador merece ver su marco igual), o fijo en la vista previa de la
+   tienda. Una opción ya respondida está deshabilitada y no se enciende: ahí lo
+   que tiene que hablar es el verde del acierto o el rojo del fallo. */
+.marco:not(:disabled):hover::before,
+.marco:not(:disabled):focus-visible::before,
+.marco-encendido::before {
+  opacity: 1;
+  animation: marco-vuelta 2.5s linear infinite;
+  /* `drop-shadow` y no `box-shadow`: el filtro se aplica después de la
+     máscara, así que el halo sigue la forma del aro. Un box-shadow lo
+     recortaría la propia máscara y no se vería. */
+  filter: drop-shadow(0 0 3px var(--marco-brillo));
+}
+
 /* Respeto global a reduced-motion como red de seguridad */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {

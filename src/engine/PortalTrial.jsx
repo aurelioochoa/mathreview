@@ -4,6 +4,7 @@ import { findWorld } from '../content/worlds'
 import { pathOrder } from '../content/worldMap'
 import { buildBossPool } from './generators'
 import { useGame, XP_PER_CORRECT } from '../state/gameStore'
+import OptionButton from '../components/OptionButton'
 
 const PREGUNTAS = 5
 const APROBADO = 4 // 4 de 5
@@ -99,16 +100,12 @@ function PortalTrialView() {
           </div>
           <p className="font-medium text-gray-800 mb-3">{q.question}</p>
           <div className="space-y-2">
-            {q.options.map((opt, i) => {
-              const isCorrect = selected !== null && i === q.correctAnswer
-              const isWrong = selected === i && i !== q.correctAnswer
-              return (
-                <button key={i} disabled={selected !== null} onClick={() => answer(i)}
-                  className={`w-full text-left px-3 py-2 rounded-lg border text-sm ${isCorrect ? 'bg-green-100 border-green-400' : isWrong ? 'bg-red-100 border-red-400' : 'bg-white border-gray-200 hover:bg-indigo-50'}`}>
-                  <span className="font-bold mr-2">{String.fromCharCode(65 + i)})</span>{opt}
-                </button>
-              )
-            })}
+            {q.options.map((opt, i) => (
+              <OptionButton key={i} index={i} disabled={selected !== null} onClick={() => answer(i)}
+                estado={selected !== null && i === q.correctAnswer ? 'correcta' : selected === i ? 'fallada' : 'neutro'}>
+                {opt}
+              </OptionButton>
+            ))}
           </div>
           {selected !== null && (
             <button onClick={next} className="mt-4 px-4 py-2 rounded-xl font-display bg-indigo-500 text-white font-bold">

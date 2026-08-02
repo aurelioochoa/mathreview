@@ -7,6 +7,7 @@ import { useGame, XP_PER_CORRECT, XP_LEVEL_COMPLETE, coinsForCompletion } from '
 import WhySection from '../components/WhySection'
 import CommonMistakes from '../components/CommonMistakes'
 import InteractiveBox from '../components/InteractiveBox'
+import OptionButton from '../components/OptionButton'
 import Chest from './Chest'
 import { useDeviceTier } from '../three/useDeviceTier'
 
@@ -144,16 +145,12 @@ function LevelPlayerView() {
             <div className="mb-3 p-3 rounded-lg bg-yellow-50 border border-yellow-200 text-sm">💡 {q.hint}</div>
           )}
           <div className="space-y-2">
-            {q.options.map((opt, i) => {
-              const isCorrect = selected !== null && i === q.correctAnswer
-              const isWrong = selected === i && i !== q.correctAnswer
-              return (
-                <button key={i} disabled={selected !== null} onClick={() => answer(i)}
-                  className={`w-full text-left px-3 py-2 rounded-lg border text-sm ${isCorrect ? 'bg-green-100 border-green-400' : isWrong ? 'bg-red-100 border-red-400' : 'bg-white border-gray-200 hover:bg-indigo-50'}`}>
-                  <span className="font-bold mr-2">{String.fromCharCode(65 + i)})</span>{opt}
-                </button>
-              )
-            })}
+            {q.options.map((opt, i) => (
+              <OptionButton key={i} index={i} disabled={selected !== null} onClick={() => answer(i)}
+                estado={selected !== null && i === q.correctAnswer ? 'correcta' : selected === i ? 'fallada' : 'neutro'}>
+                {opt}
+              </OptionButton>
+            ))}
           </div>
           {selected !== null && selected !== q.correctAnswer && (
             <div className="mt-3 p-3 rounded-lg bg-yellow-50 border border-yellow-200 text-sm">

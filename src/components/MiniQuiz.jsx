@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import OptionButton from './OptionButton'
 
 export default function MiniQuiz({ questions }) {
   const [answers, setAnswers] = useState({})
@@ -43,25 +44,17 @@ export default function MiniQuiz({ questions }) {
               const showWrong = isSelected && feedback[qIndex]?.type === 'hint'
               
               return (
-                <button
+                <OptionButton
                   key={optIndex}
-                  onClick={() => !answers[qIndex] && handleAnswer(qIndex, optIndex)}
+                  index={optIndex}
+                  estado={showCorrect ? 'correcta' : showWrong ? 'fallada' : isSelected ? 'elegida' : 'neutro'}
                   disabled={!!answers[qIndex]}
-                  className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-all ${
-                    showCorrect
-                      ? 'bg-green-100 border-green-400 text-green-800'
-                      : showWrong
-                      ? 'bg-red-100 border-red-400 text-red-800'
-                      : isSelected
-                      ? 'bg-indigo-100 border-indigo-400 text-indigo-800'
-                      : 'bg-white border-gray-200 hover:bg-indigo-50'
-                  } border`}
+                  onClick={() => !answers[qIndex] && handleAnswer(qIndex, optIndex)}
                 >
-                  <span className="font-bold mr-2">{String.fromCharCode(65 + optIndex)})</span>
                   {opt}
                   {showCorrect && <span className="ml-2">✅</span>}
                   {showWrong && <span className="ml-2">❌</span>}
-                </button>
+                </OptionButton>
               )
             })}
           </div>
