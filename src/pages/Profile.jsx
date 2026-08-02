@@ -1,12 +1,26 @@
 import { useGame } from '../state/gameStore'
 import { hudStats } from '../state/hudStats'
 import { titleForLevel } from '../state/xpCurve'
-import { COSMETIC_ITEMS, findItem } from '../content/shop'
+import { COSMETIC_ITEMS, EQUIPABLE_SLOTS, findItem } from '../content/shop'
 import { ACHIEVEMENTS } from '../content/achievements'
 import { worlds } from '../content/worlds'
 import SaveTransfer from '../components/SaveTransfer'
+import PlayerAvatar from '../components/PlayerAvatar'
 
-const emojiDe = (id) => findItem(id)?.emoji ?? '🙂'
+// Cómo se presenta cada slot en "Personalizar". `vacio` es la etiqueta del
+// botón que desequipa: en título significa "que lo decida el juego", y sale el
+// del nivel; en marco, aura y estela no hay automático que valga, simplemente
+// no llevas ninguno.
+//
+// `pista` cuenta lo que no se puede enseñar desde aquí: el marco solo aparece
+// mientras respondes, así que sin una línea que lo diga parece que no hace nada.
+const SLOTS = {
+  avatar: { label: 'Avatar' },
+  frame: { label: 'Marco', vacio: 'Ninguno', pista: 'Enciende la opción que señalas' },
+  title: { label: 'Título', vacio: 'Automático' },
+  aura: { label: 'Aura', vacio: 'Ninguna' },
+  cursor: { label: 'Estela del ratón', vacio: 'Ninguna' },
+}
 
 function Stat({ label, value }) {
   return (
@@ -17,18 +31,23 @@ function Stat({ label, value }) {
   )
 }
 
-// Selector de un slot cosmético. Solo lista lo que el jugador posee; el resto
+// Columna de un slot cosmético. Solo lista lo que el jugador posee; el resto
 // se compra en la tienda.
-function Selector({ slot, label, allowAuto, equipped, owned, onEquip }) {
+function Selector({ slot, equipped, owned, onEquip }) {
+  const { label, vacio, pista } = SLOTS[slot]
   const opciones = COSMETIC_ITEMS.filter(i => i.slot === slot && owned.has(i.id))
-  const clase = (activo) => `px-3 py-1.5 rounded-lg text-sm border ${activo ? 'bg-primary text-white border-primary' : 'bg-white border-gray-200'}`
+  const clase = (activo) => `w-full px-3 py-1.5 rounded-lg text-sm text-left border ${activo ? 'bg-primary text-white border-primary' : 'bg-surface border-gray-200 text-gray-700'}`
   return (
-    <div className="mb-3">
-      <p className="text-xs text-gray-500 mb-1">{label}</p>
-      <div className="flex flex-wrap gap-2">
-        {allowAuto && (
+    // `grow basis-36 min-w-36`: en escritorio las cinco columnas se reparten
+    // el ancho; en móvil el mínimo las obliga a desbordar, y la fila se
+    // arrastra en vez de partirse.
+    <section className="grow basis-36 min-w-36 snap-start glass rounded-2xl p-3">
+      <p className={`text-xs font-bold text-gray-500 ${pista ? 'mb-1' : 'mb-2'}`}>{label}</p>
+      {pista && <p className="text-[11px] leading-tight text-gray-400 mb-2">{pista}</p>}
+      <div className="flex flex-col gap-2">
+        {vacio && (
           <button onClick={() => onEquip(slot, null)} aria-pressed={equipped === null} className={clase(equipped === null)}>
-            Automático
+            {vacio}
           </button>
         )}
         {opciones.map(i => (
@@ -36,9 +55,9 @@ function Selector({ slot, label, allowAuto, equipped, owned, onEquip }) {
             {i.emoji} {i.label}
           </button>
         ))}
-        {opciones.length === 0 && <span className="text-xs text-gray-400 self-center">Consíguelos en la tienda</span>}
+        {opciones.length === 0 && <span className="text-xs text-gray-400">Consíguelos en la tienda</span>}
       </div>
-    </div>
+    </section>
   )
 }
 
@@ -54,7 +73,7 @@ export default function Profile() {
   return (
     <div className="max-w-3xl mx-auto">
       <div className="flex items-center gap-4 mb-6">
-        <span className="text-5xl">{emojiDe(state.cosmetics.avatar)}</span>
+        <PlayerAvatar />
         <div>
           <h1 className="font-display text-2xl font-extrabold text-gray-800">Perfil</h1>
           <p className="text-primary font-bold">Nv. {s.level} · {titulo}</p>
@@ -73,9 +92,14 @@ export default function Profile() {
       </div>
 
       <h2 className="font-display font-bold text-gray-700 mb-2">Personalizar</h2>
-      <Selector slot="avatar" label="Avatar" equipped={state.cosmetics.avatar} owned={owned} onEquip={onEquip} />
-      <Selector slot="frame" label="Marco" allowAuto equipped={state.cosmetics.frame} owned={owned} onEquip={onEquip} />
-      <Selector slot="title" label="Título" allowAuto equipped={state.cosmetics.title} owned={owned} onEquip={onEquip} />
+      {/* En fila: un slot por columna. En móvil la fila se arrastra en
+          horizontal en vez de partirse, que es lo que hace que se lea como
+          una estantería de opciones y no como un formulario largo. */}
+      <div data-testid="personalizar" className="flex gap-3 overflow-x-auto snap-x pb-3 mb-6 -mx-4 px-4">
+        {EQUIPABLE_SLOTS.map(slot => (
+          <Selector key={slot} slot={slot} equipped={state.cosmetics[slot]} owned={owned} onEquip={onEquip} />
+        ))}
+      </div>
 
       <SaveTransfer />
     </div>

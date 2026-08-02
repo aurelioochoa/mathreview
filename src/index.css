@@ -60,6 +60,18 @@ body {
 .katex { font-size: 1.1em; }
 .MafsView { --mafs-bg: transparent; }
 
+/* Auras: el halo gira y el núcleo late. Dos animaciones separadas para que no
+   vayan sincronizadas y el conjunto no parezca un solo pulso. */
+@keyframes aura-giro {
+  to { transform: rotate(360deg); }
+}
+@keyframes aura-latido {
+  0%, 100% { opacity: 0.45; transform: scale(0.92); }
+  50% { opacity: 0.9; transform: scale(1.06); }
+}
+.aura-giro { animation: aura-giro 6s linear infinite; }
+.aura-latido { animation: aura-latido 2.4s ease-in-out infinite; }
+
 /* Marcos: el borde de la opción que tiene el ratón encima se enciende con un
    degradado que da vueltas. El anillo es un ::before enmascarado -- se pinta la
    caja entera y se recorta el interior, así solo queda el aro -- porque un

@@ -106,7 +106,8 @@ function formaValidaCosmetics(c) {
   return (
     !!c && typeof c === 'object' && !Array.isArray(c) &&
     Array.isArray(c.owned) &&
-    esStringONull(c.avatar) && esStringONull(c.frame) && esStringONull(c.title)
+    esStringONull(c.avatar) && esStringONull(c.frame) && esStringONull(c.title) &&
+    esStringONull(c.aura) && esStringONull(c.cursor)
   )
 }
 

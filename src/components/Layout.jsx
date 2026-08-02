@@ -1,6 +1,7 @@
 import { Outlet, Link, useLocation } from 'react-router-dom'
 import { ChevronLeft, ChevronRight, Home } from 'lucide-react'
 import Hud from './Hud'
+import CursorAura from './CursorAura'
 import PageTransition from './PageTransition'
 import { adjacentBlock } from '../content/worldMap'
 
@@ -13,6 +14,9 @@ export default function Layout() {
 
   return (
     <div className={isMap ? 'h-dvh flex flex-col' : 'min-h-screen'}>
+      {/* Fuera del <main>: la estela cubre toda la ventana, también el HUD. */}
+      <CursorAura />
+
       <nav className="sticky top-0 z-50 glass border-b border-white/50 shadow-sm">
         <div className="max-w-6xl mx-auto px-4 py-2.5">
           <Hud />

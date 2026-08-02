@@ -1,4 +1,5 @@
 import { createContext, useContext } from 'react'
+import { EQUIPABLE_SLOTS } from '../content/shop'
 
 export const XP_PER_CORRECT = 10
 export const XP_LEVEL_COMPLETE = 50
@@ -22,7 +23,7 @@ export function defaultState() {
     questsCompleted: [],  // questKey[]
     achievements: [],     // achievementId[]
     hints: 0,             // tokens de pista
-    cosmetics: { owned: ['avatar-default'], avatar: 'avatar-default', frame: null, title: null },
+    cosmetics: { owned: ['avatar-default'], avatar: 'avatar-default', frame: null, title: null, aura: null, cursor: null },
     streak: { count: 0, best: 0, lastDate: null },
   }
 }
@@ -108,7 +109,7 @@ export function gameReducer(state, action) {
 
     case 'EQUIP_COSMETIC': {
       const { slot, id } = action
-      if (slot !== 'avatar' && slot !== 'frame' && slot !== 'title') return state
+      if (!EQUIPABLE_SLOTS.includes(slot)) return state
       if (id !== null && !state.cosmetics.owned.includes(id)) return state
       return { ...state, cosmetics: { ...state.cosmetics, [slot]: id } }
     }

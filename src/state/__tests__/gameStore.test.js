@@ -16,7 +16,7 @@ describe('gameReducer — base', () => {
     expect(s.questsCompleted).toEqual([])
     expect(s.achievements).toEqual([])
     expect(s.hints).toBe(0)
-    expect(s.cosmetics).toEqual({ owned: ['avatar-default'], avatar: 'avatar-default', frame: null, title: null })
+    expect(s.cosmetics).toEqual({ owned: ['avatar-default'], avatar: 'avatar-default', frame: null, title: null, aura: null, cursor: null })
     expect(s.streak).toEqual({ count: 0, best: 0, lastDate: null })
   })
 })
@@ -92,6 +92,16 @@ describe('acciones nuevas del reducer', () => {
     expect(gameReducer(owned, { type: 'EQUIP_COSMETIC', slot: 'avatar', id: 'avatar-mago' }).cosmetics.avatar).toBe('avatar-mago')
     expect(gameReducer(owned, { type: 'EQUIP_COSMETIC', slot: 'avatar', id: 'no-poseido' })).toBe(owned)
     expect(gameReducer(owned, { type: 'EQUIP_COSMETIC', slot: 'title', id: null }).cosmetics.title).toBe(null)
+  })
+  it('EQUIP_COSMETIC equipa aura y cursor, que son slots como los demás', () => {
+    const owned = {
+      ...defaultState(),
+      cosmetics: { ...defaultState().cosmetics, owned: ['avatar-default', 'aura-fuego', 'cursor-chispas'] },
+    }
+    expect(gameReducer(owned, { type: 'EQUIP_COSMETIC', slot: 'aura', id: 'aura-fuego' }).cosmetics.aura).toBe('aura-fuego')
+    expect(gameReducer(owned, { type: 'EQUIP_COSMETIC', slot: 'cursor', id: 'cursor-chispas' }).cosmetics.cursor).toBe('cursor-chispas')
+    // Un aura no poseída no se equipa, igual que un avatar no poseído.
+    expect(gameReducer(owned, { type: 'EQUIP_COSMETIC', slot: 'aura', id: 'aura-que-no-tiene' })).toBe(owned)
   })
   it('USE_HINT no baja de 0', () => {
     expect(gameReducer(defaultState(), { type: 'USE_HINT' }).hints).toBe(0)

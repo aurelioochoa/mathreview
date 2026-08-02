@@ -28,6 +28,7 @@ function partidaPesada() {
     cosmetics: {
       owned: ['avatar-default', 'avatar-mago', 'avatar-dragon', 'frame-oro', 'title-leyenda', 'avatar-robot', 'frame-neon'],
       avatar: 'avatar-mago', frame: 'frame-oro', title: 'title-leyenda',
+      aura: 'aura-arcoiris', cursor: 'cursor-neon',
     },
     streak: { count: 14, best: 22, lastDate: '2026-07-31' },
   }
@@ -130,6 +131,19 @@ describe('saveCode — formas envenenadas (decodeSave valida de verdad)', () => 
 
   it('cosmetics.owned que no es un array da corrupto', async () => {
     const code = await encodeSave({ ...defaultState(), cosmetics: { ...defaultState().cosmetics, owned: 'trampa' } })
+    expect(await decodeSave(code)).toEqual({ ok: false, reason: 'corrupto' })
+  })
+
+  // aura y cursor son de la misma forma que avatar/frame/title (string o
+  // null), así que la validación explícita de cosmetics tiene que cubrirlos:
+  // el recorrido genérico de formaValida() solo caza arrays y números.
+  it('cosmetics.aura con un tipo que no es string ni null da corrupto', async () => {
+    const code = await encodeSave({ ...defaultState(), cosmetics: { ...defaultState().cosmetics, aura: 7 } })
+    expect(await decodeSave(code)).toEqual({ ok: false, reason: 'corrupto' })
+  })
+
+  it('cosmetics.cursor con un tipo que no es string ni null da corrupto', async () => {
+    const code = await encodeSave({ ...defaultState(), cosmetics: { ...defaultState().cosmetics, cursor: [] } })
     expect(await decodeSave(code)).toEqual({ ok: false, reason: 'corrupto' })
   })
 
