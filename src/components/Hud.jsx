@@ -4,6 +4,7 @@ import { motion, useReducedMotion } from 'motion/react'
 import { useGame } from '../state/gameStore'
 import { hudStats } from '../state/hudStats'
 import PlayerAvatar from './PlayerAvatar'
+import ThemeToggle from './ThemeToggle'
 
 export default function Hud() {
   const { state } = useGame()
@@ -74,10 +75,12 @@ export default function Hud() {
         <span className="tabular-nums">{s.coins}</span>
       </motion.div>
 
-      {/* Accesos a logros, tienda y perfil */}
+      {/* Accesos a logros y tienda, y el botón de tema. El perfil ya no está
+          aquí: lo lleva el avatar. */}
       <div className="flex items-center gap-2 shrink-0">
         <Link to="/logros" title="Logros" aria-label="Logros" className="text-gray-500 hover:text-primary"><Award size={18} /></Link>
         <Link to="/tienda" title="Tienda" aria-label="Tienda" className="text-gray-500 hover:text-primary"><ShoppingBag size={18} /></Link>
+        <ThemeToggle />
       </div>
     </div>
   )

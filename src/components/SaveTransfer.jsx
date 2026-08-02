@@ -215,13 +215,13 @@ export default function SaveTransfer() {
                 <button ref={botonRecuperarRef} onClick={confirmarDeshacer} className={`${boton} bg-primary text-white`}>
                   Sí, recuperar esa partida
                 </button>
-                <button onClick={() => setPreviaDeshacer(null)} className={`${boton} bg-white border border-gray-200`}>
+                <button onClick={() => setPreviaDeshacer(null)} className={`${boton} bg-surface border border-gray-200`}>
                   No, dejarlo como está
                 </button>
               </div>
             </div>
           ) : (
-            <button onClick={pedirDeshacer} className={`${boton} bg-white border border-amber-300 text-amber-700`}>
+            <button onClick={pedirDeshacer} className={`${boton} bg-surface border border-amber-300 text-amber-700`}>
               Deshacer la última carga
             </button>
           )}
@@ -232,13 +232,13 @@ export default function SaveTransfer() {
         <label htmlFor="codigo-salida" className="text-xs text-gray-500 block mb-1">Tu código de partida</label>
         <textarea
           id="codigo-salida" ref={salidaRef} readOnly value={codigo} rows={3}
-          className="w-full text-xs font-mono border border-gray-200 rounded-lg p-2 bg-white break-all"
+          className="w-full text-xs font-mono border border-gray-200 rounded-lg p-2 bg-surface break-all"
         />
         <div className="flex flex-wrap gap-2 mt-2">
           <button onClick={copiar} disabled={!codigo} className={`${boton} bg-primary text-white disabled:opacity-50`}>Copiar</button>
-          <button onClick={descargar} disabled={!codigo} className={`${boton} bg-white border border-gray-200 disabled:opacity-50`}>Descargar fichero</button>
+          <button onClick={descargar} disabled={!codigo} className={`${boton} bg-surface border border-gray-200 disabled:opacity-50`}>Descargar fichero</button>
           {cabeEnQr && (
-            <button onClick={() => setVerQr(v => !v)} className={`${boton} bg-white border border-gray-200`}>
+            <button onClick={() => setVerQr(v => !v)} className={`${boton} bg-surface border border-gray-200`}>
               {verQr ? 'Ocultar QR' : 'Mostrar QR'}
             </button>
           )}
@@ -270,15 +270,15 @@ export default function SaveTransfer() {
             // aplicar su resultado (ver el id en revisar()).
             peticionRef.current++
           }}
-          className="w-full text-xs font-mono border border-gray-200 rounded-lg p-2 bg-white break-all"
+          className="w-full text-xs font-mono border border-gray-200 rounded-lg p-2 bg-surface break-all"
         />
         <div className="flex flex-wrap gap-2 mt-2 items-center">
           <button onClick={() => revisar(pegado)} className={`${boton} bg-primary text-white`}>Revisar código</button>
-          <label className={`${boton} bg-white border border-gray-200 cursor-pointer focus-within:ring-2 focus-within:ring-primary`}>
+          <label className={`${boton} bg-surface border border-gray-200 cursor-pointer focus-within:ring-2 focus-within:ring-primary`}>
             Abrir fichero
             <input type="file" accept=".mathquest,text/plain" onChange={subir} className="sr-only" />
           </label>
-          <button onClick={() => setEscaneando(true)} className={`${boton} bg-white border border-gray-200`}>
+          <button onClick={() => setEscaneando(true)} className={`${boton} bg-surface border border-gray-200`}>
             Escanear QR
           </button>
         </div>
@@ -299,7 +299,7 @@ export default function SaveTransfer() {
             </p>
             <div className="flex gap-2 mt-3">
               <button ref={botonCargarRef} onClick={confirmar} className={`${boton} bg-primary text-white`}>Cargar esta partida</button>
-              <button onClick={() => setPendiente(null)} className={`${boton} bg-white border border-gray-200`}>Cancelar</button>
+              <button onClick={() => setPendiente(null)} className={`${boton} bg-surface border border-gray-200`}>Cancelar</button>
             </div>
           </div>
         )}

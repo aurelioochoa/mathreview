@@ -24,7 +24,7 @@ export default function NotacionConversor() {
         className="border border-gray-300 rounded-lg px-3 py-2 w-full max-w-sm font-mono text-lg focus:ring-2 focus:ring-amber-400 outline-none"
       />
       {parseFloat(decimal) !== 0 && !isNaN(parseFloat(decimal)) && (
-        <div className="mt-4 p-4 bg-white rounded-lg text-center">
+        <div className="mt-4 p-4 bg-surface rounded-lg text-center">
           <p className="text-sm text-gray-500 mb-1">En notación científica:</p>
           <p className="text-2xl font-bold text-amber-700">
             <MathTex expr={`${mantisa} \\times 10^{${exponente}}`} />

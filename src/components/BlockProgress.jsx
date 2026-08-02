@@ -2,7 +2,7 @@ export default function BlockProgress({ current, total, blockName }) {
   const percentage = Math.round((current / total) * 100)
   
   return (
-    <div className="bg-white rounded-xl p-3 border border-gray-200 shadow-sm mb-6 sticky top-20 z-40">
+    <div className="bg-surface rounded-xl p-3 border border-gray-200 shadow-sm mb-6 sticky top-20 z-40">
       <div className="flex items-center justify-between mb-2">
         <span className="text-sm font-semibold text-gray-700">{blockName}</span>
         <span className="text-xs text-gray-500">{current} de {total} completados ✅</span>

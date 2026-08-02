@@ -5,7 +5,7 @@ export default function ExpressSummary({ children, color = 'bg-blue-500' }) {
   const [open, setOpen] = useState(false)
 
   return (
-    <div className="mb-8 border border-gray-200 rounded-xl overflow-hidden bg-white shadow-sm">
+    <div className="mb-8 border border-gray-200 rounded-xl overflow-hidden bg-surface shadow-sm">
       <button
         onClick={() => setOpen(!open)}
         className={`w-full flex items-center justify-between px-4 py-3 ${color} text-white font-semibold hover:brightness-110 transition-all`}

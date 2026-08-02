@@ -3,7 +3,7 @@ import { useFrame } from '@react-three/fiber'
 
 // Océano low-poly: plano con ondulación senoidal suave de vértices.
 // Procedural, sin texturas ni red. Estático si animate=false.
-export default function Ocean({ animate = true }) {
+export default function Ocean({ animate = true, color = '#3fa7e0' }) {
   const geoRef = useRef()
 
   useFrame(({ clock }) => {
@@ -23,7 +23,7 @@ export default function Ocean({ animate = true }) {
   return (
     <mesh rotation={[-Math.PI / 2, 0, 0]} position={[-1, -0.55, -5]}>
       <planeGeometry ref={geoRef} args={[90, 60, 48, 32]} />
-      <meshStandardMaterial color="#3fa7e0" roughness={0.35} metalness={0.05} flatShading />
+      <meshStandardMaterial color={color} roughness={0.35} metalness={0.05} flatShading />
     </mesh>
   )
 }

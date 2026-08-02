@@ -40,8 +40,8 @@ function WorldCard({ node, state }) {
             <span>⭐ {progress.stars}/{progress.totalStars}</span>
             <span>{progress.pct}%</span>
           </div>
-          <div className="mt-1 h-1.5 rounded-full bg-white/25 overflow-hidden">
-            <div className="h-full rounded-full bg-white/90" style={{ width: `${progress.pct}%` }} />
+          <div className="mt-1 h-1.5 rounded-full bg-surface/25 overflow-hidden">
+            <div className="h-full rounded-full bg-surface/90" style={{ width: `${progress.pct}%` }} />
           </div>
         </div>
       )}

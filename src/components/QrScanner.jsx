@@ -186,7 +186,7 @@ export default function QrScanner({ onCode, onCancel }) {
             Volver a intentar
           </button>
         )}
-        <button onClick={onCancel} className={`${boton} bg-white border border-gray-200`}>
+        <button onClick={onCancel} className={`${boton} bg-surface border border-gray-200`}>
           Cerrar
         </button>
       </div>

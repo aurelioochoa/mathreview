@@ -3,6 +3,8 @@ import { Canvas } from '@react-three/fiber'
 import { PerformanceMonitor } from '@react-three/drei'
 import { worldMapNodes, nodeState, worldProgress } from '../content/worldMap'
 import { useGame } from '../state/gameStore'
+import { useTema } from '../state/theme'
+import { escenaDe } from './sceneTheme'
 import Lighting from './lighting'
 import WorldObject from './WorldObject'
 import Ocean from './Ocean'
@@ -13,6 +15,8 @@ const Effects = lazy(() => import('./Effects'))
 
 export default function WorldMapCanvas({ spin = true }) {
   const { state } = useGame()
+  const { resuelto } = useTema()
+  const escena = escenaDe(resuelto)
   const [dpr, setDpr] = useState(1.5)
 
   return (
@@ -24,9 +28,9 @@ export default function WorldMapCanvas({ spin = true }) {
       style={{ width: '100%', height: '100%' }}
     >
       <PerformanceMonitor onChange={({ factor }) => setDpr(Math.round((1 + factor) * 10) / 10)} />
-      <fog attach="fog" args={['#b7d9f5', 15, 30]} />
-      <Lighting />
-      <Ocean animate={spin} />
+      <fog attach="fog" args={[escena.niebla, 15, 30]} />
+      <Lighting escena={escena} />
+      <Ocean animate={spin} color={escena.oceano} />
       <Clouds animate={spin} />
       <Paths />
       {worldMapNodes.map((node) => (

@@ -84,12 +84,12 @@ export const mundo3 = {
           <p className="text-sm text-gray-600 mb-2">Una <GlossaryTerm term="Potenciación" definition="Multiplicar un número por sí mismo varias veces. aⁿ = a × a × ... × a (n veces)">potencia</GlossaryTerm> es una multiplicación repetida:</p>
           <MathTex expr={"3^4 = 3 \\times 3 \\times 3 \\times 3 = 81"} display />
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm mt-2">
-            <div className="bg-white rounded p-2"><MathTex expr={"a^m \\cdot a^n = a^{m+n}"} /></div>
-            <div className="bg-white rounded p-2"><MathTex expr={"\\frac{a^m}{a^n} = a^{m-n}"} /></div>
-            <div className="bg-white rounded p-2"><MathTex expr={"(a^m)^n = a^{m \\cdot n}"} /></div>
-            <div className="bg-white rounded p-2"><MathTex expr={"a^0 = 1 \\text{ (siempre!)}"} /></div>
-            <div className="bg-white rounded p-2"><MathTex expr={"a^{-n} = \\frac{1}{a^n}"} /></div>
-            <div className="bg-white rounded p-2"><MathTex expr={"(a \\cdot b)^n = a^n \\cdot b^n"} /></div>
+            <div className="bg-surface rounded p-2"><MathTex expr={"a^m \\cdot a^n = a^{m+n}"} /></div>
+            <div className="bg-surface rounded p-2"><MathTex expr={"\\frac{a^m}{a^n} = a^{m-n}"} /></div>
+            <div className="bg-surface rounded p-2"><MathTex expr={"(a^m)^n = a^{m \\cdot n}"} /></div>
+            <div className="bg-surface rounded p-2"><MathTex expr={"a^0 = 1 \\text{ (siempre!)}"} /></div>
+            <div className="bg-surface rounded p-2"><MathTex expr={"a^{-n} = \\frac{1}{a^n}"} /></div>
+            <div className="bg-surface rounded p-2"><MathTex expr={"(a \\cdot b)^n = a^n \\cdot b^n"} /></div>
           </div>
         </> },
         { type: 'mistakes', items: [
@@ -121,9 +121,9 @@ export const mundo3 = {
             <MathTex expr={"\\text{Número} = a \\times 10^n \\quad \\text{donde } 1 \\leq |a| < 10"} display />
           </div>
           <div className="grid grid-cols-1 gap-1 text-sm">
-            <div className="bg-white rounded p-2">Oyentes de Bad Bunny: <MathTex expr={"4.5 \\times 10^7"} /> = 45,000,000</div>
-            <div className="bg-white rounded p-2">Usuarios TikTok Ecuador: <MathTex expr={"1.56 \\times 10^7"} /> = 15,600,000</div>
-            <div className="bg-white rounded p-2">Diamantes mínimos en Free Fire: <MathTex expr={"1 \\times 10^1"} /> = 10</div>
+            <div className="bg-surface rounded p-2">Oyentes de Bad Bunny: <MathTex expr={"4.5 \\times 10^7"} /> = 45,000,000</div>
+            <div className="bg-surface rounded p-2">Usuarios TikTok Ecuador: <MathTex expr={"1.56 \\times 10^7"} /> = 15,600,000</div>
+            <div className="bg-surface rounded p-2">Diamantes mínimos en Free Fire: <MathTex expr={"1 \\times 10^1"} /> = 10</div>
           </div>
           <p className="text-xs text-amber-600 mt-2">💡 Exponente positivo = número grande | Exponente negativo = número pequeñito</p>
         </> },
@@ -156,10 +156,10 @@ export const mundo3 = {
             <MathTex expr={"\\sqrt[n]{a} = b \\quad \\Leftrightarrow \\quad b^n = a"} display />
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm">
-            <div className="bg-white rounded p-2"><MathTex expr={"\\sqrt[n]{a \\cdot b} = \\sqrt[n]{a} \\cdot \\sqrt[n]{b}"} /></div>
-            <div className="bg-white rounded p-2"><MathTex expr={"\\sqrt[n]{\\frac{a}{b}} = \\frac{\\sqrt[n]{a}}{\\sqrt[n]{b}}"} /></div>
-            <div className="bg-white rounded p-2"><MathTex expr={"\\sqrt[n]{a^m} = a^{m/n}"} /></div>
-            <div className="bg-white rounded p-2"><MathTex expr={"\\sqrt[m]{\\sqrt[n]{a}} = \\sqrt[m \\cdot n]{a}"} /></div>
+            <div className="bg-surface rounded p-2"><MathTex expr={"\\sqrt[n]{a \\cdot b} = \\sqrt[n]{a} \\cdot \\sqrt[n]{b}"} /></div>
+            <div className="bg-surface rounded p-2"><MathTex expr={"\\sqrt[n]{\\frac{a}{b}} = \\frac{\\sqrt[n]{a}}{\\sqrt[n]{b}}"} /></div>
+            <div className="bg-surface rounded p-2"><MathTex expr={"\\sqrt[n]{a^m} = a^{m/n}"} /></div>
+            <div className="bg-surface rounded p-2"><MathTex expr={"\\sqrt[m]{\\sqrt[n]{a}} = \\sqrt[m \\cdot n]{a}"} /></div>
           </div>
         </> },
         { type: 'mistakes', items: [

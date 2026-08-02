@@ -1,6 +1,13 @@
 @import "tailwindcss";
 @import "katex/dist/katex.min.css";
 @import "mafs/core.css";
+@import "./dark-palette.css";
+
+/* El tema oscuro lo manda la clase `dark` del <html> (la pone
+   src/state/theme.js), no `prefers-color-scheme` a secas: el jugador puede
+   elegir claro u oscuro contra lo que diga su sistema. El automático se
+   resuelve en JS y acaba poniendo o quitando esta misma clase. */
+@custom-variant dark (&:where(.dark, .dark *));
 
 /* Fuente display auto-hospedada (offline). Variable: rango de pesos 300–700. */
 @font-face {
@@ -29,6 +36,10 @@
   --color-bloque5: #ef4444;
   --color-bloque6: #ec4899;
   --font-display: "Fredoka", "Nunito", system-ui, sans-serif;
+  /* Superficie de tarjeta sólida. Es un token y no `white` porque en oscuro
+     tiene que dejar de ser blanco; `text-white`, que sí se queda blanco
+     siempre (va sobre botones de color), no se toca. */
+  --color-surface: #ffffff;
 }
 
 /* Variables de vidrio/elevación (usadas por clases utilitarias glossy) */
@@ -36,16 +47,33 @@
   --glass-bg: rgba(255, 255, 255, 0.65);
   --glass-border: rgba(255, 255, 255, 0.8);
   --shadow-glow: 0 10px 40px -10px rgba(99, 102, 241, 0.45);
+  /* Cielo de aventura: degradado suave detrás de todo */
+  --cielo: radial-gradient(1200px 600px at 50% -10%, #dbeafe 0%, transparent 60%),
+    linear-gradient(180deg, #eef2ff 0%, #faf5ff 100%);
+}
+
+/* Noche: mismo cielo, otras horas. El resto del tema oscuro (toda la paleta)
+   está en dark-palette.css. */
+.dark {
+  --color-surface: oklch(25% 0.021 265);
+  --glass-bg: rgba(30, 37, 56, 0.62);
+  --glass-border: rgba(255, 255, 255, 0.09);
+  --shadow-glow: 0 10px 40px -10px rgba(129, 140, 248, 0.35);
+  --cielo: radial-gradient(1200px 600px at 50% -10%, #1e2a4a 0%, transparent 60%),
+    linear-gradient(180deg, #10131f 0%, #171426 100%);
+  /* --color-primary NO se aclara. Hace de fondo de botón con texto blanco
+     encima y de color de texto sobre el fondo de noche, y son necesidades
+     opuestas: aclararlo deja el texto blanco de los botones casi ilegible.
+     El #6366f1 de día aguanta los dos usos. Lo que sí cambia es el hover,
+     que en oscuro tiene que aclarar en vez de oscurecer. */
+  --color-primary-dark: #a5b4fc;
 }
 
 body {
   margin: 0;
   min-width: 320px;
   font-family: "Nunito", system-ui, -apple-system, sans-serif;
-  /* Cielo de aventura: degradado suave detrás de todo */
-  background:
-    radial-gradient(1200px 600px at 50% -10%, #dbeafe 0%, transparent 60%),
-    linear-gradient(180deg, #eef2ff 0%, #faf5ff 100%);
+  background: var(--cielo);
   background-attachment: fixed;
 }
 
@@ -59,6 +87,13 @@ body {
 
 .katex { font-size: 1.1em; }
 .MafsView { --mafs-bg: transparent; }
+
+/* Mafs pinta ejes y etiquetas con su propio negro; en oscuro desaparecen. */
+.dark .MafsView {
+  --mafs-fg: #e5e7eb;
+  --mafs-line-color: #9ca3af;
+  --mafs-origin-color: #e5e7eb;
+}
 
 /* Auras: el halo gira y el núcleo late. Dos animaciones separadas para que no
    vayan sincronizadas y el conjunto no parezca un solo pulso. */

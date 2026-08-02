@@ -43,6 +43,9 @@ export default function QrPanel({ code }) {
           un QR deformado no lo lee nadie, y `pixelated` evita que al reducirlo
           se difuminen los bordes de los módulos. */}
       <div className="w-full max-w-[360px] aspect-square">
+        {/* El fondo es blanco de verdad, no la superficie del tema: en oscuro,
+            un QR sobre fondo gris pierde el contraste que la cámara necesita
+            para separar los módulos, y deja de escanearse. */}
         <canvas
           ref={ref}
           aria-label="Código QR de tu partida"

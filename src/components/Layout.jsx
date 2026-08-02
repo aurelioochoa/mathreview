@@ -17,7 +17,7 @@ export default function Layout() {
       {/* Fuera del <main>: la estela cubre toda la ventana, también el HUD. */}
       <CursorAura />
 
-      <nav className="sticky top-0 z-50 glass border-b border-white/50 shadow-sm">
+      <nav className="sticky top-0 z-50 glass border-b border-surface/50 shadow-sm">
         <div className="max-w-6xl mx-auto px-4 py-2.5">
           <Hud />
         </div>

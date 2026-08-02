@@ -9,7 +9,7 @@ import { estiloMarco } from './marco'
 // y después la correcta, la fallada, o la elegida cuando aún no hay veredicto
 // (esta última solo la usa el mini-quiz).
 const FONDO = {
-  neutro: 'bg-white border-gray-200 hover:bg-indigo-50',
+  neutro: 'bg-surface border-gray-200 hover:bg-indigo-50',
   correcta: 'bg-green-100 border-green-400 text-green-800',
   fallada: 'bg-red-100 border-red-400 text-red-800',
   elegida: 'bg-indigo-100 border-indigo-400 text-indigo-800',

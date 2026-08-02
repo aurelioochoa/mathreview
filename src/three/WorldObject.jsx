@@ -39,7 +39,7 @@ function InfoCard({ node, state, progress, hovered, locked }) {
   return (
     <div
       className={`pointer-events-none select-none rounded-2xl px-3 py-2 shadow-lg border transition-transform whitespace-nowrap ${
-        locked ? 'bg-gray-100/90 border-gray-200' : 'bg-white/95 border-white'
+        locked ? 'bg-gray-100/90 border-gray-200' : 'bg-surface/95 border-white'
       } ${hovered && !locked ? 'scale-110' : ''}`}
     >
       <div className={`font-display font-bold text-sm leading-tight ${locked ? 'text-gray-500' : 'text-gray-800'}`}>

@@ -240,10 +240,10 @@ export const mundo2 = {
           <div className="glass rounded-xl p-4 text-sm">
             <p className="font-semibold mb-2">Las que más se repiten (vale la pena sabérselas):</p>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-center">
-              <div className="bg-white/70 rounded-lg p-2">1/2 = 0.5</div>
-              <div className="bg-white/70 rounded-lg p-2">1/4 = 0.25</div>
-              <div className="bg-white/70 rounded-lg p-2">3/4 = 0.75</div>
-              <div className="bg-white/70 rounded-lg p-2">1/10 = 0.1</div>
+              <div className="bg-surface/70 rounded-lg p-2">1/2 = 0.5</div>
+              <div className="bg-surface/70 rounded-lg p-2">1/4 = 0.25</div>
+              <div className="bg-surface/70 rounded-lg p-2">3/4 = 0.75</div>
+              <div className="bg-surface/70 rounded-lg p-2">1/10 = 0.1</div>
             </div>
             <p className="mt-3">Después de la coma, la primera cifra son las <strong>décimas</strong> y la segunda las <strong>centésimas</strong>.</p>
           </div>

@@ -5,6 +5,21 @@
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📐</text></svg>" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Repaso Matemáticas 10mo</title>
+    <script>
+      // Aplica el tema antes del primer pintado. Sin esto, la app arranca en
+      // claro y parpadea a oscuro cuando React monta el HUD. Duplica a
+      // propósito la lógica de src/state/theme.js: es la única forma de que
+      // corra antes de cargar el bundle.
+      (function () {
+        try {
+          var t = localStorage.getItem('mathquest-tema')
+          var oscuro = t === 'oscuro' ||
+            ((!t || t === 'auto') && matchMedia('(prefers-color-scheme: dark)').matches)
+          document.documentElement.classList.toggle('dark', oscuro)
+          document.documentElement.style.colorScheme = oscuro ? 'dark' : 'light'
+        } catch (e) { /* sin localStorage se queda en claro */ }
+      })()
+    </script>
   </head>
   <body>
     <div id="root"></div>
