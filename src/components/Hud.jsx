@@ -1,8 +1,9 @@
 import { Link } from 'react-router-dom'
-import { Home, Coins, Star, Award, ShoppingBag, User } from 'lucide-react'
+import { Home, Coins, Star, Award, ShoppingBag } from 'lucide-react'
 import { motion, useReducedMotion } from 'motion/react'
 import { useGame } from '../state/gameStore'
 import { hudStats } from '../state/hudStats'
+import PlayerAvatar from './PlayerAvatar'
 
 export default function Hud() {
   const { state } = useGame()
@@ -14,6 +15,12 @@ export default function Hud() {
       <Link to="/" className="flex items-center gap-2 font-display font-bold text-lg text-primary hover:text-primary-dark transition-colors shrink-0">
         <Home size={20} />
         <span className="hidden sm:inline">Math Quest</span>
+      </Link>
+
+      {/* El avatar hace de acceso al perfil: dice quién eres y lleva ahí, que
+          es lo que se esperaba del icono de muñeco que ocupaba su sitio. */}
+      <Link to="/perfil" title="Perfil" aria-label="Perfil" className="shrink-0 flex items-center">
+        <PlayerAvatar size={38} className="text-2xl" />
       </Link>
 
       {/* Nivel + barra de XP */}
@@ -71,7 +78,6 @@ export default function Hud() {
       <div className="flex items-center gap-2 shrink-0">
         <Link to="/logros" title="Logros" aria-label="Logros" className="text-gray-500 hover:text-primary"><Award size={18} /></Link>
         <Link to="/tienda" title="Tienda" aria-label="Tienda" className="text-gray-500 hover:text-primary"><ShoppingBag size={18} /></Link>
-        <Link to="/perfil" title="Perfil" aria-label="Perfil" className="text-gray-500 hover:text-primary"><User size={18} /></Link>
       </div>
     </div>
   )
