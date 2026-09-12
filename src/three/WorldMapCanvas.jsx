@@ -21,6 +21,7 @@ export default function WorldMapCanvas({ spin = true }) {
 
   return (
     <Canvas
+      shadows="percentage"
       dpr={dpr}
       camera={{ position: [-0.9, 8.4, 10], fov: 46, near: 0.1, far: 100 }}
       onCreated={({ camera }) => camera.lookAt(-0.9, -0.4, -0.6)}

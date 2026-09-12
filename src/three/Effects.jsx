@@ -4,7 +4,7 @@ import { EffectComposer, Bloom } from '@react-three/postprocessing'
 export default function Effects() {
   return (
     <EffectComposer>
-      <Bloom intensity={0.7} luminanceThreshold={0.85} luminanceSmoothing={0.3} mipmapBlur />
+      <Bloom intensity={0.25} luminanceThreshold={1} luminanceSmoothing={0.3} mipmapBlur />
     </EffectComposer>
   )
 }

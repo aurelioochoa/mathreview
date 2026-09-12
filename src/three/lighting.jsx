@@ -1,13 +1,45 @@
+import { useLayoutEffect, useRef } from 'react'
 import { Environment, Lightformer } from '@react-three/drei'
 
 // Estudio de luz procedural: reflejos glossy sin descargar HDR de ningún CDN.
 // Los valores (intensidades y colores) los pone el tema; ver sceneTheme.js.
 export default function Lighting({ escena }) {
   const [principal, calida, fria] = escena.estudio
+  const sol = useRef(null)
+
+  // La cámara de sombra hay que encuadrarla a mano: por defecto es un ortográfico
+  // de ±5 y el mapa va de x=-6.2 a x=4.4, así que las islas de los extremos se
+  // quedaban fuera y no proyectaban nada. Y no basta con fijar los límites como
+  // props: three lee `projectionMatrix`, que no se recalcula solo al cambiarlos.
+  // Sin este updateProjectionMatrix() el encuadre queda incoherente y no se ve
+  // ni una sombra en todo el mapa — que es justo lo que pasaba.
+  useLayoutEffect(() => {
+    const luz = sol.current
+    if (!luz) return
+    const cam = luz.shadow.camera
+    cam.left = -12
+    cam.right = 12
+    cam.top = 10
+    cam.bottom = -10
+    cam.near = 0.5
+    cam.far = 40
+    cam.updateProjectionMatrix()
+  }, [])
+
   return (
     <>
       <ambientLight intensity={escena.ambiente} />
-      <directionalLight position={[4, 6, 3]} intensity={escena.sol.intensidad} color={escena.sol.color} />
+      <hemisphereLight args={[escena.niebla, '#69634b', 0.6]} />
+      <directionalLight
+        ref={sol}
+        castShadow
+        shadow-mapSize={[2048, 2048]}
+        shadow-normalBias={0.02}
+        shadow-bias={-0.0005}
+        position={[4, 9, 3]}
+        intensity={escena.sol.intensidad}
+        color={escena.sol.color}
+      />
       <directionalLight position={[-5, 2, -2]} intensity={escena.relleno.intensidad} color={escena.relleno.color} />
       <Environment resolution={256}>
         <Lightformer form="rect" intensity={principal.intensidad} color={principal.color} position={[0, 4, 3]} scale={8} />
