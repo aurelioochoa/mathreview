@@ -11,7 +11,7 @@ const ASPECTO = {
 // Un solo botón que cicla auto → claro → oscuro. Cicla en vez de abrir un
 // menú porque el HUD ya va apretado y son tres estados: llegar a cualquiera
 // cuesta dos toques como mucho.
-export default function ThemeToggle() {
+export default function ThemeToggle({ className = 'text-gray-500 hover:text-primary' }) {
   const { tema, resuelto } = useTema()
   const { Icono, nombre } = ASPECTO[tema]
 
@@ -25,7 +25,7 @@ export default function ThemeToggle() {
       onClick={() => setTema(siguienteTema(tema))}
       title={`Tema: ${nombre} (pulsa para cambiar)`}
       aria-label={`Tema: ${nombre}. Pulsa para cambiar.`}
-      className="text-gray-500 hover:text-primary"
+      className={className}
     >
       <Icono size={18} fill={resuelto === 'oscuro' && tema !== 'auto' ? 'currentColor' : 'none'} />
     </button>

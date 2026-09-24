@@ -3,8 +3,11 @@ import { Link, useParams } from 'react-router-dom'
 import { findWorld } from '../content/worlds'
 import { findQuest } from '../content/quests'
 import { shuffleOptions } from './generators'
+import { rutaMundo } from '../state/vistaMundo'
 import { useGame, XP_PER_CORRECT, COINS_QUEST, XP_QUEST } from '../state/gameStore'
 import OptionButton from '../components/OptionButton'
+import { GameHeader, SegmentProgress, QuestionCard, Feedback, ResultCard, Rewards } from '../components/game/GameUI'
+import useAnswerKeys from '../components/game/useAnswerKeys'
 
 export default function QuestPlayer() {
   const { questId } = useParams()
@@ -16,6 +19,7 @@ function QuestPlayerView() {
   const { state, dispatch } = useGame()
   const world = findWorld(slug)
   const quest = world ? findQuest(world.id, questId) : null
+  const volver = rutaMundo(slug)
 
   const [phase, setPhase] = useState('intro')  // intro | preguntas | fin
   const [qIndex, setQIndex] = useState(0)
@@ -25,6 +29,15 @@ function QuestPlayerView() {
     () => (quest ? quest.questions.map(f => shuffleOptions(f())) : []),
     [quest],
   )
+
+  const qNow = questions[qIndex]
+  const acertada = qNow && selected === qNow.correctAnswer
+  useAnswerKeys({
+    count: qNow?.options.length ?? 0,
+    onPick: (i) => answer(i),
+    onContinue: acertada ? () => next() : selected !== null ? () => setSelected(null) : undefined,
+    enabled: phase === 'preguntas' && !!qNow,
+  })
 
   if (!world || !quest) return <p className="text-center py-12">Misión no encontrada. <Link className="text-primary underline" to="/">Volver</Link></p>
 
@@ -48,24 +61,30 @@ function QuestPlayerView() {
 
   return (
     <div className="max-w-3xl mx-auto">
-      <div className="mb-6">
-        <span className={`inline-block px-3 py-1 ${world.color} text-white rounded-full text-sm font-semibold mb-2`}>{world.emoji} {world.name} · Sidequest</span>
-        <h1 className="font-display text-2xl font-extrabold text-gray-800">{quest.emoji} {quest.title}</h1>
-      </div>
+      <GameHeader world={world} backTo={volver} backLabel="Volver al mundo" kicker={`${world.emoji} ${world.name} · Sidequest`} title={`${quest.emoji} ${quest.title}`}>
+        {phase === 'preguntas' && <SegmentProgress total={questions.length} current={qIndex} results={questions.map((_, i) => (i < qIndex ? 'ok' : undefined))} />}
+      </GameHeader>
 
       {phase === 'intro' && (
-        <div className="glass rounded-[1.75rem] shadow-lg p-8">
-          <p className="text-gray-600 mb-6">{quest.intro}</p>
-          {yaCompletada && <p className="text-xs text-amber-600 mb-3">Ya completaste esta misión: puedes rejugarla por práctica (sin monedas nuevas).</p>}
-          <button onClick={() => setPhase('preguntas')} className="px-6 py-3 rounded-xl font-display bg-primary text-white font-bold">📋 Aceptar misión</button>
+        <div className="panel p-6 sm:p-8 entrar-abajo">
+          <div className="flex gap-4 items-start">
+            <span className="text-5xl shrink-0 flotar inline-block">{quest.emoji}</span>
+            <div className="relative flex-1 rounded-2xl bg-indigo-50 border-2 border-indigo-100 p-4">
+              <p className="text-gray-700">{quest.intro}</p>
+            </div>
+          </div>
+          {yaCompletada && <p className="text-xs text-amber-600 mt-4">Ya completaste esta misión: puedes rejugarla por práctica (sin monedas nuevas).</p>}
+          <div className="flex flex-wrap items-center gap-3 mt-6">
+            <button onClick={() => setPhase('preguntas')} className="btn btn-lg">📋 Aceptar misión</button>
+            {!yaCompletada && <span className="chip text-sm"><span className="chip-ico bg-amber-100">🎁</span>+{XP_QUEST} XP · +{COINS_QUEST} 🪙</span>}
+          </div>
         </div>
       )}
 
       {phase === 'preguntas' && q && (
-        <div className="glass rounded-[1.75rem] shadow-lg p-6">
-          <p className="text-xs text-gray-400 mb-2">Pregunta {qIndex + 1} / {questions.length} · sin vidas</p>
-          <p className="font-medium text-gray-800 mb-3">{q.question}</p>
-          <div className="space-y-2">
+        <QuestionCard meta={<span>Pregunta {qIndex + 1} / {questions.length} · sin vidas</span>}>
+          <p key={qIndex} className="entrar-abajo font-display text-lg sm:text-xl font-bold leading-snug mb-4">{q.question}</p>
+          <div className="grid gap-2.5">
             {q.options.map((opt, i) => (
               <OptionButton key={i} index={i} disabled={selected !== null} onClick={() => answer(i)}
                 estado={selected !== null && i === q.correctAnswer ? 'correcta' : selected === i ? 'fallada' : 'neutro'}>
@@ -74,25 +93,25 @@ function QuestPlayerView() {
             ))}
           </div>
           {selected !== null && selected !== q.correctAnswer && (
-            <div className="mt-3 p-3 rounded-lg bg-yellow-50 border border-yellow-200 text-sm">
+            <Feedback tone="ko" title="Todavía no">
               💡 {q.hint}<p className="text-xs italic mt-1">{q.reminder}</p>
-              <button onClick={() => setSelected(null)} className="mt-2 px-3 py-1.5 rounded bg-yellow-400 text-white text-xs font-bold">Intentar de nuevo</button>
-            </div>
+              <button onClick={() => setSelected(null)} className="btn btn-amber btn-sm mt-3">Intentar de nuevo</button>
+            </Feedback>
           )}
           {selected === q.correctAnswer && (
-            <button onClick={next} className="mt-4 px-4 py-2 rounded-xl font-display bg-green-500 text-white font-bold">✅ Continuar</button>
+            <Feedback tone="ok" title="¡Bien hecho!">
+              <button onClick={next} className="btn btn-green">✅ Continuar</button>
+            </Feedback>
           )}
-        </div>
+        </QuestionCard>
       )}
 
       {phase === 'fin' && (
-        <div className="text-center glass rounded-[1.75rem] shadow-lg p-8">
-          <p className="text-4xl mb-2">🎁</p>
-          <h2 className="font-display text-xl font-bold mb-1">¡Misión cumplida!</h2>
+        <ResultCard icon="🎁" title="¡Misión cumplida!">
           <p className="text-gray-500 text-sm mb-2">{quest.outro}</p>
-          {!yaCompletada && <p className="text-sm text-gray-500 mb-4">+{XP_QUEST} XP · +{COINS_QUEST} 🪙</p>}
-          <Link to={`/mundo/${world.slug}`} className="px-6 py-3 rounded-xl bg-primary text-white font-display font-bold inline-block">Volver al mundo</Link>
-        </div>
+          {!yaCompletada && <Rewards items={[{ icon: '✨', text: `+${XP_QUEST} XP` }, { icon: '🪙', text: `+${COINS_QUEST}` }]} />}
+          <Link to={volver} className="btn btn-lg mt-2">Volver al mundo</Link>
+        </ResultCard>
       )}
     </div>
   )

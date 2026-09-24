@@ -2,10 +2,13 @@ import { lazy, Suspense, useMemo, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { findWorld } from '../content/worlds'
 import { buildBossPool } from './generators'
+import { rutaMundo } from '../state/vistaMundo'
 import { useGame, XP_PER_CORRECT, COINS_BOSS, XP_BOSS } from '../state/gameStore'
 import { useDeviceTier } from '../three/useDeviceTier'
 import Chest from './Chest'
 import OptionButton from '../components/OptionButton'
+import { GameHeader, Hearts, Bar, QuestionCard, Feedback, ResultCard, Rewards } from '../components/game/GameUI'
+import useAnswerKeys from '../components/game/useAnswerKeys'
 
 const Celebration = lazy(() => import('../three/Celebration'))
 const BOSS_QUESTIONS = 8
@@ -36,6 +39,14 @@ function BossArenaView() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [world, attempt],
   )
+
+  const qNow = questions[qIndex]
+  useAnswerKeys({
+    count: qNow?.options.length ?? 0,
+    onPick: (i) => answer(i),
+    onContinue: selected !== null ? () => next() : undefined,
+    enabled: phase === 'pelea' && !!qNow,
+  })
 
   if (!world) return <p className="text-center py-12">Jefe no encontrado. <Link className="text-primary underline" to="/">Volver</Link></p>
 
@@ -75,97 +86,109 @@ function BossArenaView() {
     setQIndex(0); setLives(BOSS_LIVES); setHits(0); setSelected(null); setHintShown(false); setPhase('pelea')
   }
 
+  const golpeado = selected !== null && selected === q?.correctAnswer
+  const herido = selected !== null && selected !== q?.correctAnswer
+
   return (
     <div className="max-w-3xl mx-auto">
-      <div className="mb-6 text-center">
-        <span className={`inline-block px-3 py-1 ${world.color} text-white rounded-full text-sm font-semibold mb-2`}>{world.emoji} {world.name}</span>
-        <h1 className="font-display text-2xl font-extrabold text-gray-800">{world.boss.emoji} {world.boss.name}</h1>
-      </div>
+      <GameHeader world={world} backTo={rutaMundo(world.slug)} backLabel="Volver al mundo" kicker={`${world.emoji} ${world.name} · Jefe`} title={`${world.boss.emoji} ${world.boss.name}`} />
 
       {phase === 'intro' && (
-        <div className="glass rounded-[1.75rem] shadow-lg p-8 text-center">
-          <p className="text-6xl mb-3">{world.boss.emoji}</p>
-          <p className="text-gray-600 mb-6">{world.boss.intro}</p>
+        <div className="panel p-8 text-center entrar-abajo">
+          <p className="text-8xl mb-3 flotar inline-block drop-shadow-xl">{world.boss.emoji}</p>
+          <p className="text-gray-600 mb-6 max-w-lg mx-auto">{world.boss.intro}</p>
+          <div className="flex flex-wrap justify-center gap-2 mb-6 text-sm">
+            <span className="chip"><span className="chip-ico bg-red-100">⚔️</span>{BOSS_QUESTIONS} golpes para vencerlo</span>
+            <span className="chip"><span className="chip-ico bg-pink-100">❤️</span>{BOSS_LIVES} vidas</span>
+          </div>
           {allDone ? (
-            <button onClick={() => setPhase('pelea')} className="px-6 py-3 rounded-xl font-display bg-red-500 text-white font-bold">⚔️ ¡Enfrentar al jefe!</button>
+            <button onClick={() => setPhase('pelea')} className="btn btn-red btn-lg latido">⚔️ ¡Enfrentar al jefe!</button>
           ) : (
             <div>
               <p className="text-sm text-amber-600 mb-3">Completa todos los niveles del mundo para desafiar al jefe.</p>
-              <Link to={`/mundo/${world.slug}`} className="px-6 py-3 rounded-xl bg-primary text-white font-display font-bold inline-block">Volver al mundo</Link>
+              <Link to={`/mundo/${world.slug}`} className="btn">Volver al mundo</Link>
             </div>
           )}
         </div>
       )}
 
       {phase === 'pelea' && q && (
-        <div className="glass rounded-[1.75rem] shadow-lg p-6">
-          <div className="mb-2 flex justify-between text-sm">
-            <span>{world.boss.emoji} Vida del jefe</span>
-            <span>{'❤️'.repeat(lives)}{'🖤'.repeat(BOSS_LIVES - lives)}</span>
-          </div>
-          <div className="h-3 rounded-full bg-gray-200 overflow-hidden mb-4">
-            <div className="h-full bg-red-500 transition-all" style={{ width: `${bossHpPct}%` }} />
-          </div>
-          <p className="text-xs text-gray-400 mb-2">Golpe {qIndex + 1} / {questions.length}</p>
-          <p className="font-medium text-gray-800 mb-3">{q.question}</p>
-          {selected === null && !hintShown && (
-            state.hints > 0
-              ? <button onClick={() => { dispatch({ type: 'USE_HINT' }); setHintShown(true) }}
-                  className="mb-3 px-3 py-1.5 rounded-lg bg-yellow-100 border border-yellow-300 text-xs font-bold text-yellow-700">
-                  💡 Pedir pista ({state.hints} {state.hints === 1 ? 'token' : 'tokens'})
-                </button>
-              : <p className="mb-3"><Link to="/tienda" className="text-xs text-primary underline">Consigue pistas en la tienda</Link></p>
-          )}
-          {hintShown && selected === null && (
-            <div className="mb-3 p-3 rounded-lg bg-yellow-50 border border-yellow-200 text-sm">💡 {q.hint}</div>
-          )}
-          <div className="space-y-2">
-            {q.options.map((opt, i) => (
-              <OptionButton key={i} index={i} disabled={selected !== null} onClick={() => answer(i)}
-                estado={selected !== null && i === q.correctAnswer ? 'correcta' : selected === i ? 'fallada' : 'neutro'}>
-                {opt}
-              </OptionButton>
-            ))}
-          </div>
-          {selected !== null && selected !== q.correctAnswer && (
-            <div className="mt-3 p-3 rounded-lg bg-yellow-50 border border-yellow-200 text-sm">
-              💡 {q.hint}
-              <p className="text-xs italic mt-1">{q.reminder}</p>
-              <button onClick={next} className="mt-2 px-3 py-1.5 rounded bg-yellow-400 text-white text-xs font-bold">Continuar</button>
+        <div className="space-y-4">
+          {/* Arena: el jefe con su barra de vida, frente a tus corazones */}
+          <div className="panel p-4 sm:p-5 flex items-center gap-4 overflow-hidden">
+            <span key={`${qIndex}-${selected}`}
+              className={`text-6xl sm:text-7xl shrink-0 inline-block ${golpeado ? 'sacudir' : herido ? 'latido' : 'flotar'}`}>
+              {world.boss.emoji}
+            </span>
+            <div className="flex-1 min-w-0">
+              <div className="flex justify-between items-baseline mb-1 text-sm font-display font-bold">
+                <span className="truncate">{world.boss.emoji} Vida del jefe</span>
+                <span className="text-red-500 tabular-nums">{bossHpPct}%</span>
+              </div>
+              <Bar pct={bossHpPct} label="Vida del jefe" gradient="linear-gradient(90deg,#f87171,#dc2626)" />
+              <div className="flex justify-between items-center mt-3 text-sm">
+                <span className="text-xs font-semibold text-gray-500">Golpe {qIndex + 1} / {questions.length}</span>
+                <Hearts lives={lives} max={BOSS_LIVES} />
+              </div>
             </div>
-          )}
-          {selected === q.correctAnswer && (
-            <button onClick={next} className="mt-4 px-4 py-2 rounded-xl font-display bg-green-500 text-white font-bold">🗡️ ¡Golpe! Continuar</button>
-          )}
+          </div>
+
+          <QuestionCard>
+            <p key={qIndex} className="entrar-abajo font-display text-lg sm:text-xl font-bold leading-snug mb-4">{q.question}</p>
+            {selected === null && !hintShown && (
+              state.hints > 0
+                ? <button onClick={() => { dispatch({ type: 'USE_HINT' }); setHintShown(true) }}
+                    className="btn btn-amber btn-sm mb-4">
+                    💡 Pedir pista ({state.hints} {state.hints === 1 ? 'token' : 'tokens'})
+                  </button>
+                : <p className="mb-4"><Link to="/tienda" className="text-xs font-semibold text-primary underline">Consigue pistas en la tienda</Link></p>
+            )}
+            {hintShown && selected === null && (
+              <div className="mb-4 p-3 rounded-2xl bg-yellow-50 border-2 border-yellow-200 text-sm entrar-abajo">💡 {q.hint}</div>
+            )}
+            <div className="grid gap-2.5">
+              {q.options.map((opt, i) => (
+                <OptionButton key={i} index={i} disabled={selected !== null} onClick={() => answer(i)}
+                  estado={selected !== null && i === q.correctAnswer ? 'correcta' : selected === i ? 'fallada' : 'neutro'}>
+                  {opt}
+                </OptionButton>
+              ))}
+            </div>
+            {herido && (
+              <Feedback tone="ko" title="¡El jefe te golpea!">
+                💡 {q.hint}
+                <p className="text-xs italic mt-1">{q.reminder}</p>
+                <button onClick={next} className="btn btn-amber btn-sm mt-3">Continuar</button>
+              </Feedback>
+            )}
+            {golpeado && (
+              <Feedback tone="ok" title="¡Golpe crítico!">
+                <button onClick={next} className="btn btn-green">🗡️ ¡Golpe! Continuar</button>
+              </Feedback>
+            )}
+          </QuestionCard>
         </div>
       )}
 
       {phase === 'derrota' && (
-        <div className="text-center glass rounded-[1.75rem] shadow-lg p-8">
-          <p className="text-5xl mb-2">💥</p>
-          <h2 className="font-display text-xl font-bold mb-2">El jefe te venció</h2>
-          <p className="text-gray-500 mb-4 text-sm">El XP que ganaste se queda contigo. Inténtalo otra vez con preguntas nuevas.</p>
-          <button onClick={retry} className="px-6 py-3 rounded-xl font-display bg-primary text-white font-bold">🔄 Reintentar</button>
-        </div>
+        <ResultCard icon="💥" title="El jefe te venció">
+          <p className="text-gray-500 mb-5 text-sm">El XP que ganaste se queda contigo. Inténtalo otra vez con preguntas nuevas.</p>
+          <button onClick={retry} className="btn btn-lg">🔄 Reintentar</button>
+        </ResultCard>
       )}
 
       {phase === 'victoria' && (
-        <div className="relative text-center glass rounded-[1.75rem] shadow-lg p-8 overflow-hidden">
-          {use3D && <div className="absolute inset-0 pointer-events-none" aria-hidden="true"><Suspense fallback={null}><Celebration variant="jefe" /></Suspense></div>}
-          <div className="relative">
-            <p className="text-5xl mb-2">🏆</p>
-            <h2 className="font-display text-xl font-bold mb-1">¡{world.boss.name} derrotado!</h2>
-            <div className="mb-2 flex justify-between text-sm">
-              <span>💀 {world.boss.emoji} Jefe derrotado</span>
-            </div>
-            <div className="h-3 rounded-full bg-gray-200 overflow-hidden mb-4">
-              <div className="h-full bg-red-500 transition-all" style={{ width: '0%' }} />
-            </div>
-            <p className="text-sm text-gray-500 mb-4">+{XP_BOSS} XP · +{COINS_BOSS} 🪙 · ⭐ Maestría del mundo</p>
-            {cofre && <Chest />}
-            <Link to={`/mundo/${world.slug}`} className="px-6 py-3 rounded-xl bg-primary text-white font-display font-bold inline-block">Volver al mundo</Link>
-          </div>
-        </div>
+        <ResultCard
+          icon="🏆"
+          title={`¡${world.boss.name} derrotado!`}
+          overlay={use3D && <div className="absolute inset-0 pointer-events-none" aria-hidden="true"><Suspense fallback={null}><Celebration variant="jefe" /></Suspense></div>}
+        >
+          <p className="text-sm font-semibold text-gray-500 mb-2">💀 {world.boss.emoji} Jefe derrotado</p>
+          <div className="max-w-xs mx-auto"><Bar pct={0} label="Vida del jefe" /></div>
+          <Rewards items={[{ icon: '✨', text: `+${XP_BOSS} XP` }, { icon: '🪙', text: `+${COINS_BOSS}` }, { icon: '⭐', text: 'Maestría del mundo' }]} />
+          {cofre && <Chest />}
+          <Link to={rutaMundo(world.slug)} className="btn btn-lg mt-2">Volver al mundo</Link>
+        </ResultCard>
       )}
     </div>
   )

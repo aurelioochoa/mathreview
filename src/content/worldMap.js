@@ -78,6 +78,21 @@ export const worldMapNodes = [
   },
 ]
 
+// Color hex por tema (deben coincidir con los tokens --color-world-* del CSS).
+// three.js y las variables CSS inline no leen clases de Tailwind: por eso aquí.
+export const THEME_HEX = {
+  'world-volcan': '#f97316', 'world-castillo': '#10b981',
+  'world-laberinto': '#3b82f6', 'world-estacion': '#8b5cf6',
+  'world-montanas': '#ef4444', 'world-feria': '#ec4899',
+  'world-isla': '#14b8a6', 'world-reino': '#eab308',
+}
+
+// Color del mundo a partir de su slug (el id del nodo). Puro.
+export function worldHex(slug) {
+  const node = worldMapNodes.find(n => n.id === slug)
+  return THEME_HEX[node?.theme] ?? '#6366f1'
+}
+
 // Orden del camino principal entre mundos activos (serpiente por el mapa).
 export const pathOrder = [
   'isla-numerica', 'reino-fracciones', 'volcan-potencias', 'castillo-algebra', 'laberinto-sistemas',

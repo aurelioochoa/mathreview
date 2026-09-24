@@ -201,6 +201,7 @@ export const mundo1 = {
             Multiplicar y dividir son atajos: multiplicar es sumar muchas veces lo mismo, y dividir es repartir hasta que no sobre nada.
           </p>
         </> },
+        { type: 'widget', widgetId: 'operaciones-visual', title: 'Conchas que se juntan, se regalan, se agrupan y se reparten' },
         { type: 'mistakes', items: [
           'Ojo al leer: "regalé" y "perdí" piden restar, aunque el problema tenga números grandes.',
           'Multiplicar no es sumar los dos números: 4 × 5 es 20, no 9.',

@@ -6,7 +6,8 @@
 // y las islas se ven iluminadas por la luna. Recolorearlas costaría tocar cada
 // material y saldría un mapa distinto, no el mismo mapa de noche.
 const DIA = {
-  niebla: '#b7d9f5',
+  niebla: '#cfe6f7',
+  cielo: { cenit: '#3b8fd9', horizonte: '#d4ecfa', suelo: '#9fcbe8', sol: '#fff1c9', tamSol: 1.4, estrellas: false },
   oceano: '#3fa7e0',
   ambiente: 0.45,
   sol: { intensidad: 1.3, color: '#ffffff' },
@@ -19,7 +20,8 @@ const DIA = {
 }
 
 const NOCHE = {
-  niebla: '#131c33',
+  niebla: '#1a2544',
+  cielo: { cenit: '#050a1c', horizonte: '#24335e', suelo: '#0d1630', sol: '#c7d2fe', tamSol: 0.6, estrellas: true },
   oceano: '#14425f',
   // La ambiental sube un poco respecto al día: sin cielo claro que rebote,
   // con 0.45 las caras en sombra de las islas se quedaban en negro puro.

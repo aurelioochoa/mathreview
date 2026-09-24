@@ -24,7 +24,7 @@ const SLOTS = {
 
 function Stat({ label, value }) {
   return (
-    <div className="glass rounded-2xl p-3 text-center">
+    <div className="panel !rounded-2xl !border-2 p-3 text-center">
       <p className="font-display font-bold text-lg text-gray-800">{value}</p>
       <p className="text-xs text-gray-500">{label}</p>
     </div>
@@ -72,11 +72,14 @@ export default function Profile() {
 
   return (
     <div className="max-w-3xl mx-auto">
-      <div className="flex items-center gap-4 mb-6">
-        <PlayerAvatar />
-        <div>
-          <h1 className="font-display text-2xl font-extrabold text-gray-800">Perfil</h1>
-          <p className="text-primary font-bold">Nv. {s.level} · {titulo}</p>
+      <div className="panel overflow-hidden mb-6" style={{ '--mundo': '#6366f1' }}>
+        <div className="panel-banda px-5 py-5 flex items-center gap-4">
+          <PlayerAvatar />
+          <div className="min-w-0 flex-1">
+            <h1 className="font-display text-3xl font-extrabold">Perfil</h1>
+            <p className="font-bold opacity-95">Nv. {s.level} · {titulo}</p>
+            <div className="barra mt-2 max-w-xs !bg-white/25"><div className="relleno" style={{ width: `${Math.round(s.progress * 100)}%`, background: 'linear-gradient(90deg,#fde68a,#f59e0b)' }} /></div>
+          </div>
         </div>
       </div>
 

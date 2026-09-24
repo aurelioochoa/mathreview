@@ -251,6 +251,7 @@ export const mundo2 = {
             Para comparar decimales, mira cifra a cifra desde la izquierda: 0.5 es mayor que 0.45, aunque 45 parezca un número más grande que 5.
           </p>
         </> },
+        { type: 'widget', widgetId: 'cuadricula-decimal', title: 'Pinta centésimas y compara decimales' },
         { type: 'mistakes', items: [
           'Creer que 0.45 es mayor que 0.5 porque tiene más cifras. Compara desde la izquierda: 4 décimas es menos que 5 décimas.',
           'Leer 0.5 como "cero coma cinco partes". Es medio, la mitad.',

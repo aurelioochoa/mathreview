@@ -77,6 +77,7 @@ export const mundo5 = {
             </div>
           </div>
         </> },
+        { type: 'widget', widgetId: 'verificador-sistema', title: 'Busca el punto que cumple las dos ecuaciones' },
         { type: 'mistakes', items: [
           "Confundir 'no hay solución' con 'la solución es cero' — no, significa que las rectas nunca se cruzan.",
           'Olvidar que el punto de intersección tiene coordenadas (x, y), no solo x.',
@@ -163,6 +164,7 @@ export const mundo5 = {
             </ol>
           </div>
         </> },
+        { type: 'widget', widgetId: 'reduccion-pasos', title: 'Multiplica, suma y elimina una incógnita' },
         { type: 'mistakes', items: [
           'No multiplicar TODA la ecuación cuando igualas coeficientes.',
           'Olvidar sustituir al final para encontrar la segunda variable.',

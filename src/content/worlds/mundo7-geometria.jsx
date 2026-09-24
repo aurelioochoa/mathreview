@@ -207,6 +207,7 @@ export const mundo7 = {
           </div>
         </> },
         { type: 'widget', widgetId: 'cilindro-calculadora', title: 'Calculadora del cilindro' },
+        { type: 'widget', widgetId: 'cilindro-3d', title: 'Laboratorio 3D: desenrolla el cilindro' },
       ],
       reto: { pick: 3, factories: [
         areaLateralCilindro,
@@ -283,6 +284,7 @@ export const mundo7 = {
             </div>
           </div>
         </> },
+        { type: 'widget', widgetId: 'prisma-3d', title: 'Laboratorio 3D: gira y despliega el prisma' },
         { type: 'mistakes', items: [
           'Confundir prisma rectangular con prisma cuadrado — el rectangular tiene bases rectangulares, no cuadradas.',
           'Olvidar que el área total incluye las DOS bases, no solo una.',

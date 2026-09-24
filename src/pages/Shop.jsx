@@ -34,20 +34,26 @@ export default function Shop() {
 
   return (
     <div className="max-w-3xl mx-auto">
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="font-display text-3xl font-extrabold text-gray-800">🛒 Tienda</h1>
-        <span className="glass rounded-full px-4 py-2 font-display font-bold text-amber-600">{state.coins} 🪙</span>
+      <div className="panel overflow-hidden mb-6" style={{ '--mundo': '#f59e0b' }}>
+        <div className="panel-banda px-5 py-4 flex items-center gap-4">
+          <span className="text-5xl flotar drop-shadow" aria-hidden="true">🛒</span>
+          <div className="flex-1">
+            <h1 className="font-display text-3xl font-extrabold">🛒 Tienda</h1>
+            <p className="text-sm opacity-90">Gasta tus monedas en avatares, marcos, títulos, auras y estelas.</p>
+          </div>
+          <span className="chip text-lg !pl-3">{state.coins} 🪙</span>
+        </div>
       </div>
 
       {GRUPOS.map(slot => (
         <div key={slot} className="mb-6">
-          <h2 className="font-display font-bold text-gray-700 mb-2">{SLOT_LABEL[slot]}</h2>
+          <h2 className="font-display text-lg font-extrabold mb-2">{SLOT_LABEL[slot]}</h2>
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
             {SHOP_ITEMS.filter(i => i.slot === slot).map(item => {
               const owned = slot !== 'hint' && state.cosmetics.owned.includes(item.id)
               const afford = state.coins >= item.price
               return (
-                <div key={item.id} className="glass rounded-2xl p-3 text-center shadow-sm">
+                <div key={item.id} className="panel !rounded-2xl !border-2 p-3 text-center hover:-translate-y-0.5 transition-transform">
                   <p className="text-3xl mb-1 flex justify-center items-center h-14">
                     <Vista item={item} />
                   </p>
@@ -57,7 +63,7 @@ export default function Shop() {
                   ) : (
                     <button disabled={!afford} onClick={() => dispatch({ type: 'BUY_ITEM', item })}
                       aria-label={`Comprar ${item.label} por ${item.price} monedas`}
-                      className={`mt-2 w-full px-2 py-1.5 rounded-lg text-xs font-bold ${afford ? 'bg-primary text-white' : 'bg-gray-200 text-gray-400'}`}>
+                      className={`btn btn-sm w-full mt-2 ${afford ? 'btn-amber' : 'btn-ghost'}`}>
                       {item.price} 🪙
                     </button>
                   )}

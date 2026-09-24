@@ -370,6 +370,7 @@ export const mundo8 = {
             <li><strong>Independientes</strong> (una tirada no afecta a la otra): <MathTex expr={"P(A \\text{ y } B) = P(A)\\times P(B)"} />.</li>
           </ul>
         </> },
+        { type: 'widget', widgetId: 'simulador-probabilidad', title: 'Simulador: lanza mil veces y mira qué pasa' },
         { type: 'mistakes', items: [
           'Invertir la fracción: es favorables/posibles, no posibles/favorables.',
           'Sumar probabilidades de eventos independientes en vez de multiplicarlas.',

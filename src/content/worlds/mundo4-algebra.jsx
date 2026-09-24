@@ -185,6 +185,7 @@ export const mundo4 = {
             </div>
           </div>
         </> },
+        { type: 'widget', widgetId: 'simplificador-algebraico', title: 'Factoriza y tacha factores gemelos' },
         { type: 'mistakes', items: [
           'Cancelar TÉRMINOS en vez de FACTORES: (x+2)/(x+3) NO se simplifica a 2/3.',
           'Olvidar que a²-b² = (a+b)(a-b), no (a-b)².',
@@ -261,6 +262,7 @@ export const mundo4 = {
             </ol>
           </div>
         </> },
+        { type: 'widget', widgetId: 'balanza-ecuaciones', title: 'La balanza: resuelve sin que se incline' },
         { type: 'mistakes', items: [
           'Cambiar de lado pero olvidar cambiar el signo (lo que suma pasa restando, etc.).',
           'Distribuir mal: 2(x + 3) ≠ 2x + 3, es 2x + 6.',

@@ -48,8 +48,9 @@
   --glass-border: rgba(255, 255, 255, 0.8);
   --shadow-glow: 0 10px 40px -10px rgba(99, 102, 241, 0.45);
   /* Cielo de aventura: degradado suave detrás de todo */
-  --cielo: radial-gradient(1200px 600px at 50% -10%, #dbeafe 0%, transparent 60%),
-    linear-gradient(180deg, #eef2ff 0%, #faf5ff 100%);
+  --cielo: radial-gradient(1200px 600px at 50% -10%, #c7e3ff 0%, transparent 60%),
+    radial-gradient(900px 500px at 100% 100%, #fde2f3 0%, transparent 60%),
+    linear-gradient(180deg, #e6ecff 0%, #f5efff 100%);
 }
 
 /* Noche: mismo cielo, otras horas. El resto del tema oscuro (toda la paleta)
@@ -75,6 +76,18 @@ body {
   font-family: "Nunito", system-ui, -apple-system, sans-serif;
   background: var(--cielo);
   background-attachment: fixed;
+  color: var(--ink);
+}
+
+/* Trama de puntos sobre el cielo: da textura de tablero sin pesar nada. */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-image: radial-gradient(rgba(99, 102, 241, 0.09) 1.5px, transparent 1.6px);
+  background-size: 22px 22px;
 }
 
 /* Superficie de vidrio reutilizable */
@@ -85,8 +98,196 @@ body {
   border: 1px solid var(--glass-border);
 }
 
+/* ————————————————————————————————————————————————————————————————
+   Sistema visual de juego. Botones con relieve que se hunden al pulsar,
+   paneles gruesos con sombra sólida debajo (como las fichas de un juego de
+   mesa) y chips de recursos. Todo por variables para que el tema oscuro los
+   voltee sin clases `dark:` sueltas.
+   ———————————————————————————————————————————————————————————————— */
+:root {
+  --panel-bg: #ffffff;
+  --panel-border: #e0e7ff;
+  --panel-ledge: #c7d2fe;
+  --panel-shadow: 0 6px 0 var(--panel-ledge), 0 22px 40px -18px rgba(49, 46, 129, 0.45);
+  --ink: #1e1b4b;
+  --ink-soft: #4c4f7a;
+}
+.dark {
+  --panel-bg: #1b2139;
+  --panel-border: #2d3558;
+  --panel-ledge: #0c1022;
+  --panel-shadow: 0 6px 0 var(--panel-ledge), 0 22px 40px -18px rgba(0, 0, 0, 0.7);
+  --ink: #eef0ff;
+  --ink-soft: #b5bad8;
+}
+
+/* En la capa `components` para que las utilidades de Tailwind (hidden,
+   sm:inline-flex, rounded-*) les ganen: sin capa, `.btn { display: inline-flex }`
+   pisaba a `hidden` y el HUD se desbordaba en móvil. */
+@layer components {
+.panel {
+  background: var(--panel-bg);
+  border: 3px solid var(--panel-border);
+  border-radius: 1.75rem;
+  box-shadow: var(--panel-shadow);
+}
+
+/* Cabecera de panel con banda de color del mundo (--mundo la pone quien la usa). */
+.panel-banda {
+  background: linear-gradient(135deg, var(--mundo, #6366f1), color-mix(in oklab, var(--mundo, #6366f1) 70%, #1e1b4b));
+  color: #fff;
+  text-shadow: 0 2px 0 rgba(0, 0, 0, 0.18);
+}
+
+.btn {
+  --btn: #6366f1;
+  --btn-ledge: #4338ca;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-family: var(--font-display);
+  font-weight: 700;
+  color: #fff;
+  background: var(--btn);
+  border-radius: 1rem;
+  padding: 0.7rem 1.35rem;
+  line-height: 1.1;
+  box-shadow: 0 5px 0 var(--btn-ledge), inset 0 2px 0 rgba(255, 255, 255, 0.3);
+  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.2);
+  transition: transform 80ms ease, box-shadow 80ms ease, filter 150ms ease;
+  cursor: pointer;
+  user-select: none;
+}
+.btn:hover { filter: brightness(1.08); }
+.btn:active:not(:disabled) {
+  transform: translateY(4px);
+  box-shadow: 0 1px 0 var(--btn-ledge), inset 0 2px 0 rgba(255, 255, 255, 0.3);
+}
+.btn:focus-visible { outline: 3px solid #fbbf24; outline-offset: 3px; }
+.btn:disabled { opacity: 0.45; cursor: not-allowed; filter: grayscale(0.4); }
+.btn-green { --btn: #22c55e; --btn-ledge: #15803d; }
+.btn-red { --btn: #ef4444; --btn-ledge: #b91c1c; }
+.btn-amber { --btn: #f59e0b; --btn-ledge: #b45309; }
+.btn-sky { --btn: #0ea5e9; --btn-ledge: #0369a1; }
+.btn-violet { --btn: #8b5cf6; --btn-ledge: #6d28d9; }
+.btn-ghost {
+  --btn: var(--panel-bg);
+  --btn-ledge: var(--panel-ledge);
+  color: var(--ink);
+  text-shadow: none;
+  border: 2px solid var(--panel-border);
+}
+.btn-sm { padding: 0.45rem 0.85rem; font-size: 0.85rem; border-radius: 0.8rem; box-shadow: 0 3px 0 var(--btn-ledge), inset 0 2px 0 rgba(255, 255, 255, 0.3); }
+.btn-sm:active:not(:disabled) { transform: translateY(2px); box-shadow: 0 1px 0 var(--btn-ledge); }
+.btn-lg { padding: 0.95rem 1.9rem; font-size: 1.15rem; border-radius: 1.2rem; }
+.btn-icon { padding: 0; width: 2.5rem; height: 2.5rem; border-radius: 0.9rem; }
+
+/* Chip de recurso del HUD: burbuja de icono + número. */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.2rem 0.7rem 0.2rem 0.25rem;
+  border-radius: 999px;
+  font-family: var(--font-display);
+  font-weight: 700;
+  background: var(--panel-bg);
+  border: 2px solid var(--panel-border);
+  box-shadow: 0 3px 0 var(--panel-ledge);
+  color: var(--ink);
+}
+.chip-ico {
+  display: grid;
+  place-items: center;
+  width: 1.7rem;
+  height: 1.7rem;
+  border-radius: 999px;
+  font-size: 0.95rem;
+}
+
+/* Barra de progreso con brillo que recorre (XP, jefe, preguntas). */
+.barra {
+  position: relative;
+  height: 0.8rem;
+  border-radius: 999px;
+  background: rgba(99, 102, 241, 0.15);
+  box-shadow: inset 0 2px 0 rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+}
+.barra > .relleno {
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #818cf8, #d946ef);
+  box-shadow: inset 0 -3px 0 rgba(0, 0, 0, 0.15), inset 0 2px 0 rgba(255, 255, 255, 0.35);
+  transition: width 400ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+/* Título grande con contorno, como el logo de un juego. */
+.titulo-juego {
+  font-family: var(--font-display);
+  font-weight: 800;
+  color: #fff;
+  -webkit-text-stroke: 1.5px rgba(30, 27, 75, 0.55);
+  paint-order: stroke fill;
+  text-shadow: 0 4px 0 rgba(30, 27, 75, 0.35);
+}
+
+@keyframes flotar {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+.flotar { animation: flotar 2.6s ease-in-out infinite; }
+
+@keyframes latido-suave {
+  0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(251, 191, 36, 0.55); }
+  50% { transform: scale(1.04); box-shadow: 0 0 0 10px rgba(251, 191, 36, 0); }
+}
+.latido { animation: latido-suave 1.8s ease-in-out infinite; }
+
+@keyframes entrar-abajo {
+  from { transform: translateY(24px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+.entrar-abajo { animation: entrar-abajo 260ms cubic-bezier(0.2, 0.8, 0.2, 1); }
+
+@keyframes sacudir {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-6px); }
+  40%, 80% { transform: translateX(6px); }
+}
+.sacudir { animation: sacudir 380ms ease; }
+
+/* Tecla de teclado dibujada (atajos del mapa). */
+.tecla {
+  display: inline-grid;
+  place-items: center;
+  min-width: 1.5rem;
+  height: 1.5rem;
+  padding: 0 0.35rem;
+  border-radius: 0.4rem;
+  font-family: var(--font-display);
+  font-size: 0.75rem;
+  font-weight: 700;
+  background: var(--panel-bg);
+  color: var(--ink);
+  border: 1.5px solid var(--panel-border);
+  box-shadow: 0 2px 0 var(--panel-ledge);
+}
+}
+
+.zigzag { --zz: 0.3; }
+@media (min-width: 640px) { .zigzag { --zz: 1; } }
+
 .katex { font-size: 1.1em; }
-.MafsView { --mafs-bg: transparent; }
+.MafsView {
+  --mafs-bg: transparent;
+  /* Mafs viene con tema oscuro por defecto (texto blanco): en claro las
+     etiquetas de los ejes no se veían sobre el fondo blanco del panel. */
+  --mafs-fg: #1e1b4b;
+  --mafs-line-color: #dbe1f0;
+  --mafs-origin-color: #475569;
+}
 
 /* Mafs pinta ejes y etiquetas con su propio negro; en oscuro desaparecen. */
 .dark .MafsView {

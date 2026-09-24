@@ -2,6 +2,7 @@ import { useMemo } from 'react'
 import * as THREE from 'three'
 import { Html } from '@react-three/drei'
 import { worldMapNodes, pathOrder } from '../content/worldMap'
+import { SPREAD } from './explorerLogic'
 
 // Caminos punteados entre islas (piedritas sobre el agua), con waypoints de
 // estrella dorada entre mundos y candado en el ramal a los teasers.
@@ -11,7 +12,7 @@ const DOT_Y = -0.3
 
 function v3(id) {
   const [x, , z] = byId[id].position
-  return new THREE.Vector3(x, DOT_Y, z)
+  return new THREE.Vector3(x * SPREAD, DOT_Y, z * SPREAD)
 }
 
 // Midpoints rectos entre mundos consecutivos de una cadena.
@@ -26,7 +27,7 @@ function midpoints(ids) {
 }
 
 // Puntos a lo largo de la cadena, saltando los que caen sobre una isla o waypoint.
-function dotsFor(ids, avoid, gap = 0.6, clearIsland = 1.5, clearAvoid = 0.55) {
+function dotsFor(ids, avoid, gap = 0.75, clearIsland = 2.2, clearAvoid = 0.6) {
   const curve = new THREE.CatmullRomCurve3(ids.map(v3), false, 'catmullrom', 0.5)
   const count = Math.max(2, Math.floor(curve.getLength() / gap))
   const centers = ids.map(v3)

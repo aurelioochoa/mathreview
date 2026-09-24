@@ -9,10 +9,19 @@ import { estiloMarco } from './marco'
 // y después la correcta, la fallada, o la elegida cuando aún no hay veredicto
 // (esta última solo la usa el mini-quiz).
 const FONDO = {
-  neutro: 'bg-surface border-gray-200 hover:bg-indigo-50',
-  correcta: 'bg-green-100 border-green-400 text-green-800',
-  fallada: 'bg-red-100 border-red-400 text-red-800',
-  elegida: 'bg-indigo-100 border-indigo-400 text-indigo-800',
+  neutro: 'bg-surface border-indigo-100 hover:border-indigo-300 hover:-translate-y-0.5 shadow-[0_4px_0_var(--panel-ledge)] active:translate-y-1 active:shadow-none',
+  correcta: 'bg-emerald-100 border-emerald-400 text-emerald-900 shadow-[0_4px_0_#34d399]',
+  fallada: 'bg-red-100 border-red-400 text-red-900 shadow-[0_4px_0_#f87171] sacudir',
+  elegida: 'bg-indigo-100 border-indigo-400 text-indigo-900 shadow-[0_4px_0_#818cf8]',
+}
+
+// La letra de la opción va en una ficha redonda; al resolver, la ficha cambia
+// a ✓ o ✗ para que el veredicto se lea sin depender solo del color.
+const FICHA = {
+  neutro: 'bg-indigo-100 text-indigo-700',
+  correcta: 'bg-emerald-500 text-white',
+  fallada: 'bg-red-500 text-white',
+  elegida: 'bg-indigo-500 text-white',
 }
 
 export default function OptionButton({ index, estado = 'neutro', disabled = false, onClick, children }) {
@@ -31,10 +40,13 @@ export default function OptionButton({ index, estado = 'neutro', disabled = fals
       disabled={disabled}
       onClick={onClick}
       style={marco ?? undefined}
-      className={`w-full text-left px-3 py-2 rounded-lg border text-sm transition-colors ${FONDO[estado]}${marco ? ' marco' : ''}`}
+      className={`w-full flex items-center gap-3 text-left px-3 py-3 rounded-2xl border-2 text-[15px] font-semibold transition-all duration-100 disabled:cursor-default ${FONDO[estado]}${marco ? ' marco' : ''}`}
     >
-      <span className="font-bold mr-2">{String.fromCharCode(65 + index)})</span>
-      {children}
+      <span aria-hidden="true" className={`shrink-0 grid place-items-center w-8 h-8 rounded-xl font-display font-bold text-sm ${FICHA[estado]}`}>
+        {estado === 'correcta' ? '✓' : estado === 'fallada' ? '✗' : String.fromCharCode(65 + index)}
+      </span>
+      <span className="sr-only">{String.fromCharCode(65 + index)})</span>
+      <span className="flex-1">{children}</span>
     </button>
   )
 }

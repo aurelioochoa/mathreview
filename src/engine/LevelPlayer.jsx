@@ -3,24 +3,50 @@ import { Link, useParams } from 'react-router-dom'
 import { findWorld } from '../content/worlds'
 import { widgets } from '../widgets'
 import { buildReto } from './generators'
+import { rutaMundo } from '../state/vistaMundo'
 import { useGame, XP_PER_CORRECT, XP_LEVEL_COMPLETE, coinsForCompletion } from '../state/gameStore'
 import WhySection from '../components/WhySection'
 import CommonMistakes from '../components/CommonMistakes'
 import InteractiveBox from '../components/InteractiveBox'
 import OptionButton from '../components/OptionButton'
 import Chest from './Chest'
+import { GameHeader, Hearts, SegmentProgress, QuestionCard, Feedback, ResultCard, Rewards } from '../components/game/GameUI'
+import useAnswerKeys from '../components/game/useAnswerKeys'
 import { useDeviceTier } from '../three/useDeviceTier'
 
 const Celebration = lazy(() => import('../three/Celebration'))
+
+// Pestañas del briefing: cada paso con su icono, para que se vea de un vistazo
+// cuánto falta y se pueda saltar a cualquiera.
+const PASO = {
+  why: { icon: '🤔', label: 'Para qué' },
+  content: { icon: '📘', label: 'Teoría' },
+  widget: { icon: '🧪', label: 'Laboratorio' },
+  mistakes: { icon: '⚠️', label: 'Trampas' },
+}
 
 function BriefingStep({ step }) {
   if (step.type === 'why') return <WhySection>{step.body}</WhySection>
   if (step.type === 'mistakes') return <CommonMistakes mistakes={step.items} />
   if (step.type === 'widget') {
     const Widget = widgets[step.widgetId]
-    return <InteractiveBox title={step.title}>{Widget ? <Widget /> : <p>Widget no encontrado: {step.widgetId}</p>}</InteractiveBox>
+    return (
+      <InteractiveBox title={step.title}>
+        <Suspense fallback={<p className="h-40 grid place-items-center text-sm font-display font-bold text-indigo-400">Preparando el laboratorio…</p>}>
+          {Widget ? <Widget /> : <p>Widget no encontrado: {step.widgetId}</p>}
+        </Suspense>
+      </InteractiveBox>
+    )
   }
-  return <div>{step.body}</div>
+  return (
+    <div className="panel p-5 sm:p-6">
+      <h4 className="font-display font-bold text-indigo-700 mb-3 flex items-center gap-2">
+        <span className="grid place-items-center w-8 h-8 rounded-xl bg-indigo-100 text-lg" aria-hidden="true">📘</span>
+        Lo que necesitas saber
+      </h4>
+      {step.body}
+    </div>
+  )
 }
 
 // Envoltorio que fuerza el remount al cambiar de nivel (resetea phase/attempt/
@@ -47,6 +73,7 @@ function LevelPlayerView() {
   const [failedThis, setFailedThis] = useState(false)
   const [hintShown, setHintShown] = useState(false)  // pista comprada en la pregunta actual
   const [result, setResult] = useState(null)   // { stars, coins, primeraVez } de esta partida
+  const [results, setResults] = useState([])   // 'ok' | 'meh' por pregunta, para la barra de segmentos
   const startRef = useRef(null)                // inicio del reto, para el logro Speedrunner
 
   const questions = useMemo(
@@ -57,6 +84,15 @@ function LevelPlayerView() {
   )
 
   const { use3D } = useDeviceTier()
+
+  const qNow = questions[qIndex]
+  const acertada = qNow && selected === qNow.correctAnswer
+  useAnswerKeys({
+    count: qNow?.options.length ?? 0,
+    onPick: (i) => answer(i),
+    onContinue: acertada ? () => nextQuestion() : selected !== null ? () => setSelected(null) : undefined,
+    enabled: phase === 'reto' && !!qNow,
+  })
 
   if (!world || !level) return <p className="text-center py-12">Nivel no encontrado. <Link className="text-primary underline" to="/">Volver</Link></p>
 
@@ -69,6 +105,7 @@ function LevelPlayerView() {
     if (i === q.correctAnswer) {
       dispatch({ type: 'ANSWER_CORRECT', xp: XP_PER_CORRECT })
       if (!failedThis) setFirstTryHits(h => h + 1)
+      setResults(r => { const n = [...r]; n[qIndex] = failedThis ? 'meh' : 'ok'; return n })
     } else {
       setFailedThis(true)
       const remaining = lives - 1
@@ -101,50 +138,67 @@ function LevelPlayerView() {
 
   const retry = () => {
     setAttempt(a => a + 1)
-    setQIndex(0); setLives(3); setFirstTryHits(0); setSelected(null); setFailedThis(false); setHintShown(false)
+    setQIndex(0); setLives(3); setFirstTryHits(0); setSelected(null); setFailedThis(false); setHintShown(false); setResults([])
     startRef.current = Date.now()
     setPhase('reto')
   }
 
+  const paso = level.briefing[stepIndex]
+
   return (
     <div className="max-w-3xl mx-auto">
-      <div className="mb-6">
-        <span className={`inline-block px-3 py-1 ${world.color} text-white rounded-full text-sm font-semibold mb-2`}>{world.emoji} {world.name}</span>
-        <h1 className="font-display text-2xl font-extrabold text-gray-800">{level.icon} {level.title}</h1>
-      </div>
+      <GameHeader world={world} backTo={rutaMundo(world.slug)} backLabel="Volver al mundo" title={`${level.icon} ${level.title}`}>
+        {phase === 'briefing' && (
+          <div className="flex gap-1.5 overflow-x-auto" role="tablist" aria-label="Pasos del briefing">
+            {level.briefing.map((st, i) => {
+              const meta = PASO[st.type] ?? PASO.content
+              return (
+                <button key={i} type="button" role="tab" aria-selected={i === stepIndex} onClick={() => setStepIndex(i)}
+                  className={`shrink-0 flex items-center gap-1 rounded-xl px-2.5 py-1.5 text-xs font-display font-bold border-2 transition-colors ${
+                    i === stepIndex ? 'bg-indigo-500 border-indigo-500 text-white' : i < stepIndex ? 'bg-indigo-50 border-indigo-100 text-indigo-600' : 'border-gray-200 text-gray-400'
+                  }`}>
+                  <span aria-hidden="true">{meta.icon}</span>{meta.label}
+                </button>
+              )
+            })}
+          </div>
+        )}
+        {phase === 'reto' && q && (
+          <div className="flex items-center gap-4">
+            <div className="flex-1"><SegmentProgress total={questions.length} current={qIndex} results={results} /></div>
+            <Hearts lives={lives} max={3} />
+          </div>
+        )}
+      </GameHeader>
 
       {phase === 'briefing' && (
         <div>
-          <BriefingStep step={level.briefing[stepIndex]} />
-          <div className="flex justify-between mt-4">
-            <button disabled={stepIndex === 0} onClick={() => setStepIndex(i => i - 1)} className="px-4 py-2 rounded-xl font-display glass disabled:opacity-40">← Anterior</button>
-            <span className="text-sm text-gray-400 self-center">{stepIndex + 1} / {level.briefing.length}</span>
+          <div key={stepIndex} className="entrar-abajo"><BriefingStep step={paso} /></div>
+          <div className="flex items-center justify-between gap-2 mt-5">
+            <button disabled={stepIndex === 0} onClick={() => setStepIndex(i => i - 1)} className="btn btn-ghost">← Anterior</button>
+            <span className="text-sm font-display font-bold text-gray-400 tabular-nums">{stepIndex + 1} / {level.briefing.length}</span>
             {stepIndex + 1 < level.briefing.length
-              ? <button onClick={() => setStepIndex(i => i + 1)} className="px-4 py-2 rounded-xl font-display bg-primary text-white">Siguiente →</button>
-              : <button onClick={() => { startRef.current = Date.now(); setPhase('reto') }} className="px-4 py-2 rounded-xl font-display bg-green-500 text-white font-bold">⚔️ ¡Al reto!</button>}
+              ? <button onClick={() => setStepIndex(i => i + 1)} className="btn">Siguiente →</button>
+              : <button onClick={() => { startRef.current = Date.now(); setPhase('reto') }} className="btn btn-green latido">⚔️ ¡Al reto!</button>}
           </div>
         </div>
       )}
 
       {phase === 'reto' && q && (
-        <div className="glass rounded-[1.75rem] shadow-lg p-6">
-          <div className="flex justify-between mb-4 text-sm">
-            <span>Pregunta {qIndex + 1} / {questions.length}</span>
-            <span>{'❤️'.repeat(lives)}{'🖤'.repeat(3 - lives)}</span>
-          </div>
-          <p className="font-medium text-gray-800 mb-3">{q.question}</p>
+        <QuestionCard meta={<><span>Pregunta {qIndex + 1} / {questions.length}</span><span className="text-xs">+{XP_PER_CORRECT} XP por acierto</span></>}>
+          <p key={qIndex} className="entrar-abajo font-display text-lg sm:text-xl font-bold leading-snug mb-4">{q.question}</p>
           {selected === null && !hintShown && (
             state.hints > 0
               ? <button onClick={() => { dispatch({ type: 'USE_HINT' }); setHintShown(true) }}
-                  className="mb-3 px-3 py-1.5 rounded-lg bg-yellow-100 border border-yellow-300 text-xs font-bold text-yellow-700">
+                  className="btn btn-amber btn-sm mb-4">
                   💡 Pedir pista ({state.hints} {state.hints === 1 ? 'token' : 'tokens'})
                 </button>
-              : <p className="mb-3"><Link to="/tienda" className="text-xs text-primary underline">Consigue pistas en la tienda</Link></p>
+              : <p className="mb-4"><Link to="/tienda" className="text-xs font-semibold text-primary underline">Consigue pistas en la tienda</Link></p>
           )}
           {hintShown && selected === null && (
-            <div className="mb-3 p-3 rounded-lg bg-yellow-50 border border-yellow-200 text-sm">💡 {q.hint}</div>
+            <div className="mb-4 p-3 rounded-2xl bg-yellow-50 border-2 border-yellow-200 text-sm entrar-abajo">💡 {q.hint}</div>
           )}
-          <div className="space-y-2">
+          <div className="grid gap-2.5">
             {q.options.map((opt, i) => (
               <OptionButton key={i} index={i} disabled={selected !== null} onClick={() => answer(i)}
                 estado={selected !== null && i === q.correctAnswer ? 'correcta' : selected === i ? 'fallada' : 'neutro'}>
@@ -153,43 +207,47 @@ function LevelPlayerView() {
             ))}
           </div>
           {selected !== null && selected !== q.correctAnswer && (
-            <div className="mt-3 p-3 rounded-lg bg-yellow-50 border border-yellow-200 text-sm">
+            <Feedback tone="ko" title="¡Casi! Pierdes una vida">
               💡 {q.hint}
               <p className="text-xs italic mt-1">{q.reminder}</p>
-              <button onClick={() => setSelected(null)} className="mt-2 px-3 py-1.5 rounded bg-yellow-400 text-white text-xs font-bold">Intentar de nuevo</button>
-            </div>
+              <button onClick={() => setSelected(null)} className="btn btn-amber btn-sm mt-3">Intentar de nuevo</button>
+            </Feedback>
           )}
           {selected === q.correctAnswer && (
-            <button onClick={nextQuestion} className="mt-4 px-4 py-2 rounded-xl font-display bg-green-500 text-white font-bold">✅ +{XP_PER_CORRECT} XP — Continuar</button>
+            <Feedback tone="ok" title={failedThis ? '¡Bien! A la segunda' : '¡Perfecto!'}>
+              <button onClick={nextQuestion} className="btn btn-green">✅ +{XP_PER_CORRECT} XP — Continuar</button>
+            </Feedback>
           )}
-        </div>
+        </QuestionCard>
       )}
 
       {phase === 'fallado' && (
-        <div className="text-center glass rounded-[1.75rem] shadow-lg p-8">
-          <p className="text-4xl mb-2">💀</p>
-          <h2 className="font-display text-xl font-bold mb-2">¡Sin vidas!</h2>
-          <p className="text-gray-500 mb-4 text-sm">Tranquilo: el XP que ganaste se queda contigo. El reto se regenera con preguntas nuevas.</p>
-          <button onClick={retry} className="px-6 py-3 rounded-xl font-display bg-primary text-white font-bold">🔄 Reintentar</button>
-        </div>
+        <ResultCard icon="💀" title="¡Sin vidas!">
+          <p className="text-gray-500 mb-5 text-sm">Tranquilo: el XP que ganaste se queda contigo. El reto se regenera con preguntas nuevas.</p>
+          <div className="flex flex-wrap gap-3 justify-center">
+            <button onClick={retry} className="btn btn-lg">🔄 Reintentar</button>
+            <button onClick={() => { setPhase('briefing'); setStepIndex(0) }} className="btn btn-ghost btn-lg">📘 Repasar</button>
+          </div>
+        </ResultCard>
       )}
 
       {phase === 'completado' && (
-        <div className="relative text-center glass rounded-[1.75rem] shadow-lg p-8 overflow-hidden">
-          {use3D && (
+        <ResultCard
+          icon="🎉"
+          title="¡Nivel superado!"
+          overlay={use3D && (
             <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
               <Suspense fallback={null}><Celebration variant="nivel" /></Suspense>
             </div>
           )}
-          <div className="relative">
-            <p className="text-4xl mb-2">🎉</p>
-            <h2 className="font-display text-xl font-bold mb-1">¡Nivel superado!</h2>
-            <p className="text-2xl my-2">{'⭐'.repeat(result?.stars ?? 1)}</p>
-            <p className="text-sm text-gray-500 mb-4">+{XP_LEVEL_COMPLETE} XP · +{result?.coins ?? 0} 🪙</p>
-            {result?.primeraVez && <Chest />}
-            <Link to={`/mundo/${world.slug}`} className="px-6 py-3 rounded-xl bg-primary text-white font-display font-bold inline-block">Volver al mundo</Link>
-          </div>
-        </div>
+        >
+          <p className="text-4xl my-2" aria-label={`${result?.stars ?? 1} estrellas`}>
+            {[0, 1, 2].map(i => <span key={i} className={`inline-block entrar-abajo ${i < (result?.stars ?? 1) ? '' : 'grayscale opacity-30'}`} style={{ animationDelay: `${i * 150}ms` }}>⭐</span>)}
+          </p>
+          <Rewards items={[{ icon: '✨', text: `+${XP_LEVEL_COMPLETE} XP` }, { icon: '🪙', text: `+${result?.coins ?? 0}` }]} />
+          {result?.primeraVez && <Chest />}
+          <Link to={rutaMundo(world.slug)} className="btn btn-lg mt-2">Volver al mundo</Link>
+        </ResultCard>
       )}
     </div>
   )

@@ -1,86 +1,95 @@
-import { Link } from 'react-router-dom'
-import { Home, Coins, Star, Award, ShoppingBag } from 'lucide-react'
+import { Link, useLocation } from 'react-router-dom'
+import { Map as MapIcon, Award, ShoppingBag } from 'lucide-react'
 import { motion, useReducedMotion } from 'motion/react'
 import { useGame } from '../state/gameStore'
 import { hudStats } from '../state/hudStats'
 import PlayerAvatar from './PlayerAvatar'
 import ThemeToggle from './ThemeToggle'
 
-export default function Hud() {
+// Contador de recurso con "pop" al cambiar. La key fuerza el remontado para
+// que la animación se repita cada vez que el número se mueve.
+function Recurso({ value, icon, bg, title, className = '' }) {
+  const reduce = useReducedMotion()
+  return (
+    <motion.div
+      key={value}
+      initial={reduce ? false : { scale: 0.7 }}
+      animate={{ scale: 1 }}
+      transition={reduce ? { duration: 0 } : { type: 'spring', stiffness: 500, damping: 15 }}
+      className={`chip text-sm shrink-0 ${className}`}
+      title={title}
+    >
+      <span className={`chip-ico ${bg}`} aria-hidden="true">{icon}</span>
+      <span className="tabular-nums">{value}</span>
+    </motion.div>
+  )
+}
+
+// HUD de juego: placa del jugador a la izquierda (avatar con su nivel, título y
+// barra de XP), recursos en fichas y botonera cuadrada a la derecha. En el mapa
+// flota sobre la escena 3D; en el resto de pantallas va en una barra fija.
+export default function Hud({ floating = false }) {
   const { state } = useGame()
   const s = hudStats(state)
   const reduce = useReducedMotion()
+  const { pathname } = useLocation()
+  const enMapa = pathname === '/'
+  // En el mapa la barra no captura el ratón (para poder arrastrar la cámara
+  // por los huecos); cada pieza lo vuelve a capturar por su cuenta.
+  const pieza = floating ? 'pointer-events-auto' : ''
 
   return (
-    <div className="flex items-center gap-3 sm:gap-4">
-      <Link to="/" className="flex items-center gap-2 font-display font-bold text-lg text-primary hover:text-primary-dark transition-colors shrink-0">
-        <Home size={20} />
-        <span className="hidden sm:inline">Math Quest</span>
+    <div className="flex items-center gap-2 sm:gap-3">
+      <Link to="/" title="Mapa" aria-label="Mapa"
+        className={`btn btn-sky btn-icon shrink-0 ${enMapa ? 'hidden sm:inline-flex' : ''} ${pieza}`}>
+        <MapIcon size={20} />
       </Link>
 
-      {/* El avatar hace de acceso al perfil: dice quién eres y lleva ahí, que
-          es lo que se esperaba del icono de muñeco que ocupaba su sitio. */}
-      <Link to="/perfil" title="Perfil" aria-label="Perfil" className="shrink-0 flex items-center">
-        <PlayerAvatar size={38} className="text-2xl" />
-      </Link>
-
-      {/* Nivel + barra de XP */}
-      <div className="flex-1 min-w-0">
-        <div className="flex items-baseline justify-between gap-2">
-          <span className="font-display font-bold text-sm text-gray-800 truncate">
-            Nv. {s.level} · <span className="text-primary">{s.title}</span>
+      {/* Placa del jugador. El avatar hace de acceso al perfil. */}
+      <div className={`flex items-center gap-2 sm:gap-3 min-w-0 flex-1 max-w-md panel !rounded-2xl !border-2 px-2 py-1.5 ${pieza}`}
+        style={{ boxShadow: '0 4px 0 var(--panel-ledge)' }}>
+        <Link to="/perfil" title="Perfil" aria-label="Perfil" className="shrink-0 relative flex items-center">
+          <PlayerAvatar size={40} className="text-2xl" />
+          <span aria-hidden="true"
+            className="absolute -bottom-1 -right-1 min-w-5 h-5 px-1 grid place-items-center rounded-full bg-gradient-to-b from-amber-300 to-amber-500 text-[10px] font-display font-bold text-amber-950 border-2 border-white shadow">
+            {s.level}
           </span>
-          <span className="text-[11px] text-gray-500 shrink-0 tabular-nums">
-            {s.intoLevel}/{s.span} XP
-          </span>
-        </div>
-        <div className="mt-1 h-2.5 rounded-full bg-gray-200/70 overflow-hidden">
-          <motion.div
-            className="h-full rounded-full bg-gradient-to-r from-indigo-500 to-fuchsia-500"
-            initial={false}
-            animate={{ width: `${Math.round(s.progress * 100)}%` }}
-            transition={reduce ? { duration: 0 } : { type: 'spring', stiffness: 120, damping: 20 }}
-          />
+        </Link>
+        <div className="min-w-0 flex-1">
+          <div className="flex items-baseline justify-between gap-2">
+            <span className="font-display font-bold text-sm truncate">
+              Nv. {s.level} · <span className="text-primary">{s.title}</span>
+            </span>
+            <span className="hidden sm:inline text-[11px] text-gray-500 shrink-0 tabular-nums">
+              {s.intoLevel}/{s.span} XP
+            </span>
+          </div>
+          <div className="barra mt-1 !h-2.5">
+            <motion.div
+              className="relleno"
+              initial={false}
+              animate={{ width: `${Math.round(s.progress * 100)}%` }}
+              transition={reduce ? { duration: 0 } : { type: 'spring', stiffness: 120, damping: 20 }}
+            />
+          </div>
         </div>
       </div>
 
-      {/* Estrellas totales (dato real) */}
-      <motion.div
-        key={`stars-${s.totalStars}`}
-        initial={reduce ? false : { scale: 0.7 }}
-        animate={{ scale: 1 }}
-        transition={reduce ? { duration: 0 } : { type: 'spring', stiffness: 500, damping: 15 }}
-        className="hidden xs:flex sm:flex items-center gap-1 font-display font-bold text-yellow-500 glass rounded-full px-3 py-1 shrink-0"
-      >
-        <Star size={16} fill="currentColor" />
-        <span className="tabular-nums">{s.totalStars}</span>
-      </motion.div>
+      <div className="flex-1 hidden lg:block" />
 
-      {/* Racha diaria */}
-      {state.streak?.count > 0 && (
-        <div className="flex items-center gap-1 font-display font-bold text-orange-500 glass rounded-full px-3 py-1 shrink-0" title={`Racha de ${state.streak.count} días`}>
-          🔥<span className="tabular-nums">{state.streak.count}</span>
-        </div>
-      )}
+      <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
+        <Recurso value={s.totalStars} icon="⭐" bg="bg-yellow-100" title="Estrellas" className={`hidden sm:inline-flex ${pieza}`} />
+        {state.streak?.count > 0 && (
+          <Recurso value={state.streak.count} icon="🔥" bg="bg-orange-100" title={`Racha de ${state.streak.count} días`} className={`hidden sm:inline-flex ${pieza}`} />
+        )}
+        <Recurso value={s.coins} icon="🪙" bg="bg-amber-100" title="Monedas" className={pieza} />
+      </div>
 
-      {/* Monedas con pop al cambiar */}
-      <motion.div
-        key={s.coins}
-        initial={reduce ? false : { scale: 0.7 }}
-        animate={{ scale: 1 }}
-        transition={reduce ? { duration: 0 } : { type: 'spring', stiffness: 500, damping: 15 }}
-        className="flex items-center gap-1 font-display font-bold text-amber-600 glass rounded-full px-3 py-1 shrink-0"
-      >
-        <Coins size={16} />
-        <span className="tabular-nums">{s.coins}</span>
-      </motion.div>
-
-      {/* Accesos a logros y tienda, y el botón de tema. El perfil ya no está
-          aquí: lo lleva el avatar. */}
-      <div className="flex items-center gap-2 shrink-0">
-        <Link to="/logros" title="Logros" aria-label="Logros" className="text-gray-500 hover:text-primary"><Award size={18} /></Link>
-        <Link to="/tienda" title="Tienda" aria-label="Tienda" className="text-gray-500 hover:text-primary"><ShoppingBag size={18} /></Link>
-        <ThemeToggle />
+      {/* Botonera: logros, tienda y tema. El perfil lo lleva el avatar. */}
+      <div className="flex items-center gap-1.5 shrink-0">
+        <Link to="/logros" title="Logros" aria-label="Logros" className={`btn btn-violet btn-icon ${pieza}`}><Award size={19} /></Link>
+        <Link to="/tienda" title="Tienda" aria-label="Tienda" className={`btn btn-amber btn-icon ${pieza}`}><ShoppingBag size={19} /></Link>
+        <ThemeToggle className={`btn btn-ghost btn-icon ${pieza}`} />
       </div>
     </div>
   )
