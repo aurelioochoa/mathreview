@@ -13,33 +13,37 @@ export default function Layout() {
   const isMap = location.pathname === '/'
 
   return (
-    <div className={isMap ? 'h-dvh flex flex-col' : 'min-h-screen'}>
+    <div className={isMap ? 'h-dvh relative overflow-hidden' : 'min-h-screen'}>
       {/* Fuera del <main>: la estela cubre toda la ventana, también el HUD. */}
       <CursorAura />
 
-      <nav className="sticky top-0 z-50 glass border-b border-surface/50 shadow-sm">
-        <div className="max-w-6xl mx-auto px-4 py-2.5">
-          <Hud />
+      {/* En el mapa el HUD flota sobre la escena 3D, como en un juego; en el
+          resto va en una barra fija con vidrio. */}
+      <nav className={isMap
+        ? 'absolute top-0 inset-x-0 z-50 pointer-events-none'
+        : 'sticky top-0 z-50 glass border-b border-surface/50 shadow-sm'}>
+        <div className={isMap ? 'px-3 sm:px-5 pt-3' : 'max-w-6xl mx-auto px-3 sm:px-4 py-2'}>
+          <Hud floating={isMap} />
         </div>
       </nav>
 
-      <main className={isMap ? 'flex-1 min-h-0 overflow-auto' : 'max-w-5xl mx-auto px-4 py-8'}>
+      <main className={isMap ? 'absolute inset-0' : 'max-w-5xl mx-auto px-4 py-6 sm:py-8'}>
         <PageTransition><Outlet /></PageTransition>
       </main>
 
       {onBlockPage && (
         <div className="max-w-5xl mx-auto px-4 pb-12 flex justify-between">
           {prev ? (
-            <Link to={prev.path} className="flex items-center gap-2 px-4 py-2 rounded-xl glass hover:shadow-md transition-all text-gray-700 hover:text-primary">
+            <Link to={prev.path} className="btn btn-ghost btn-sm">
               <ChevronLeft size={18} /> {prev.label}
             </Link>
           ) : <div />}
           {next ? (
-            <Link to={next.path} className="flex items-center gap-2 px-4 py-2 rounded-xl glass hover:shadow-md transition-all text-gray-700 hover:text-primary">
+            <Link to={next.path} className="btn btn-ghost btn-sm">
               {next.label} <ChevronRight size={18} />
             </Link>
           ) : (
-            <Link to="/" className="flex items-center gap-2 px-4 py-2 rounded-xl bg-primary text-white hover:bg-primary-dark transition-all">
+            <Link to="/" className="btn btn-sm">
               <Home size={18} /> Volver al mapa
             </Link>
           )}

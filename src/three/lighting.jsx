@@ -17,12 +17,14 @@ export default function Lighting({ escena }) {
     const luz = sol.current
     if (!luz) return
     const cam = luz.shadow.camera
-    cam.left = -12
-    cam.right = 12
-    cam.top = 10
-    cam.bottom = -10
+    // Con el mapa explorable las islas se separaron (SPREAD) y el mar navegable
+    // va de x=-17 a x=14: el encuadre crece con él.
+    cam.left = -19
+    cam.right = 19
+    cam.top = 15
+    cam.bottom = -15
     cam.near = 0.5
-    cam.far = 40
+    cam.far = 50
     cam.updateProjectionMatrix()
   }, [])
 
@@ -36,7 +38,7 @@ export default function Lighting({ escena }) {
         shadow-mapSize={[2048, 2048]}
         shadow-normalBias={0.02}
         shadow-bias={-0.0005}
-        position={[4, 9, 3]}
+        position={[5, 14, 5]}
         intensity={escena.sol.intensidad}
         color={escena.sol.color}
       />

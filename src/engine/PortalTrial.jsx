@@ -5,6 +5,8 @@ import { pathOrder } from '../content/worldMap'
 import { buildBossPool } from './generators'
 import { useGame, XP_PER_CORRECT } from '../state/gameStore'
 import OptionButton from '../components/OptionButton'
+import { GameHeader, SegmentProgress, QuestionCard, Feedback, ResultCard } from '../components/game/GameUI'
+import useAnswerKeys from '../components/game/useAnswerKeys'
 
 const PREGUNTAS = 5
 const APROBADO = 4 // 4 de 5
@@ -27,12 +29,21 @@ function PortalTrialView() {
   const [qIndex, setQIndex] = useState(0)
   const [aciertos, setAciertos] = useState(0)
   const [selected, setSelected] = useState(null)
+  const [marcas, setMarcas] = useState([])   // 'ok' | 'ko' por pregunta
 
   const questions = useMemo(
     () => (world ? buildBossPool(world, PREGUNTAS) : []),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [world, intento],
   )
+
+  const qNow = questions[qIndex]
+  useAnswerKeys({
+    count: qNow?.options.length ?? 0,
+    onPick: (i) => answer(i),
+    onContinue: selected !== null ? () => next() : undefined,
+    enabled: phase === 'prueba' && !!qNow,
+  })
 
   if (!world) return <p className="text-center py-12">Portal no encontrado. <Link className="text-primary underline" to="/">Volver</Link></p>
 
@@ -42,7 +53,9 @@ function PortalTrialView() {
   const answer = (i) => {
     if (selected !== null) return
     setSelected(i)
-    if (i === q.correctAnswer) {
+    const ok = i === q.correctAnswer
+    setMarcas(m => { const n = [...m]; n[qIndex] = ok ? 'ok' : 'ko'; return n })
+    if (ok) {
       dispatch({ type: 'ANSWER_CORRECT', xp: XP_PER_CORRECT })
       setAciertos(a => a + 1)
     }
@@ -65,19 +78,18 @@ function PortalTrialView() {
 
   const reintentar = () => {
     setIntento(n => n + 1)
-    setQIndex(0); setAciertos(0); setSelected(null); setPhase('prueba')
+    setQIndex(0); setAciertos(0); setSelected(null); setMarcas([]); setPhase('prueba')
   }
 
   return (
     <div className="max-w-3xl mx-auto">
-      <div className="mb-6 text-center">
-        <span className="inline-block px-3 py-1 bg-indigo-500 text-white rounded-full text-sm font-semibold mb-2">🌀 Portal de teletransporte</span>
-        <h1 className="font-display text-2xl font-extrabold text-gray-800">{world.emoji} {world.name}</h1>
-      </div>
+      <GameHeader world={world} backTo={`/mundo/${world.slug}`} backLabel="Volver al mundo" kicker="🌀 Portal de teletransporte" title={`${world.emoji} ${world.name}`}>
+        {phase === 'prueba' && <SegmentProgress total={questions.length} current={qIndex} results={marcas} />}
+      </GameHeader>
 
       {phase === 'intro' && (
-        <div className="glass rounded-[1.75rem] shadow-lg p-8 text-center">
-          <p className="text-6xl mb-3">🌀</p>
+        <div className="panel p-8 text-center entrar-abajo">
+          <p className="text-7xl mb-3 inline-block aura-giro">🌀</p>
           <p className="text-gray-600 mb-2">
             ¿Ya te sabes lo de <strong>{world.name}</strong>? Demuéstralo y sáltatelo.
           </p>
@@ -85,21 +97,17 @@ function PortalTrialView() {
             {PREGUNTAS} preguntas, sin vidas. Necesitas {APROBADO} aciertos.
             Aprobar abre el siguiente mundo, pero <strong>no da estrellas</strong>: puedes volver a por ellas cuando quieras.
           </p>
-          <button onClick={() => setPhase('prueba')} className="px-6 py-3 rounded-xl font-display bg-indigo-500 text-white font-bold">🌀 Empezar la prueba</button>
+          <button onClick={() => setPhase('prueba')} className="btn btn-violet btn-lg">🌀 Empezar la prueba</button>
           <p className="mt-4">
-            <Link to={`/mundo/${world.slug}`} className="text-sm text-primary underline">Mejor lo juego entero</Link>
+            <Link to={`/mundo/${world.slug}`} className="text-sm font-semibold text-primary underline">Mejor lo juego entero</Link>
           </p>
         </div>
       )}
 
       {phase === 'prueba' && q && (
-        <div className="glass rounded-[1.75rem] shadow-lg p-6">
-          <div className="mb-3 flex justify-between text-sm">
-            <span className="text-gray-400">Pregunta {qIndex + 1} / {questions.length}</span>
-            <span className="font-bold text-indigo-600">{aciertos} ✅</span>
-          </div>
-          <p className="font-medium text-gray-800 mb-3">{q.question}</p>
-          <div className="space-y-2">
+        <QuestionCard meta={<><span>Pregunta {qIndex + 1} / {questions.length}</span><span className="font-bold text-indigo-600">{aciertos} ✅ · necesitas {APROBADO}</span></>}>
+          <p key={qIndex} className="entrar-abajo font-display text-lg sm:text-xl font-bold leading-snug mb-4">{q.question}</p>
+          <div className="grid gap-2.5">
             {q.options.map((opt, i) => (
               <OptionButton key={i} index={i} disabled={selected !== null} onClick={() => answer(i)}
                 estado={selected !== null && i === q.correctAnswer ? 'correcta' : selected === i ? 'fallada' : 'neutro'}>
@@ -108,43 +116,41 @@ function PortalTrialView() {
             ))}
           </div>
           {selected !== null && (
-            <button onClick={next} className="mt-4 px-4 py-2 rounded-xl font-display bg-indigo-500 text-white font-bold">
-              {qIndex + 1 < questions.length ? 'Siguiente →' : 'Ver resultado'}
-            </button>
+            <Feedback tone={selected === q.correctAnswer ? 'ok' : 'ko'} title={selected === q.correctAnswer ? '¡Correcto!' : 'Esta no era'}>
+              <button onClick={next} className="btn btn-violet">
+                {qIndex + 1 < questions.length ? 'Siguiente →' : 'Ver resultado'}
+              </button>
+            </Feedback>
           )}
-        </div>
+        </QuestionCard>
       )}
 
       {phase === 'aprobado' && (
-        <div className="text-center glass rounded-[1.75rem] shadow-lg p-8">
-          <p className="text-5xl mb-2">🌀✨</p>
-          <h2 className="font-display text-xl font-bold mb-1">¡Portal abierto!</h2>
-          <p className="text-sm text-gray-500 mb-4">
+        <ResultCard icon="🌀✨" title="¡Portal abierto!">
+          <p className="text-sm text-gray-500 mb-5">
             {aciertos} de {questions.length}. Superaste {world.name} por portal y el siguiente mundo queda desbloqueado.
             Sus estrellas siguen ahí esperándote.
           </p>
-          <Link to="/" className="px-6 py-3 rounded-xl bg-primary text-white font-display font-bold inline-block">Ir al mapa</Link>
+          <Link to="/" className="btn btn-lg">🗺️ Ir al mapa</Link>
           {siguienteId && (
             <p className="mt-3">
-              <Link to={`/mundo/${siguienteId}`} className="text-sm text-primary underline">Entrar al siguiente mundo →</Link>
+              <Link to={`/mundo/${siguienteId}`} className="text-sm font-semibold text-primary underline">Entrar al siguiente mundo →</Link>
             </p>
           )}
-        </div>
+        </ResultCard>
       )}
 
       {phase === 'suspendido' && (
-        <div className="text-center glass rounded-[1.75rem] shadow-lg p-8">
-          <p className="text-5xl mb-2">🚧</p>
-          <h2 className="font-display text-xl font-bold mb-1">El portal no se abre… todavía</h2>
-          <p className="text-sm text-gray-500 mb-4">
+        <ResultCard icon="🚧" title="El portal no se abre… todavía">
+          <p className="text-sm text-gray-500 mb-5">
             {aciertos} de {questions.length}, y hacen falta {APROBADO}. El XP que ganaste se queda contigo.
             Puedes reintentarlo con preguntas nuevas o jugar el mundo entero.
           </p>
-          <button onClick={reintentar} className="px-6 py-3 rounded-xl font-display bg-primary text-white font-bold">🔄 Reintentar</button>
+          <button onClick={reintentar} className="btn btn-lg">🔄 Reintentar</button>
           <p className="mt-4">
-            <Link to={`/mundo/${world.slug}`} className="text-sm text-primary underline">Jugar {world.name}</Link>
+            <Link to={`/mundo/${world.slug}`} className="text-sm font-semibold text-primary underline">Jugar {world.name}</Link>
           </p>
-        </div>
+        </ResultCard>
       )}
     </div>
   )

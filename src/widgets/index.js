@@ -22,6 +22,21 @@ import BoxPlot from './BoxPlot'
 import PermutacionesCalculadora from './PermutacionesCalculadora'
 import CombinacionesCalculadora from './CombinacionesCalculadora'
 import AtuendosEjemplo from './AtuendosEjemplo'
+import { lazy } from 'react'
+
+// Los laboratorios interactivos nuevos van en diferido: cada uno se descarga al
+// abrir el paso del briefing que lo usa, no en el arranque. LevelPlayer los
+// envuelve en <Suspense>. Los de antes siguen directos porque los Bloque*.jsx
+// del modo estudio los importan tal cual.
+const OperacionesVisual = lazy(() => import('./OperacionesVisual'))
+const CuadriculaDecimal = lazy(() => import('./CuadriculaDecimal'))
+const BalanzaEcuaciones = lazy(() => import('./BalanzaEcuaciones'))
+const SimplificadorAlgebraico = lazy(() => import('./SimplificadorAlgebraico'))
+const VerificadorSistema = lazy(() => import('./VerificadorSistema'))
+const ReduccionPasos = lazy(() => import('./ReduccionPasos'))
+const SimuladorProbabilidad = lazy(() => import('./SimuladorProbabilidad'))
+const PrismaLab = lazy(() => import('./Laboratorio3D').then(m => ({ default: m.PrismaLab })))
+const CilindroLab = lazy(() => import('./Laboratorio3D').then(m => ({ default: m.CilindroLab })))
 
 export const widgets = {
   'recta-numerica': RectaNumerica,
@@ -48,4 +63,13 @@ export const widgets = {
   'permutaciones-calculadora': PermutacionesCalculadora,
   'combinaciones-calculadora': CombinacionesCalculadora,
   'atuendos-ejemplo': AtuendosEjemplo,
+  'operaciones-visual': OperacionesVisual,
+  'cuadricula-decimal': CuadriculaDecimal,
+  'balanza-ecuaciones': BalanzaEcuaciones,
+  'simplificador-algebraico': SimplificadorAlgebraico,
+  'verificador-sistema': VerificadorSistema,
+  'reduccion-pasos': ReduccionPasos,
+  'simulador-probabilidad': SimuladorProbabilidad,
+  'prisma-3d': PrismaLab,
+  'cilindro-3d': CilindroLab,
 }

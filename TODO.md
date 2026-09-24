@@ -5,7 +5,11 @@ Hoja de ruta por fases. Lo pendiente va arriba; el historial, al final.
 **Specs:** [base](docs/superpowers/specs/2026-07-18-math-quest-design.md) · [worldmap 3D](docs/superpowers/specs/2026-07-19-rediseno-worldmap-3d-design.md) · [Fase 2](docs/superpowers/specs/2026-07-21-fase2-migracion-completa-design.md) · [Fase 3](docs/superpowers/specs/2026-07-22-fase3-gamificacion-design.md) · [Fase 4](docs/superpowers/specs/2026-07-31-fase4-contenido-nuevo-design.md) · [Fase 5](docs/superpowers/specs/2026-07-31-fase5-pulido-design.md)
 **Planes:** [Fases 0-1](docs/superpowers/plans/2026-07-18-math-quest-fase0-fase1.md) · [worldmap 3D](docs/superpowers/plans/2026-07-19-rediseno-worldmap-3d.md) · [Fase 2](docs/superpowers/plans/2026-07-21-fase2-migracion-completa.md) · [Fase 3](docs/superpowers/plans/2026-07-22-fase3-gamificacion.md) · [Fase 4](docs/superpowers/plans/2026-07-31-fase4-contenido-nuevo.md) · [Fase 5](docs/superpowers/plans/2026-07-31-fase5-pulido.md)
 
-## Estado — 2026-08-01
+## Estado — 2026-09-24
+
+- **Mapa explorable e interfaz de juego (2026-09-24):** barco con cámara en tercera persona, minimapa, objetivo, botellas con mensaje; HUD, camino de niveles y modos de juego rehechos como juego; 9 laboratorios interactivos nuevos (uno en 3D). `npm test` → 62 archivos, 462 tests.
+
+## Estado anterior — 2026-08-01
 
 - **Rama:** `fix/qr-escaneable-y-medalla-visible` (Fase 5 ya mergeada).
 - **Suite:** `npm test` → 57 archivos, 406 tests en verde; `build` y `lint` limpios.
@@ -23,7 +27,9 @@ Hoja de ruta por fases. Lo pendiente va arriba; el historial, al final.
 - [ ] Verificación e2e interactiva en navegador de las funciones nuevas de Fase 5 — el 2026-08-01 solo se comprobó que el panel QR se pinta y sigue en blanco y negro nítido con el tema oscuro puesto. Sigue pendiente el resto: copiar el código, descargar el fichero, escanear con la cámara, el resumen de confirmación, un código corrupto, la corona al derrotar a un jefe y la medalla en el aviso de logro.
 - [x] ~~Verificación e2e interactiva en navegador de Fase 4~~ — hecha el 2026-07-31 al cerrar Fase 4, arrastrada desde Fase 1. Destapó tres bugs que ningún test veía: el bono de racha cobrado dos veces con StrictMode, el gate entre mundos ausente en el mapa 3D, y un logro mal nombrado. Incluyó cargar un guardado v2 real: migra a v3 sin perder nada y el grandfathering deja abiertos justo los mundos que ya se jugaban.
 - [x] ~~README desactualizado~~ — actualizado el 2026-07-30 y el 2026-07-31.
-- [ ] Las tarjetas de información del mapa 3D se pisan entre ellas. Todas se anclan a la misma altura (`position={[0, 2.45, 0]}` en `WorldObject`) y son anchas, así que en las islas vecinas —Reino de las Fracciones con Feria de Datos, Castillo con Laberinto— una tapa a la otra y de paso al diorama de debajo. Viene de antes de los dioramas, pero ahora molesta más, porque lo que queda tapado ya tiene detalle que merece verse. Arreglarlo de verdad es decidir el comportamiento (¿escalonar la altura por fila?, ¿enseñar la tarjeta solo al señalar?), no mover un número.
+- [x] ~~Las tarjetas de información del mapa 3D se pisan entre ellas~~ — resuelto el 2026-09-24 con el mapa explorable: islas separadas (`SPREAD = 2`, con un test que exige hueco para el barco entre cada par), placas pequeñas que se desvanecen con la distancia a la cámara, y la ficha completa solo en un panel DOM al atracar.
+- [ ] Probar el mapa explorable con un ratón y un móvil de verdad. En el contenedor de desarrollo Chromium renderiza por software a ~0,5 fps, así que el movimiento del barco, la cámara y el despliegue del laboratorio 3D solo se validaron con los tests de la lógica y con capturas fijas, no a mano. Mirar sobre todo la sensación del giro de cámara, el joystick táctil y que el piloto automático no se atasque contra una isla que se cruce en el camino (hoy la rodea deslizándose por la colisión, sin planificar ruta).
+- [ ] Peso del arranque tras la interfaz de juego (2026-09-24): los chunks que precarga `index.html` suman 416 KB con `gzip -c` (antes ~403 KB). Los laboratorios nuevos no cuentan: van en diferido. Katex salió a un chunk propio (`MathTex-*.js`) que se sigue precargando.
 - [ ] ⚠️ **Rotar el token del túnel de Cloudflare** en el dashboard — vivió en texto plano en `docker-compose.yml` antes de moverse a `.env`.
 
 # Ideas futuras (fuera de alcance actual)
