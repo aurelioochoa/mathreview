@@ -3,6 +3,7 @@ import { Link, useParams } from 'react-router-dom'
 import { findWorld } from '../content/worlds'
 import { widgets } from '../widgets'
 import { buildReto } from './generators'
+import { rutaMundo } from '../state/vistaMundo'
 import { useGame, XP_PER_CORRECT, XP_LEVEL_COMPLETE, coinsForCompletion } from '../state/gameStore'
 import WhySection from '../components/WhySection'
 import CommonMistakes from '../components/CommonMistakes'
@@ -146,7 +147,7 @@ function LevelPlayerView() {
 
   return (
     <div className="max-w-3xl mx-auto">
-      <GameHeader world={world} backTo={`/mundo/${world.slug}`} backLabel="Volver al mundo" title={`${level.icon} ${level.title}`}>
+      <GameHeader world={world} backTo={rutaMundo(world.slug)} backLabel="Volver al mundo" title={`${level.icon} ${level.title}`}>
         {phase === 'briefing' && (
           <div className="flex gap-1.5 overflow-x-auto" role="tablist" aria-label="Pasos del briefing">
             {level.briefing.map((st, i) => {
@@ -245,7 +246,7 @@ function LevelPlayerView() {
           </p>
           <Rewards items={[{ icon: '✨', text: `+${XP_LEVEL_COMPLETE} XP` }, { icon: '🪙', text: `+${result?.coins ?? 0}` }]} />
           {result?.primeraVez && <Chest />}
-          <Link to={`/mundo/${world.slug}`} className="btn btn-lg mt-2">Volver al mundo</Link>
+          <Link to={rutaMundo(world.slug)} className="btn btn-lg mt-2">Volver al mundo</Link>
         </ResultCard>
       )}
     </div>

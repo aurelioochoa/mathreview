@@ -1,10 +1,12 @@
-import { EffectComposer, Bloom } from '@react-three/postprocessing'
+import { EffectComposer, Bloom, Vignette } from '@react-three/postprocessing'
 
-// Glow suave: solo los píxeles brillantes (emissive de los mundos) florecen.
-export default function Effects() {
+// Glow suave en lo que brilla (lava, faros, gemas) y una viñeta ligera que
+// centra la mirada, como el acabado de cámara de un juego.
+export default function Effects({ bloom = 0.35 }) {
   return (
-    <EffectComposer>
-      <Bloom intensity={0.25} luminanceThreshold={1} luminanceSmoothing={0.3} mipmapBlur />
+    <EffectComposer multisampling={4}>
+      <Bloom intensity={bloom} luminanceThreshold={0.9} luminanceSmoothing={0.3} mipmapBlur />
+      <Vignette eskil={false} offset={0.28} darkness={0.55} />
     </EffectComposer>
   )
 }

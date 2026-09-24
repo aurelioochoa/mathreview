@@ -2,6 +2,7 @@ import { lazy, Suspense, useMemo, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { findWorld } from '../content/worlds'
 import { buildBossPool } from './generators'
+import { rutaMundo } from '../state/vistaMundo'
 import { useGame, XP_PER_CORRECT, COINS_BOSS, XP_BOSS } from '../state/gameStore'
 import { useDeviceTier } from '../three/useDeviceTier'
 import Chest from './Chest'
@@ -90,7 +91,7 @@ function BossArenaView() {
 
   return (
     <div className="max-w-3xl mx-auto">
-      <GameHeader world={world} backTo={`/mundo/${world.slug}`} backLabel="Volver al mundo" kicker={`${world.emoji} ${world.name} · Jefe`} title={`${world.boss.emoji} ${world.boss.name}`} />
+      <GameHeader world={world} backTo={rutaMundo(world.slug)} backLabel="Volver al mundo" kicker={`${world.emoji} ${world.name} · Jefe`} title={`${world.boss.emoji} ${world.boss.name}`} />
 
       {phase === 'intro' && (
         <div className="panel p-8 text-center entrar-abajo">
@@ -186,7 +187,7 @@ function BossArenaView() {
           <div className="max-w-xs mx-auto"><Bar pct={0} label="Vida del jefe" /></div>
           <Rewards items={[{ icon: '✨', text: `+${XP_BOSS} XP` }, { icon: '🪙', text: `+${COINS_BOSS}` }, { icon: '⭐', text: 'Maestría del mundo' }]} />
           {cofre && <Chest />}
-          <Link to={`/mundo/${world.slug}`} className="btn btn-lg mt-2">Volver al mundo</Link>
+          <Link to={rutaMundo(world.slug)} className="btn btn-lg mt-2">Volver al mundo</Link>
         </ResultCard>
       )}
     </div>

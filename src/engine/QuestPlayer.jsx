@@ -3,6 +3,7 @@ import { Link, useParams } from 'react-router-dom'
 import { findWorld } from '../content/worlds'
 import { findQuest } from '../content/quests'
 import { shuffleOptions } from './generators'
+import { rutaMundo } from '../state/vistaMundo'
 import { useGame, XP_PER_CORRECT, COINS_QUEST, XP_QUEST } from '../state/gameStore'
 import OptionButton from '../components/OptionButton'
 import { GameHeader, SegmentProgress, QuestionCard, Feedback, ResultCard, Rewards } from '../components/game/GameUI'
@@ -18,6 +19,7 @@ function QuestPlayerView() {
   const { state, dispatch } = useGame()
   const world = findWorld(slug)
   const quest = world ? findQuest(world.id, questId) : null
+  const volver = rutaMundo(slug)
 
   const [phase, setPhase] = useState('intro')  // intro | preguntas | fin
   const [qIndex, setQIndex] = useState(0)
@@ -59,7 +61,7 @@ function QuestPlayerView() {
 
   return (
     <div className="max-w-3xl mx-auto">
-      <GameHeader world={world} backTo={`/mundo/${world.slug}`} backLabel="Volver al mundo" kicker={`${world.emoji} ${world.name} · Sidequest`} title={`${quest.emoji} ${quest.title}`}>
+      <GameHeader world={world} backTo={volver} backLabel="Volver al mundo" kicker={`${world.emoji} ${world.name} · Sidequest`} title={`${quest.emoji} ${quest.title}`}>
         {phase === 'preguntas' && <SegmentProgress total={questions.length} current={qIndex} results={questions.map((_, i) => (i < qIndex ? 'ok' : undefined))} />}
       </GameHeader>
 
@@ -108,7 +110,7 @@ function QuestPlayerView() {
         <ResultCard icon="🎁" title="¡Misión cumplida!">
           <p className="text-gray-500 text-sm mb-2">{quest.outro}</p>
           {!yaCompletada && <Rewards items={[{ icon: '✨', text: `+${XP_QUEST} XP` }, { icon: '🪙', text: `+${COINS_QUEST}` }]} />}
-          <Link to={`/mundo/${world.slug}`} className="btn btn-lg mt-2">Volver al mundo</Link>
+          <Link to={volver} className="btn btn-lg mt-2">Volver al mundo</Link>
         </ResultCard>
       )}
     </div>

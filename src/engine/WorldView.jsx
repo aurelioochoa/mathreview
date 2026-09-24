@@ -1,8 +1,11 @@
+import { useEffect } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { findWorld } from '../content/worlds'
 import { questsForWorld } from '../content/quests'
 import { studyTargetFor, isWorldUnlocked, portalTargetFor, worldHex } from '../content/worldMap'
 import { useGame } from '../state/gameStore'
+import { useDeviceTier } from '../three/useDeviceTier'
+import { setVistaMundo } from '../state/vistaMundo'
 
 // Desplazamiento horizontal de cada parada del camino: zigzag suave, como el
 // mapa de niveles de un juego de móvil.
@@ -72,6 +75,8 @@ function Parada({ i, level, stars, unlocked, current, to, color }) {
 export default function WorldView() {
   const { slug } = useParams()
   const { state } = useGame()
+  const { use3D } = useDeviceTier()
+  useEffect(() => setVistaMundo('lista'), [])
   const world = findWorld(slug)
   if (!world) return <p className="text-center py-12">Mundo no encontrado. <Link className="text-primary underline" to="/">Volver</Link></p>
 
@@ -122,6 +127,7 @@ export default function WorldView() {
           <span className="chip text-sm"><span className="chip-ico bg-emerald-100">🏁</span>{done}/{world.levels.length} niveles</span>
           <div className="flex-1" />
           <Link to="/" className="btn btn-ghost btn-sm">🗺️ Mapa</Link>
+          {use3D && <Link to={`/mundo/${world.slug}/explorar`} className="btn btn-green btn-sm">🚶 Explorar a pie</Link>}
           {/* Solo los mundos migrados de un Bloque tienen modo estudio. */}
           {studyTargetFor(world.slug) && (
             <Link to={`/mundo/${world.slug}/estudio`} className="btn btn-sky btn-sm">📖 Modo estudio</Link>

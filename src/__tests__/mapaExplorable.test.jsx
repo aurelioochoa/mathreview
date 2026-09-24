@@ -15,6 +15,7 @@ function renderConJuego(ui, path = '/') {
         <Routes>
           <Route path="/" element={ui} />
           <Route path="/mundo/:slug" element={<p>Dentro del mundo</p>} />
+          <Route path="/mundo/:slug/explorar" element={<p>Caminando por la isla</p>} />
           <Route path="/mundo/:slug/quest/:questId" element={ui} />
         </Routes>
       </MemoryRouter>
@@ -31,24 +32,26 @@ describe('mapa explorable: ficha de isla', () => {
     expect(screen.queryByText(/Desembarcar/)).toBeNull()
   })
 
-  it('al atracar en un mundo abierto, la ficha deja desembarcar', () => {
+  it('al atracar en un mundo abierto, la ficha desembarca a pie en la isla', () => {
     renderConJuego(<IslandPanel />)
     act(() => setSnap({ nearby: 'isla-numerica' }))
     expect(screen.getByRole('heading', { name: /Isla Numérica/ })).toBeTruthy()
-    expect(screen.getByRole('link', { name: /Desembarcar/ }).getAttribute('href')).toBe('/mundo/isla-numerica')
+    expect(screen.getByRole('link', { name: /Desembarcar/ }).getAttribute('href')).toBe('/mundo/isla-numerica/explorar')
   })
 
   it('la tecla E desembarca', () => {
     renderConJuego(<IslandPanel />)
     act(() => setSnap({ nearby: 'isla-numerica' }))
     fireEvent.keyDown(window, { key: 'e' })
-    expect(screen.getByText('Dentro del mundo')).toBeTruthy()
+    expect(screen.getByText('Caminando por la isla')).toBeTruthy()
   })
 
   it('en un mundo cerrado ofrece el portal', () => {
     renderConJuego(<IslandPanel />)
     act(() => setSnap({ nearby: 'castillo-algebra' }))
     expect(screen.getByText(/Cerrado/)).toBeTruthy()
+    // Cerrado no se desembarca: se va a la vista que explica la puerta.
+    expect(screen.getByRole('link', { name: /Ver la puerta/ }).getAttribute('href')).toBe('/mundo/castillo-algebra')
     expect(screen.getByRole('link', { name: /Portal/ }).getAttribute('href')).toBe('/mundo/volcan-potencias/portal')
   })
 })

@@ -31,7 +31,8 @@ export default function Lighting({ escena }) {
   return (
     <>
       <ambientLight intensity={escena.ambiente} />
-      <hemisphereLight args={[escena.niebla, '#69634b', 0.6]} />
+      {/* Cielo arriba, tierra abajo: las caras en sombra toman color en vez de gris. */}
+      <hemisphereLight args={[escena.cielo.horizonte, '#5d6b3c', 0.7]} />
       <directionalLight
         ref={sol}
         castShadow

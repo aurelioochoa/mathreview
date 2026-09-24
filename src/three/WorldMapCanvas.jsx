@@ -14,35 +14,10 @@ import Ocean from './Ocean'
 import Clouds from './Clouds'
 import Paths from './Paths'
 import Boat from './Boat'
+import { useMoveKeys, inputAxes } from './useMoveKeys'
+import SkyDome from './SkyDome'
 
 const Effects = lazy(() => import('./Effects'))
-
-// Teclas de navegación → eje (x = derecha, y = adelante).
-const KEY_AXES = {
-  w: [0, 1], arrowup: [0, 1], s: [0, -1], arrowdown: [0, -1],
-  a: [-1, 0], arrowleft: [-1, 0], d: [1, 0], arrowright: [1, 0],
-}
-
-function useKeyboard() {
-  useEffect(() => {
-    const isField = (e) => ['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target?.tagName)
-    const down = (e) => {
-      if (isField(e) || e.metaKey || e.ctrlKey || e.altKey) return
-      const k = e.key.toLowerCase()
-      if (KEY_AXES[k]) { live.keys.add(k); e.preventDefault() }
-    }
-    const up = (e) => live.keys.delete(e.key.toLowerCase())
-    const blur = () => live.keys.clear()
-    window.addEventListener('keydown', down)
-    window.addEventListener('keyup', up)
-    window.addEventListener('blur', blur)
-    return () => {
-      window.removeEventListener('keydown', down)
-      window.removeEventListener('keyup', up)
-      window.removeEventListener('blur', blur)
-    }
-  }, [])
-}
 
 // Bucle de juego: lee la entrada, mueve el barco, decide qué isla tiene cerca
 // y si ha pescado una botella. Corre dentro del render loop de r3f.
@@ -50,8 +25,7 @@ function ExplorerLoop() {
   const acc = useRef(0)
   useFrame((_, delta) => {
     const dt = Math.min(delta, 0.05)
-    let ix = live.stick.x, iy = live.stick.y
-    for (const k of live.keys) { ix += KEY_AXES[k][0]; iy += KEY_AXES[k][1] }
+    const { ix, iy } = inputAxes(live)
     let dir = { x: 0, z: 0 }
     if (Math.abs(ix) > 0.05 || Math.abs(iy) > 0.05) {
       cancelAutopilot()
@@ -182,7 +156,7 @@ export default function WorldMapCanvas({ spin = true, recommended = null }) {
   const escena = escenaDe(resuelto)
   const [dpr, setDpr] = useState(1.5)
   const nearby = useExplorer(s => s.nearby)
-  useKeyboard()
+  useMoveKeys(live)
 
   // Guarda el barco al salir del mapa (p. ej. al entrar a un mundo) para
   // reaparecer en el mismo sitio al volver.
@@ -198,7 +172,8 @@ export default function WorldMapCanvas({ spin = true, recommended = null }) {
       style={{ width: '100%', height: '100%', touchAction: 'none' }}
     >
       <PerformanceMonitor onChange={({ factor }) => setDpr(Math.round((1 + factor) * 10) / 10)} />
-      <fog attach="fog" args={[escena.niebla, 22, 48]} />
+      <fog attach="fog" args={[escena.niebla, 24, 70]} />
+      <SkyDome cielo={escena.cielo} />
       <Lighting escena={escena} />
       <Ocean
         animate={spin}

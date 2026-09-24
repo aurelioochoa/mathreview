@@ -101,7 +101,7 @@ export default function WorldObject({ node, state, progress, spin, nearby, recom
     e.stopPropagation()
     if (e.delta > 6) return // fue un arrastre de cámara, no un clic
     if (proximamente) return
-    if (getSnap().nearby === node.id && node.target) navigate(node.target)
+    if (getSnap().nearby === node.id && node.target) navigate(locked ? node.target : `${node.target}/explorar`)
     else sailToIsland(node.id)
   }
 

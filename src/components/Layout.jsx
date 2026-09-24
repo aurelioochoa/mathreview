@@ -10,7 +10,8 @@ export default function Layout() {
   const { prev, next } = adjacentBlock(location.pathname)
   const onBlockPage = prev !== null || next !== null || location.pathname.startsWith('/bloque')
   // El mapa (home) es full-bleed: llena el viewport bajo el HUD, sin footer.
-  const isMap = location.pathname === '/'
+  // La exploración a pie también ocupa toda la pantalla, con el HUD flotando.
+  const isMap = location.pathname === '/' || location.pathname.endsWith('/explorar')
 
   return (
     <div className={isMap ? 'h-dvh relative overflow-hidden' : 'min-h-screen'}>

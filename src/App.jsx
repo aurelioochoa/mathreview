@@ -1,3 +1,4 @@
+import { lazy, Suspense } from 'react'
 import { Routes, Route, Navigate } from 'react-router-dom'
 import Layout from './components/Layout'
 import WorldMap from './pages/WorldMap'
@@ -13,6 +14,9 @@ import Profile from './pages/Profile'
 import NotFound from './components/NotFound'
 import { blockRoutes } from './content/worldMap'
 
+// La exploración a pie arrastra three.js: en su propio chunk.
+const WorldExplore = lazy(() => import('./pages/WorldExplore'))
+
 export default function App() {
   return (
     <Routes>
@@ -20,6 +24,7 @@ export default function App() {
         <Route path="/" element={<WorldMap />} />
         <Route path="/mundo/:slug" element={<WorldView />} />
         <Route path="/mundo/:slug/nivel/:levelId" element={<LevelPlayer />} />
+        <Route path="/mundo/:slug/explorar" element={<Suspense fallback={null}><WorldExplore /></Suspense>} />
         <Route path="/mundo/:slug/estudio" element={<StudyView />} />
         <Route path="/mundo/:slug/jefe" element={<BossArena />} />
         <Route path="/mundo/:slug/quest/:questId" element={<QuestPlayer />} />

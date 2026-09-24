@@ -29,16 +29,18 @@ export function IslandPanel() {
   const node = id ? byId[id] : null
   const st = node ? nodeState(node, state) : null
   const enterable = node && st !== 'coming-soon' && node.target
+  // Abierto: se desembarca a pie en la isla. Cerrado: a la vista que explica la puerta.
+  const destino = enterable ? (st === 'locked' ? node.target : `${node.target}/explorar`) : null
 
   useEffect(() => {
     if (!enterable) return undefined
     const onKey = (e) => {
       if (['INPUT', 'TEXTAREA'].includes(e.target?.tagName)) return
-      if (e.key === 'e' || e.key === 'E' || e.key === 'Enter') { e.preventDefault(); navigate(node.target) }
+      if (e.key === 'e' || e.key === 'E' || e.key === 'Enter') { e.preventDefault(); navigate(destino) }
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
-  }, [enterable, node, navigate])
+  }, [enterable, destino, navigate])
 
   if (!node) return null
   const progress = worldProgress(node, state)
@@ -70,7 +72,7 @@ export function IslandPanel() {
         {st === 'locked' && <p className="text-xs text-gray-500 mb-3">Derrota al jefe del mundo anterior para abrirlo, o demuestra que ya lo dominas en el portal.</p>}
         <div className="flex flex-wrap gap-2">
           {enterable && (
-            <Link to={node.target} className={`btn ${locked ? 'btn-ghost' : 'btn-green'} flex-1`}>
+            <Link to={destino} className={`btn ${locked ? 'btn-ghost' : 'btn-green'} flex-1`}>
               {locked ? 'Ver la puerta' : '⚓ Desembarcar'} <span className="tecla !bg-white/25 !text-white !border-white/40 !shadow-none">E</span>
             </Link>
           )}
@@ -180,8 +182,10 @@ export function ControlsHint() {
   )
 }
 
-// Joystick virtual para pantallas táctiles. Escribe en live.stick.
-export function Joystick() {
+// Joystick virtual para pantallas táctiles. Avisa del eje con `onMove` (por
+// defecto mueve el barco del mapa; la exploración a pie pasa el suyo).
+const moverBarco = (x, y) => { live.stick = { x, y } }
+export function Joystick({ onMove = moverBarco, label = 'Joystick para mover el barco' }) {
   const base = useRef(null)
   const [knob, setKnob] = useState({ x: 0, y: 0 })
   const active = useRef(null)
@@ -194,12 +198,12 @@ export function Joystick() {
     const d = Math.hypot(dx, dy)
     if (d > R) { dx = (dx / d) * R; dy = (dy / d) * R }
     setKnob({ x: dx, y: dy })
-    live.stick = { x: dx / R, y: -dy / R }
+    onMove(dx / R, -dy / R)
   }
   const end = () => {
     active.current = null
     setKnob({ x: 0, y: 0 })
-    live.stick = { x: 0, y: 0 }
+    onMove(0, 0)
   }
 
   return (
@@ -210,7 +214,7 @@ export function Joystick() {
       onPointerMove={(e) => { if (active.current === e.pointerId) update(e) }}
       onPointerUp={end}
       onPointerCancel={end}
-      aria-label="Joystick para mover el barco"
+      aria-label={label}
       role="application"
     >
       <div className="absolute left-1/2 top-1/2 w-12 h-12 -ml-6 -mt-6 rounded-full bg-gradient-to-b from-white to-indigo-100 border-2 border-indigo-200 shadow-[0_4px_0_rgba(49,46,129,0.35)]"
