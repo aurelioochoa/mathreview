@@ -17,7 +17,6 @@ const GRAVITY = -22
 const JUMP_V = 7.5
 
 const clamp = (v, a, b) => Math.min(b, Math.max(a, v))
-const smooth = (a, b, x) => { const t = clamp((x - a) / (b - a), 0, 1); return t * t * (3 - 2 * t) }
 
 export function hashSeed(str) {
   let h = 2166136261
@@ -33,19 +32,6 @@ export function rng(seed) {
     t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t
     return ((t ^ (t >>> 14)) >>> 0) / 4294967296
   }
-}
-
-// Altura del suelo: lomas suaves, una explanada en el centro para el
-// monumento del mundo, y la orilla que baja hasta perderse bajo el agua.
-export function groundHeight(x, z, seed = 0) {
-  const r = Math.hypot(x, z)
-  const s = (seed % 1000) / 100
-  const lomas = 0.55 * Math.sin(x * 0.23 + s) * Math.cos(z * 0.19 + s * 1.7)
-    + 0.3 * Math.sin((x + z) * 0.41 + s * 0.3)
-    + 0.15 * Math.cos(x * 0.7 - z * 0.5 + s)
-  const explanada = smooth(3.5, 6.5, r)
-  const orilla = -3.2 * smooth(SHORE_R - 1, SHORE_R + 3.5, r)
-  return (lomas + 0.35) * explanada * (1 - smooth(SHORE_R - 2, SHORE_R, r)) + orilla
 }
 
 // Posición polar: φ = 0 es el sur (+z, donde está el embarcadero y la cámara
@@ -114,7 +100,7 @@ export function obstaclesFor(stations, props) {
 
 // Árboles, arbustos y rocas: por semilla, lejos del monumento, del camino y de
 // las estaciones, y sin montarse entre ellos.
-export function propsFor(seed, stations, mix = ['pine', 'round', 'bush', 'rock']) {
+export function propsFor(seed, stations, mix = ['pine', 'round', 'bush', 'rock'], avoid = []) {
   const rand = rng(seed)
   const path = pathPoints(stations)
   const densePath = []
@@ -126,12 +112,15 @@ export function propsFor(seed, stations, mix = ['pine', 'round', 'bush', 'rock']
     const r = 4.6 + rand() * (WALK_R - 4.6)
     const a = rand() * Math.PI * 2
     const x = Math.sin(a) * r, z = Math.cos(a) * r
-    if (stations.some(s => Math.hypot(x - s.x, z - s.z) < 2.6)) continue
-    if (densePath.some(p => Math.hypot(x - p.x, z - p.z) < 1.4)) continue
+    // El embarcadero es donde se llega: despejado para que la cámara no
+    // empiece metida en un árbol. El camino, con margen para la cámara.
+    if (stations.some(s => Math.hypot(x - s.x, z - s.z) < (s.kind === 'dock' ? 5 : 2.6))) continue
+    if (densePath.some(p => Math.hypot(x - p.x, z - p.z) < 2)) continue
     if (props.some(p => Math.hypot(x - p.x, z - p.z) < 1.3)) continue
+    if (avoid.some(a => Math.hypot(x - a.x, z - a.z) < a.r)) continue
     const kind = mix[Math.floor(rand() * mix.length)]
     const scale = 0.8 + rand() * 0.8
-    props.push({ kind, x, z, scale, seed: rand(), solid: kind !== 'bush', r: kind === 'rock' ? 0.45 * scale : 0.3 })
+    props.push({ kind, x, z, scale, seed: rand(), solid: kind !== 'bush', r: kind === 'rock' ? 0.45 * scale : kind === 'crystal' ? 0.25 * scale : 0.3 })
   }
   return props
 }
@@ -193,18 +182,6 @@ export function spawnPoint(stations) {
   return { x: dock.x * 0.93, z: dock.z * 0.93, heading: Math.PI, speed: 0 }
 }
 
-// Ambientación por mundo: qué crece y de qué color es la hierba.
-export const AMBIENTE = {
-  mundo1: { mix: ['palm', 'palm', 'bush', 'rock', 'round'], hierba: '#ffffff' },
-  mundo2: { mix: ['round', 'round', 'bush', 'bush', 'pine'], hierba: '#fff6d6' },
-  mundo3: { mix: ['rock', 'rock', 'pine', 'bush'], hierba: '#d9c9b0' },
-  mundo4: { mix: ['pine', 'round', 'bush', 'rock'], hierba: '#ffffff' },
-  mundo5: { mix: ['bush', 'bush', 'round', 'rock'], hierba: '#e8f2ff' },
-  mundo6: { mix: ['pine', 'rock', 'bush'], hierba: '#eee8ff' },
-  mundo7: { mix: ['pine', 'pine', 'rock', 'rock'], hierba: '#f2f2ea' },
-  mundo8: { mix: ['round', 'bush', 'bush', 'palm'], hierba: '#fff0f6' },
-}
-
 export function sanitizeWalker(raw) {
   if (!raw || typeof raw !== 'object') return null
   const { x, z, heading } = raw
@@ -212,4 +189,32 @@ export function sanitizeWalker(raw) {
   const r = Math.hypot(x, z)
   const k = r > WALK_R ? WALK_R / r : 1
   return { x: x * k, z: z * k, heading, speed: 0 }
+}
+
+// Distancia horizontal libre desde el personaje hacia la cámara: si un árbol,
+// una roca o el monumento se cruzan, la cámara se acerca para no meterse
+// dentro. (tx, tz) es el personaje; (dx, dz), la dirección unitaria hacia la
+// cámara; `want`, la distancia que pidió el jugador con la rueda.
+export function cameraClear(tx, tz, dx, dz, want, blockers, pad = 0.35) {
+  let best = want
+  for (const b of blockers) {
+    const fx = tx - b.x, fz = tz - b.z
+    const c = fx * fx + fz * fz - b.r * b.r
+    if (c < 0) continue // el personaje está pegado a él: no cuenta
+    const bq = fx * dx + fz * dz
+    const disc = bq * bq - c
+    if (disc < 0) continue
+    const s = -bq - Math.sqrt(disc)
+    if (s > 0 && s < best + pad) best = Math.min(best, s - pad)
+  }
+  return Math.max(1.2, Math.min(want, best))
+}
+
+// Qué tapa la vista: copas de los árboles, rocas y lo que ya es obstáculo.
+export function cameraBlockers(props, obstacles) {
+  const out = obstacles.map(o => ({ x: o.x, z: o.z, r: o.r }))
+  for (const p of props) {
+    if (p.kind === 'pine' || p.kind === 'round' || p.kind === 'palm') out.push({ x: p.x, z: p.z, r: 0.75 * p.scale })
+  }
+  return out
 }

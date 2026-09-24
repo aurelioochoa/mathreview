@@ -138,6 +138,23 @@ const PINTORES = {
     const a = hex('#c9ced3'), b = hex('#eef1f3')
     return paint((u, v) => mix(a, b, n(u, v) * 0.5 + brush(u * 0.05, v) * 0.5)).canvas
   },
+  // Detalle neutro en grises: grano, briznas y guijarros. Se multiplica por el
+  // color de vértice del terreno, así sirve para cualquier bioma.
+  detalle() {
+    const n = fbm(91, 5, 4), fine = makeNoise(92, 96), peb = makeNoise(93, 40)
+    const { canvas, ctx } = paint((u, v) => {
+      let g = 205 + (n(u, v) - 0.5) * 60 + (fine(u, v) - 0.5) * 40
+      if (peb(u, v) > 0.83) g += 25
+      return [g, g, g]
+    })
+    const rand = mulberry32(94)
+    for (let i = 0; i < 700; i++) {
+      const x = rand() * SIZE, y = rand() * SIZE, l = 2 + rand() * 4
+      ctx.strokeStyle = rand() < 0.5 ? 'rgba(255,255,255,0.18)' : 'rgba(0,0,0,0.14)'
+      ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x + (rand() - 0.5) * 2, y - l); ctx.stroke()
+    }
+    return canvas
+  },
   // Normal map del agua: altura por ruido y normales por diferencias finitas.
   waterNormal() {
     const h = fbm(81, 4, 4)

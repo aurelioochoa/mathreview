@@ -10,39 +10,42 @@ import Lighting from '../lighting'
 import SkyDome from '../SkyDome'
 import Ocean from '../Ocean'
 import WorldModel from '../WorldModel'
-import { Pine, RoundTree, Palm, Bush, Rock } from '../Vegetation'
+import { Pine, RoundTree, Palm, Bush, Rock, DeadTree, Crystal } from '../Vegetation'
 import { useMoveKeys, inputAxes } from '../useMoveKeys'
 import { cameraRelative } from '../explorerLogic'
 import Character from './Character'
-import { groundHeight, stepWalker, stepVertical, nearestStation, pathPoints } from './walkLogic'
+import Rasgos from './Rasgos'
+import { Velero } from '../Boat'
+
+const cero = () => 0
+import { stepWalker, stepVertical, nearestStation, pathPoints, cameraClear, cameraBlockers } from './walkLogic'
 import { live, setWalkSnap, getWalkSnap, saveWalker, useWalk } from './walkStore'
 
 const Effects = lazy(() => import('../Effects'))
 const EXTRA = [' ', 'shift']
 
 // ——— Terreno ———
-function Terreno({ seed, tint }) {
+function Terreno({ terrain }) {
   const geo = useMemo(() => {
-    const g = new THREE.PlaneGeometry(50, 50, 150, 150)
+    const g = new THREE.PlaneGeometry(50, 50, 160, 160)
     g.rotateX(-Math.PI / 2)
     const p = g.attributes.position
     const col = new Float32Array(p.count * 3)
-    const hierba = new THREE.Color(tint), arena = new THREE.Color('#f3dfae'), sombra = new THREE.Color('#9fb58a')
-    const c = new THREE.Color()
     for (let i = 0; i < p.count; i++) {
       const x = p.getX(i), z = p.getZ(i)
-      const h = groundHeight(x, z, seed)
+      const h = terrain.height(x, z)
       p.setY(i, h)
-      const r = Math.hypot(x, z)
-      const playa = THREE.MathUtils.smoothstep(r, 16.2, 18)
-      c.copy(hierba).lerp(sombra, THREE.MathUtils.clamp(0.4 - h * 0.5, 0, 0.5)).lerp(arena, playa)
-      col.set([c.r, c.g, c.b], i * 3)
+      // Los colores del bioma están en sRGB; los atributos de color van en lineal.
+      const [r, gg, b] = terrain.color(x, z, h)
+      col.set([r ** 2.2, gg ** 2.2, b ** 2.2], i * 3)
     }
     g.setAttribute('color', new THREE.BufferAttribute(col, 3))
     g.computeVertexNormals()
     return g
-  }, [seed, tint])
-  const map = useMemo(() => texture('grass', 14), [])
+  }, [terrain])
+  // Textura de detalle en grises: el color lo pone el bioma (vértices) y la
+  // textura solo añade grano, así sirve igual para hierba, basalto o nieve.
+  const map = useMemo(() => texture('detalle', 16), [])
   useEffect(() => () => geo.dispose(), [geo])
   return (
     <mesh geometry={geo} receiveShadow>
@@ -52,7 +55,7 @@ function Terreno({ seed, tint }) {
 }
 
 // ——— Camino de losas ———
-function Camino({ points, seed }) {
+function Camino({ points, terrain }) {
   const losas = useMemo(() => {
     const curve = new THREE.CatmullRomCurve3(points.map(p => new THREE.Vector3(p.x, 0, p.z)), false, 'catmullrom', 0.3)
     const n = Math.floor(curve.getLength() / 0.9)
@@ -60,10 +63,10 @@ function Camino({ points, seed }) {
     for (let i = 0; i <= n; i++) {
       const p = curve.getPoint(i / n)
       if (Math.hypot(p.x, p.z) < 3.8) continue
-      out.push({ x: p.x, z: p.z, y: groundHeight(p.x, p.z, seed), rot: (i * 1.7) % 3, s: 0.34 + ((i * 7) % 5) * 0.03 })
+      out.push({ x: p.x, z: p.z, y: terrain.height(p.x, p.z), rot: (i * 1.7) % 3, s: 0.34 + ((i * 7) % 5) * 0.03 })
     }
     return out
-  }, [points, seed])
+  }, [points, terrain])
   const map = useMemo(() => texture('dirt', 1), [])
   return losas.map((l, i) => (
     <mesh key={i} position={[l.x, l.y + 0.03, l.z]} rotation={[0, l.rot, 0]} receiveShadow>
@@ -94,10 +97,10 @@ function Placa({ position, children, far = 36 }) {
 }
 
 // ——— Monumento del mundo: su diorama en grande sobre un pedestal ———
-function Monumento({ shape, color, seed }) {
+function Monumento({ shape, color, terrain }) {
   const rock = useMemo(() => texture('rock', 3), [])
   const bricks = useMemo(() => texture('bricks', 4), [])
-  const y = groundHeight(0, 0, seed)
+  const y = terrain.height(0, 0)
   return (
     <group position={[0, y, 0]}>
       <mesh position={[0, 0.35, 0]} castShadow receiveShadow>
@@ -116,10 +119,10 @@ function Monumento({ shape, color, seed }) {
 }
 
 // ——— Estación de nivel: pedestal con gema flotante ———
-function Estacion({ s, color, seed, nearby }) {
+function Estacion({ s, color, terrain, nearby }) {
   const gem = useRef()
   const bricks = useMemo(() => texture('bricks', 1), [])
-  const y = groundHeight(s.x, s.z, seed)
+  const y = terrain.height(s.x, s.z)
   const on = s.unlocked
   useFrame(({ clock }) => {
     if (!gem.current) return
@@ -180,9 +183,9 @@ function Antorcha({ position, on }) {
   )
 }
 
-function PuertaJefe({ s, seed }) {
+function PuertaJefe({ s, terrain }) {
   const bricks = useMemo(() => texture('bricks', 2), [])
-  const y = groundHeight(s.x, s.z, seed)
+  const y = terrain.height(s.x, s.z)
   const on = s.unlocked
   // Mira hacia el centro de la isla.
   const rot = Math.atan2(-s.x, -s.z)
@@ -230,12 +233,15 @@ function PuertaJefe({ s, seed }) {
 
 // ——— Personaje de sidequest ———
 const CAMISAS = ['#f59e0b', '#10b981', '#ec4899', '#0ea5e9']
-function Npc({ s, i, seed }) {
-  const y = groundHeight(s.x, s.z, seed)
+const PIELES_NPC = ['#d9a07a', '#8d5a3b', '#f1c7a3', '#b97a52']
+const PELOS_NPC = ['#1f1a17', '#c8923d', '#7a4b24', '#3b2616']
+function Npc({ s, i, terrain }) {
+  const y = terrain.height(s.x, s.z)
   const pos = useMemo(() => ({ x: s.x, y, z: s.z, heading: Math.atan2(-s.x, -s.z), speed: 0 }), [s.x, s.z, y])
   return (
     <group>
-      <Character state={() => pos} emoji={s.icon} shirt={CAMISAS[i % CAMISAS.length]} pants="#374151" scale={0.9} idle />
+      <Character state={() => pos} emoji={s.icon} shirt={CAMISAS[i % CAMISAS.length]} pants="#374151"
+        skin={PIELES_NPC[i % 4]} hair={PELOS_NPC[i % 4]} scale={0.95} idle backpack={false} />
       <Placa position={[s.x, y + 2.3, s.z]}>
         <div className={`rounded-2xl px-2.5 py-1 border-2 font-display font-bold text-[12px] shadow-[0_3px_0_rgba(30,27,75,0.25)] ${s.done ? 'bg-emerald-100 border-emerald-300 text-emerald-800' : 'bg-amber-300 border-amber-200 text-amber-950 animate-bounce'}`}>
           {s.done ? '✓' : '!'}
@@ -246,10 +252,10 @@ function Npc({ s, i, seed }) {
 }
 
 // ——— Embarcadero ———
-function Muelle({ s, seed }) {
+function Muelle({ s, terrain }) {
   const wood = useMemo(() => texture('wood', 2), [])
   const rot = Math.atan2(s.x, s.z)
-  const y = Math.max(groundHeight(s.x, s.z, seed), -0.4)
+  const y = Math.max(terrain.height(s.x, s.z), -0.4)
   return (
     <group position={[s.x, y, s.z]} rotation={[0, rot, 0]}>
       <mesh position={[0, 0.1, 1.6]} castShadow receiveShadow>
@@ -262,20 +268,9 @@ function Muelle({ s, seed }) {
           <meshStandardMaterial map={wood} color="#8a6a4a" />
         </mesh>
       )))}
-      {/* El barco del mapa, amarrado */}
-      <group position={[1.5, -0.62, 3.2]} rotation={[0, 0.3, 0]} scale={1.05}>
-        <mesh position={[0, 0.12, 0]} castShadow>
-          <boxGeometry args={[0.5, 0.24, 1]} />
-          <meshStandardMaterial map={wood} color="#c2410c" roughness={0.7} />
-        </mesh>
-        <mesh position={[0, 0.38, -0.2]} castShadow>
-          <boxGeometry args={[0.32, 0.26, 0.3]} />
-          <meshStandardMaterial color="#f8fafc" />
-        </mesh>
-        <mesh position={[0, 0.85, 0.15]} castShadow>
-          <boxGeometry args={[0.02, 0.7, 0.34]} />
-          <meshStandardMaterial color="#e0e7ff" />
-        </mesh>
+      {/* El velero del mapa, amarrado junto al muelle (a ras del agua) */}
+      <group position={[1.7, -0.85 - y, 3]} rotation={[0, 0.25, 0]} scale={1.5}>
+        <Velero speed={cero} />
       </group>
       <Placa position={[0, 1.4, 0.4]}>
         <div className="rounded-full px-2.5 py-1 border-2 bg-sky-100 border-sky-200 text-sky-900 font-display font-bold text-[12px]">⛵ Mapa</div>
@@ -285,29 +280,31 @@ function Muelle({ s, seed }) {
 }
 
 // ——— Vegetación ———
-function Vegetacion({ props, seed }) {
+function Vegetacion({ props, terrain }) {
   return props.map((p, i) => {
-    const pos = [p.x, groundHeight(p.x, p.z, seed) - 0.02, p.z]
+    const pos = [p.x, terrain.height(p.x, p.z) - 0.02, p.z]
     const k = { position: pos, seed: p.seed }
     switch (p.kind) {
       case 'pine': return <Pine {...k} key={i} scale={p.scale * 2.4} />
       case 'round': return <RoundTree {...k} key={i} scale={p.scale * 2.4} />
       case 'palm': return <Palm {...k} key={i} scale={p.scale * 2.6} />
       case 'bush': return <Bush {...k} key={i} scale={p.scale * 2.2} />
+      case 'deadtree': return <DeadTree {...k} key={i} scale={p.scale * 2.2} />
+      case 'crystal': return <Crystal {...k} key={i} scale={p.scale * 1.2} />
       default: return <Rock key={i} position={[pos[0], pos[1] + 0.1, pos[2]]} seed={p.seed} scale={p.scale * 0.5} />
     }
   })
 }
 
 // ——— Bucle: entrada → física → estación cercana ———
-function Bucle({ stations, obstacles, seed }) {
+function Bucle({ stations, obstacles, terrain }) {
   const acc = useRef(0)
   useFrame((_, delta) => {
     const dt = Math.min(delta, 0.05)
     const { ix, iy } = inputAxes(live)
     const dir = Math.abs(ix) > 0.05 || Math.abs(iy) > 0.05 ? cameraRelative(ix, iy, live.cameraYaw) : { x: 0, z: 0 }
     live.p = stepWalker(live.p, dir, dt, obstacles, live.keys.has('shift'))
-    const ground = groundHeight(live.p.x, live.p.z, seed)
+    const ground = terrain.height(live.p.x, live.p.z)
     const v = stepVertical(live.y, live.vy, ground, live.keys.has(' ') || live.jumpPad, dt)
     live.y = v.y; live.vy = v.vy; live.air = !v.onGround
     live.jumpPad = false
@@ -322,11 +319,19 @@ function Bucle({ stations, obstacles, seed }) {
 }
 
 // ——— Cámara en tercera persona ———
-function Camara() {
+function Camara({ terrain, blockers }) {
   const controls = useRef()
+  const recortada = useRef(null) // distancia que eligió el jugador, si la cámara está acercada
   useFrame(({ camera }, delta) => {
     const c = controls.current
     if (!c) return
+    // Si el fotograma anterior acercó la cámara por un obstáculo, se devuelve a
+    // la distancia elegida antes de que OrbitControls la tome como suya.
+    if (recortada.current) {
+      const off = camera.position.clone().sub(c.target).setLength(recortada.current)
+      camera.position.copy(c.target).add(off)
+      recortada.current = null
+    }
     const k = 1 - Math.exp(-Math.min(delta, 0.05) * 8)
     const gx = live.p.x, gy = live.y + 1.3, gz = live.p.z
     const nx = c.target.x + (gx - c.target.x) * k
@@ -338,20 +343,35 @@ function Camara() {
     c.target.set(nx, ny, nz)
     c.update()
     live.cameraYaw = Math.atan2(camera.position.x - c.target.x, camera.position.z - c.target.z)
+
+    // Colisión: acercar si algo se cruza, y nunca por debajo del suelo.
+    const off = camera.position.clone().sub(c.target)
+    const dist = off.length()
+    const hd = Math.hypot(off.x, off.z)
+    if (hd > 1e-3) {
+      const libre = cameraClear(c.target.x, c.target.z, off.x / hd, off.z / hd, hd, blockers)
+      if (libre < hd - 0.01) {
+        recortada.current = dist
+        camera.position.copy(c.target).add(off.multiplyScalar(libre / hd))
+      }
+    }
+    const suelo = terrain.height(camera.position.x, camera.position.z) + 0.45
+    if (camera.position.y < suelo) camera.position.y = suelo
   })
   return (
     <OrbitControls ref={controls} makeDefault enablePan={false} enableDamping dampingFactor={0.12}
-      minDistance={3.5} maxDistance={16} minPolarAngle={0.3} maxPolarAngle={1.45} rotateSpeed={0.6} />
+      minDistance={2.5} maxDistance={16} minPolarAngle={0.3} maxPolarAngle={1.45} rotateSpeed={0.6} />
   )
 }
 
-export default function WalkCanvas({ world, shape, color, stations, props, obstacles, seed, tint, avatar }) {
+export default function WalkCanvas({ world, shape, color, stations, props, obstacles, terrain, avatar }) {
   const { resuelto } = useTema()
   const escena = escenaDe(resuelto)
   const [dpr, setDpr] = useState(1.5)
   const nearby = useWalk(st => st.nearby)
   const navigate = useNavigate()
   const path = useMemo(() => pathPoints(stations), [stations])
+  const blockers = useMemo(() => cameraBlockers(props, obstacles), [props, obstacles])
   useMoveKeys(live, EXTRA)
 
   useEffect(() => () => saveWalker(world.slug), [world.slug])
@@ -373,19 +393,20 @@ export default function WalkCanvas({ world, shape, color, stations, props, obsta
       <SkyDome cielo={escena.cielo} radius={150} />
       <Lighting escena={escena} />
       <Ocean color={escena.oceano} size={[260, 260]} segments={[80, 80]} position={[0, -0.9, 0]} />
-      <Terreno seed={seed} tint={tint} />
-      <Camino points={path} seed={seed} />
-      <Monumento shape={shape} color={color} seed={seed} />
-      <Vegetacion props={props} seed={seed} />
+      <Terreno terrain={terrain} />
+      <Rasgos terrain={terrain} />
+      <Camino points={path} terrain={terrain} />
+      <Monumento shape={shape} color={color} terrain={terrain} />
+      <Vegetacion props={props} terrain={terrain} />
       {stations.map((s, i) => {
-        if (s.kind === 'level') return <group key={s.id} onClick={() => onClickStation(s)}><Estacion s={s} color={color} seed={seed} nearby={nearby === s.id} /></group>
-        if (s.kind === 'boss') return <group key={s.id} onClick={() => onClickStation(s)}><PuertaJefe s={s} seed={seed} /></group>
-        if (s.kind === 'quest') return <group key={s.id} onClick={() => onClickStation(s)}><Npc s={s} i={i} seed={seed} /></group>
-        return <Muelle key={s.id} s={s} seed={seed} />
+        if (s.kind === 'level') return <group key={s.id} onClick={() => onClickStation(s)}><Estacion s={s} color={color} terrain={terrain} nearby={nearby === s.id} /></group>
+        if (s.kind === 'boss') return <group key={s.id} onClick={() => onClickStation(s)}><PuertaJefe s={s} terrain={terrain} /></group>
+        if (s.kind === 'quest') return <group key={s.id} onClick={() => onClickStation(s)}><Npc s={s} i={i} terrain={terrain} /></group>
+        return <Muelle key={s.id} s={s} terrain={terrain} />
       })}
       <Character state={() => ({ x: live.p.x, y: live.y, z: live.p.z, heading: live.p.heading, speed: live.p.speed, air: live.air })} emoji={avatar} />
-      <Bucle stations={stations} obstacles={obstacles} seed={seed} />
-      <Camara />
+      <Bucle stations={stations} obstacles={obstacles} terrain={terrain} />
+      <Camara terrain={terrain} blockers={blockers} />
       <Suspense fallback={null}><Effects bloom={0.45} /></Suspense>
     </Canvas>
   )

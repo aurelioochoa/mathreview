@@ -8,7 +8,8 @@ import { findItem } from '../content/shop'
 import { useGame } from '../state/gameStore'
 import { setVistaMundo } from '../state/vistaMundo'
 import { useDeviceTier } from '../three/useDeviceTier'
-import { layoutFor, propsFor, obstaclesFor, spawnPoint, hashSeed, AMBIENTE, WALK_R } from '../three/walk/walkLogic'
+import { layoutFor, propsFor, obstaclesFor, spawnPoint, hashSeed, WALK_R } from '../three/walk/walkLogic'
+import { makeTerrain, biomaDe } from '../three/walk/biomes'
 import { live, initWalker, useWalk } from '../three/walk/walkStore'
 import { Joystick } from '../components/map/MapOverlays'
 import useCoarsePointer from '../components/map/useCoarsePointer'
@@ -119,12 +120,12 @@ function Exploracion({ world }) {
   const node = worldMapNodes.find(n => n.id === world.slug)
   const color = worldHex(world.slug)
   const seed = hashSeed(world.slug)
-  const amb = AMBIENTE[world.id] ?? AMBIENTE.mundo4
   const stations = useMemo(() => layoutFor(world, quests, state), [world, quests, state])
-  // La vegetación depende solo de las posiciones, no del progreso: así no se
-  // replanta el bosque cada vez que cambia la partida.
-  const props = useMemo(() => propsFor(seed, layoutFor(world, quests, {}), amb.mix), [seed, world, quests, amb])
-  const obstacles = useMemo(() => obstaclesFor(stations, props), [stations, props])
+  // El terreno y la vegetación dependen solo de las posiciones, no del
+  // progreso: así no se rehace la isla cada vez que cambia la partida.
+  const terrain = useMemo(() => makeTerrain(biomaDe(world.slug), seed, layoutFor(world, quests, {})), [world, quests, seed])
+  const props = useMemo(() => propsFor(seed, layoutFor(world, quests, {}), terrain.bioma.mix, terrain.avoid), [seed, world, quests, terrain])
+  const obstacles = useMemo(() => [...obstaclesFor(stations, props), ...terrain.obstacles], [stations, props, terrain])
   const avatar = findItem(state.cosmetics?.avatar)?.emoji ?? '🙂'
   useState(() => initWalker(world.slug, spawnPoint(stations)))
   useEffect(() => setVistaMundo('pie'), [])
@@ -136,7 +137,7 @@ function Exploracion({ world }) {
       <div className="absolute inset-0" aria-hidden="true">
         <Suspense fallback={<div className="h-full grid place-items-center font-display font-bold text-sky-900/70"><span><span className="text-5xl block text-center flotar">🚶</span>Desembarcando…</span></div>}>
           <WalkCanvas world={world} shape={node?.shape} color={color} stations={stations} props={props}
-            obstacles={obstacles} seed={seed} tint={amb.hierba} avatar={avatar} />
+            obstacles={obstacles} terrain={terrain} avatar={avatar} />
         </Suspense>
       </div>
 
@@ -145,6 +146,7 @@ function Exploracion({ world }) {
           <div className="panel !rounded-2xl px-3 py-2 pointer-events-auto" style={{ '--mundo': color }}>
             <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400">Explorando</p>
             <p className="font-display font-extrabold leading-tight">{world.emoji} {world.name}</p>
+            <p className="text-[11px] text-gray-500">{terrain.bioma.nombre}</p>
             <div className="flex gap-1.5 mt-2">
               <Link to="/" className="btn btn-sky btn-sm !px-2.5" title="Volver al mapa"><MapIcon size={14} /> Mapa</Link>
               <Link to={`/mundo/${world.slug}`} className="btn btn-ghost btn-sm !px-2.5" title="Ver la lista de niveles"><List size={14} /> Lista</Link>

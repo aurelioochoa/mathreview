@@ -155,3 +155,42 @@ export function Rock({ position, scale = 1, seed = 1, color = '#a39a8e' }) {
     </mesh>
   )
 }
+
+// Árbol seco (volcán): tronco retorcido y ramas desnudas.
+export function DeadTree({ position, scale = 1, seed = 1 }) {
+  const wood = useWood()
+  const ramas = useMemo(() => {
+    const r = rng(seed)
+    return Array.from({ length: 4 }, () => ({ y: 0.35 + r() * 0.35, a: r() * 6.28, t: 0.6 + r() * 0.4, l: 0.2 + r() * 0.2 }))
+  }, [seed])
+  return (
+    <group position={position} scale={scale} rotation={[0, seed * 9, 0.08]}>
+      <mesh position={[0, 0.35, 0]} castShadow>
+        <cylinderGeometry args={[0.03, 0.07, 0.7, 6]} />
+        <meshStandardMaterial map={wood} color="#4a3b33" roughness={1} />
+      </mesh>
+      {ramas.map((b, i) => (
+        <group key={i} position={[0, b.y, 0]} rotation={[0, b.a, b.t]}>
+          <mesh position={[0, b.l / 2, 0]} castShadow>
+            <cylinderGeometry args={[0.008, 0.025, b.l, 5]} />
+            <meshStandardMaterial map={wood} color="#4a3b33" roughness={1} />
+          </mesh>
+        </group>
+      ))}
+    </group>
+  )
+}
+
+// Cristal suelto (suelo lunar).
+export function Crystal({ position, scale = 1, seed = 1 }) {
+  return (
+    <group position={position} scale={scale} rotation={[0, seed * 7, 0]}>
+      {[[0, 0.3, 0, 0.12, 0.6, 0], [0.1, 0.2, 0.04, 0.08, 0.4, 0.4]].map(([x, y, z, r, h, t], i) => (
+        <mesh key={i} position={[x, y, z]} rotation={[0, 0, t]} castShadow>
+          <cylinderGeometry args={[0, r, h, 6]} />
+          <meshPhysicalMaterial color="#a5f3fc" emissive="#0891b2" emissiveIntensity={0.7} roughness={0.1} clearcoat={1} />
+        </mesh>
+      ))}
+    </group>
+  )
+}

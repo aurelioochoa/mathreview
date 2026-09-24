@@ -2,9 +2,9 @@ import { describe, it, expect } from 'vitest'
 import { worlds, findWorld } from '../../content/worlds'
 import { questsForWorld } from '../../content/quests'
 import {
-  layoutFor, propsFor, obstaclesFor, pathPoints, groundHeight, stepWalker, stepVertical,
-  nearestStation, spawnPoint, sanitizeWalker, hashSeed, AMBIENTE,
-  WALK_R, SHORE_R, PLAYER_R, WALK_SPEED, RUN_SPEED, NEAR,
+  layoutFor, propsFor, obstaclesFor, pathPoints, stepWalker, stepVertical,
+  nearestStation, spawnPoint, sanitizeWalker, hashSeed, cameraClear, cameraBlockers,
+  WALK_R, PLAYER_R, WALK_SPEED, RUN_SPEED, NEAR,
 } from '../walk/walkLogic'
 
 const vacio = { completedLevels: [], stars: {}, bossDefeats: [], questsCompleted: [] }
@@ -17,7 +17,6 @@ describe('exploración a pie: distribución de la isla', () => {
       expect(st.filter(s => s.kind === 'boss')).toHaveLength(1)
       expect(st.filter(s => s.kind === 'dock')).toHaveLength(1)
       expect(st.filter(s => s.kind === 'quest').length).toBe(Math.min(4, questsForWorld(w.id).length))
-      expect(AMBIENTE[w.id], `ambiente de ${w.id}`).toBeTruthy()
     }
   })
 
@@ -76,17 +75,6 @@ describe('exploración a pie: distribución de la isla', () => {
   })
 })
 
-describe('exploración a pie: relieve', () => {
-  it('explanada en el centro, tierra firme en el anillo y agua más allá de la orilla', () => {
-    const seed = hashSeed('isla-numerica')
-    expect(Math.abs(groundHeight(0, 0, seed) - groundHeight(1, 1, seed))).toBeLessThan(0.05)
-    for (let a = 0; a < 6.28; a += 0.5) {
-      expect(groundHeight(Math.sin(a) * 10, Math.cos(a) * 10, seed)).toBeGreaterThan(-0.9)
-      expect(groundHeight(Math.sin(a) * (SHORE_R + 4), Math.cos(a) * (SHORE_R + 4), seed)).toBeLessThan(-0.9)
-    }
-  })
-})
-
 describe('exploración a pie: movimiento', () => {
   const w = findWorld('isla-numerica')
   const st = layoutFor(w, questsForWorld(w.id), vacio)
@@ -138,5 +126,37 @@ describe('exploración a pie: movimiento', () => {
     expect(sanitizeWalker({ x: 1, z: 'a', heading: 0 })).toBeNull()
     const s = sanitizeWalker({ x: 100, z: 0, heading: 1 })
     expect(s.x).toBeCloseTo(WALK_R)
+  })
+})
+
+describe('exploración a pie: cámara', () => {
+  it('sin nada en medio, la cámara se queda donde la puso el jugador', () => {
+    expect(cameraClear(0, 0, 0, 1, 8, [])).toBe(8)
+  })
+
+  it('un árbol entre el personaje y la cámara la acerca por delante del árbol', () => {
+    const d = cameraClear(0, 0, 0, 1, 8, [{ x: 0, z: 4, r: 1 }])
+    expect(d).toBeLessThan(3)
+    expect(d).toBeGreaterThanOrEqual(1.2)
+  })
+
+  it('lo que está detrás de la cámara o a un lado no cuenta', () => {
+    expect(cameraClear(0, 0, 0, 1, 8, [{ x: 0, z: 12, r: 1 }])).toBe(8)
+    expect(cameraClear(0, 0, 0, 1, 8, [{ x: 4, z: 4, r: 1 }])).toBe(8)
+  })
+
+  it('las copas de los árboles tapan; los arbustos no', () => {
+    const b = cameraBlockers([{ kind: 'pine', x: 1, z: 1, scale: 1 }, { kind: 'bush', x: 2, z: 2, scale: 1 }], [])
+    expect(b).toHaveLength(1)
+  })
+
+  it('el embarcadero, donde se llega, queda despejado de árboles', () => {
+    for (const w of worlds) {
+      const st = layoutFor(w, questsForWorld(w.id), vacio)
+      const dock = st.find(s => s.kind === 'dock')
+      for (const p of propsFor(hashSeed(w.slug), st)) {
+        expect(Math.hypot(p.x - dock.x, p.z - dock.z), w.slug).toBeGreaterThanOrEqual(5)
+      }
+    }
   })
 })
