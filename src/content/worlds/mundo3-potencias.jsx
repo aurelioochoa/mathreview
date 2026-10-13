@@ -31,7 +31,7 @@ export function raizCuadradaMinecraft() {
     options: opts,
     correctAnswer: 0,
     hint: `√${area} = ? Busca el número que multiplicado por sí mismo da ${area}`,
-    reminder: 'La raíz cuadrada es la inversa del cuadrado: si x² = a, entonces √a = x',
+    reminder: 'Para x ≥ 0, si x² = a entonces √a = x. El símbolo √ elige la raíz no negativa.',
   }
 }
 
@@ -70,7 +70,7 @@ export const mundo3 = {
         factories: [
           staticQuestion({ question: 'Spotify dice que tu canción favorita tiene 2,450,890 reproducciones. Si la aproximas a 2 decimales usando millones, ¿qué valor es correcto?', options: ['2.4 millones', '2.45 millones', '2.5 millones', '2.0 millones'], correctAnswer: 1, hint: 'Mira el tercer decimal después de convertir a millones', reminder: 'Para redondear a 2 decimales, revisas el tercero. Si es 5 o más, subes el anterior.' }),
           staticQuestion({ question: 'Tienes 899 Robux. Si truncas a centenas (no redondeas), ¿cuántos tienes?', options: ['900 Robux', '800 Robux', '899 Robux', '1000 Robux'], correctAnswer: 1, hint: 'Truncar es cortar sin redondear. Solo eliminas lo sobrante.', reminder: 'Truncar = cortar los dígitos sobrantes sin modificar el anterior.' }),
-          staticQuestion({ question: 'Tu K/D ratio es 2.447. El juego lo muestra como 2.4. ¿Qué operación hizo?', options: ['Redondeó a 1 decimal', 'Truncó a 1 decimal', 'Redondeó a enteros', 'Truncó a enteros'], correctAnswer: 1, hint: 'Si fuera redondeo sería 2.5, porque 4≥5? No, 4<5', reminder: 'Truncar a 1 decimal de 2.447 da 2.4. Redondear daría 2.4 también... aquí ambos coinciden, pero truncar siempre corta.' }),
+          staticQuestion({ question: 'Tu K/D ratio es 2.467. El juego lo muestra como 2.4. ¿Qué operación hizo?', options: ['Redondeó a 1 decimal', 'Truncó a 1 decimal', 'Redondeó a enteros', 'Truncó a enteros'], correctAnswer: 1, hint: 'Al redondear a 1 decimal, el siguiente dígito es 6: daría 2.5. Truncar solo corta.', reminder: 'Truncar 2.467 a 1 decimal da 2.4; redondear da 2.5, porque el siguiente dígito es 6.' }),
         ],
       },
     },
@@ -92,6 +92,7 @@ export const mundo3 = {
             <div className="bg-surface rounded p-2"><MathTex expr={"(a \\cdot b)^n = a^n \\cdot b^n"} /></div>
           </div>
         </> },
+        { type: 'widget', widgetId: 'concept-powers', title: 'Una potencia crece por pasos' },
         { type: 'mistakes', items: [
           'Pensar que exponente negativo da resultado negativo: 2⁻³ = 1/8, NO -8.',
           'Confundir a⁰ con 0: cualquier número (excepto 0) a la 0 es 1.',
@@ -105,7 +106,7 @@ export const mundo3 = {
           potenciaDanio,   // ← parametrizada
           staticQuestion({ question: 'En Free Fire, tu arma hace 50 de daño base. Con un potenciador de nivel 3 (×2³), ¿cuánto daño haces ahora?', options: ['100', '150', '200', '400'], correctAnswer: 3, hint: '2³ = 2 × 2 × 2 = 8. Luego 50 × 8', reminder: 'Potencia = multiplicación repetida. aⁿ = a multiplicado n veces.' }),
           staticQuestion({ question: '¿Cuánto vale 5⁰?', options: ['0', '1', '5', 'No se puede'], correctAnswer: 1, hint: 'Cualquier número (excepto 0) elevado a la 0 es 1', reminder: 'a⁰ = 1 siempre, para cualquier a ≠ 0.' }),
-          staticQuestion({ question: '¿Cuál es el resultado de 2⁻³?', options: ['-8', '-6', '1/8', '0.125'], correctAnswer: 2, hint: 'Exponente negativo = 1 dividido por la potencia positiva', reminder: 'a⁻ⁿ = 1/aⁿ. El exponente negativo NO hace negativo el resultado.' }),
+          staticQuestion({ question: '¿Cuál es el resultado de 2⁻³?', options: ['-8', '-6', '1/8', '8'], correctAnswer: 2, hint: 'Exponente negativo = 1 dividido por la potencia positiva', reminder: 'a⁻ⁿ = 1/aⁿ. El exponente negativo NO hace negativo el resultado.' }),
         ],
       },
     },
@@ -151,14 +152,15 @@ export const mundo3 = {
       briefing: [
         { type: 'why', body: <>Si tu terreno cuadrado en Minecraft mide 144 bloques², ¿cuánto mide cada lado? √144 = 12. Las raíces son esenciales para entender áreas, volúmenes y hasta la distancia más corta entre dos puntos (Pitágoras).</> },
         { type: 'content', body: <>
-          <p className="text-sm text-gray-600 mb-2">La <GlossaryTerm term="Radicación" definition="Operación inversa de la potenciación. Si bⁿ = a, entonces ⁿ√a = b">radicación</GlossaryTerm> es la operación inversa de la potenciación. Si potenciar es "¿cuánto da 3 elevado a 2?" (9), la raíz pregunta "¿qué número elevado a 2 da 9?" (3).</p>
+          <p className="text-sm text-gray-600 mb-2">La <GlossaryTerm term="Radicación" definition="Busca el número cuya potencia n es a. Si n es par, el símbolo radical elige la raíz no negativa.">radicación</GlossaryTerm> es la operación inversa de la potenciación. Si potenciar es "¿cuánto da 3 elevado a 2?" (9), la raíz pregunta "¿qué número elevado a 2 da 9?" (3).</p>
           <div className="text-center my-2">
             <MathTex expr={"\\sqrt[n]{a} = b \\quad \\Leftrightarrow \\quad b^n = a"} display />
+            <p className="text-xs text-gray-600">n es un entero mayor que 1. Si n es par, a y b deben ser no negativos: √9 = 3, aunque (−3)² también sea 9. Si n es impar, puede haber una raíz negativa.</p>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm">
             <div className="bg-surface rounded p-2"><MathTex expr={"\\sqrt[n]{a \\cdot b} = \\sqrt[n]{a} \\cdot \\sqrt[n]{b}"} /></div>
             <div className="bg-surface rounded p-2"><MathTex expr={"\\sqrt[n]{\\frac{a}{b}} = \\frac{\\sqrt[n]{a}}{\\sqrt[n]{b}}"} /></div>
-            <div className="bg-surface rounded p-2"><MathTex expr={"\\sqrt[n]{a^m} = a^{m/n}"} /></div>
+            <div className="bg-surface rounded p-2"><MathTex expr={"\\sqrt[n]{a^m} = a^{m/n}"} /><p className="text-xs text-gray-600 mt-1">En estas propiedades usamos radicandos no negativos, índices enteros mayores que 1 y denominadores distintos de cero.</p></div>
             <div className="bg-surface rounded p-2"><MathTex expr={"\\sqrt[m]{\\sqrt[n]{a}} = \\sqrt[m \\cdot n]{a}"} /></div>
           </div>
         </> },
@@ -174,7 +176,7 @@ export const mundo3 = {
         factories: [
           raizCuadradaMinecraft,   // ← parametrizada
           // ⬇️ copiadas literalmente de RadicacionSection (Bloque1.jsx)
-          staticQuestion({ question: 'Tu base cuadrada en Minecraft mide 144 bloques². ¿Cuántos bloques mide cada lado?', options: ['12', '72', '24', '144'], correctAnswer: 0, hint: '√144 = ? Busca el número que multiplicado por sí mismo da 144', reminder: 'La raíz cuadrada es la inversa del cuadrado: si x² = a, entonces √a = x' }),
+          staticQuestion({ question: 'Tu base cuadrada en Minecraft mide 144 bloques². ¿Cuántos bloques mide cada lado?', options: ['12', '72', '24', '144'], correctAnswer: 0, hint: '√144 = ? Busca el número que multiplicado por sí mismo da 144', reminder: 'Para x ≥ 0, si x² = a entonces √a = x. El símbolo √ elige la raíz no negativa.' }),
           staticQuestion({ question: 'Si un cubo tiene volumen de 27 unidades³, ¿cuánto mide su arista?', options: ['3', '9', '6', '27'], correctAnswer: 0, hint: '³√27 = ? Busca el número que multiplicado 3 veces da 27', reminder: '³√a = b significa que b³ = a' }),
           staticQuestion({ question: '¿Cuál es el valor de √(9 + 16)?', options: ['5', '7', '25', '3 + 4 = 7'], correctAnswer: 0, hint: '√(25) = 5. ¡No es √9 + √16!', reminder: '√(a+b) ≠ √a + √b. La raíz NO se distribuye sobre sumas.' }),
         ],

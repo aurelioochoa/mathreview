@@ -86,11 +86,12 @@ export const mundo6 = {
             <p className="font-semibold mb-2">Dominio y recorrido:</p>
             <ul className="list-disc pl-5 text-sm space-y-1">
               <li><strong>Dominio</strong>: todos los valores que puede tomar x → <MathTex expr={"D = \\mathbb{R} = (-\\infty, +\\infty)"} /></li>
-              <li><strong>Recorrido</strong> (o rango): todos los valores que puede dar f(x) → <MathTex expr={"R = \\mathbb{R} = (-\\infty, +\\infty)"} /></li>
+              <li><strong>Recorrido</strong> (o rango): si m ≠ 0 y x puede ser cualquier real, <MathTex expr={"R = \\mathbb{R}"} />. Si m = 0, la función es constante: <MathTex expr={"R = \\{b\\}"} />.</li>
             </ul>
             <p className="text-xs text-gray-500 mt-1">Piensa en el dominio como "las preguntas que puedes hacer" y el recorrido como "las respuestas posibles".</p>
           </div>
         </> },
+        { type: 'widget', widgetId: 'concept-functions', title: 'Una máquina, una tabla y una recta' },
         { type: 'mistakes', items: [
           'Confundir pendiente con ordenada al origen: m es la inclinación, b es el corte con Y.',
           'Pensar que m = 0 significa que no hay recta — no, significa que es horizontal.',

@@ -43,6 +43,7 @@ export default function PendienteOrdenada() {
       <div className="mt-3 text-sm text-center text-gray-600">
         <p>Corte con eje Y: <strong>(0, {b})</strong></p>
         {m !== 0 && <p>Corte con eje X: <strong>({(-b / m).toFixed(2)}, 0)</strong></p>}
+        <p aria-live="polite" className="mt-2">{m === 0 ? `Función constante: recorrido {${b}}. Todas las entradas dan ${b}.` : 'Con dominio real y pendiente distinta de cero, el recorrido es todos los reales.'}</p>
       </div>
     </div>
   )

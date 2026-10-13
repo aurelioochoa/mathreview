@@ -364,12 +364,14 @@ export const mundo8 = {
         { type: 'content', body: <>
           <p className="text-sm text-gray-600 mb-2">La <GlossaryTerm term="Probabilidad" definition="Medida de qué tan posible es un evento, entre 0 (imposible) y 1 (seguro)">probabilidad</GlossaryTerm> de un evento es:</p>
           <MathTex expr={"P(\\text{evento}) = \\dfrac{\\text{casos favorables}}{\\text{casos posibles}}"} display />
+          <p className="text-xs text-gray-600 mt-2">Esta fórmula de conteo supone que todos los resultados posibles tienen la misma probabilidad.</p>
           <ul className="list-disc pl-5 space-y-1 text-sm mt-2">
             <li>El <strong>espacio muestral</strong> son todos los resultados posibles.</li>
             <li><strong>Complemento:</strong> <MathTex expr={"P(\\text{no } A) = 1 - P(A)"} />.</li>
             <li><strong>Independientes</strong> (una tirada no afecta a la otra): <MathTex expr={"P(A \\text{ y } B) = P(A)\\times P(B)"} />.</li>
           </ul>
         </> },
+        { type: 'widget', widgetId: 'concept-probability', title: 'El mapa de todos los resultados' },
         { type: 'mistakes', items: [
           'Invertir la fracción: es favorables/posibles, no posibles/favorables.',
           'Sumar probabilidades de eventos independientes en vez de multiplicarlas.',

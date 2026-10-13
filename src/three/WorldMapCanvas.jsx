@@ -1,7 +1,7 @@
 import { lazy, Suspense, useState } from 'react'
 import { Canvas } from '@react-three/fiber'
 import { PerformanceMonitor } from '@react-three/drei'
-import { worldMapNodes, nodeState, worldProgress } from '../content/worldMap'
+import { worldMapNodes, nodeState } from '../content/worldMap'
 import { useGame } from '../state/gameStore'
 import { useTema } from '../state/theme'
 import { escenaDe } from './sceneTheme'
@@ -13,7 +13,7 @@ import Paths from './Paths'
 
 const Effects = lazy(() => import('./Effects'))
 
-export default function WorldMapCanvas({ spin = true }) {
+export default function WorldMapCanvas({ spin = true, selectedId, onPreview }) {
   const { state } = useGame()
   const { resuelto } = useTema()
   const escena = escenaDe(resuelto)
@@ -34,12 +34,14 @@ export default function WorldMapCanvas({ spin = true }) {
       <Ocean animate={spin} color={escena.oceano} />
       <Clouds animate={spin} />
       <Paths />
-      {worldMapNodes.map((node) => (
+      {worldMapNodes.map((node, index) => (
         <WorldObject
           key={node.id}
           node={node}
           state={nodeState(node, state)}
-          progress={worldProgress(node, state)}
+          number={index + 1}
+          selected={selectedId === node.id}
+          onPreview={onPreview}
           spin={spin}
         />
       ))}

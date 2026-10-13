@@ -23,6 +23,10 @@ describe('persistence', () => {
   it('devuelve null sin partida guardada', () => {
     expect(loadSave()).toBeNull()
   })
+  it('arranca sin guardado si el navegador bloquea las lecturas de localStorage', () => {
+    globalThis.localStorage.getItem = () => { throw new DOMException('blocked', 'SecurityError') }
+    expect(loadSave()).toBeNull()
+  })
   it('guarda y carga ida y vuelta (v1 se migra a v2 al leer)', () => {
     persistSave({ version: 1, xp: 50 })
     expect(loadSave()).toEqual({ ...defaultState(), xp: 50 })
@@ -108,6 +112,10 @@ describe('instantánea previa a importar', () => {
   beforeEach(() => localStorage.clear())
 
   it('sin instantánea guardada, devuelve null', () => {
+    expect(loadPreImportSnapshot()).toBeNull()
+  })
+  it('no ofrece deshacer si el navegador bloquea las lecturas de localStorage', () => {
+    globalThis.localStorage.getItem = () => { throw new DOMException('blocked', 'SecurityError') }
     expect(loadPreImportSnapshot()).toBeNull()
   })
 

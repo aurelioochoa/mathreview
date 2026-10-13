@@ -13,40 +13,7 @@ const THEME_HEX = {
   'world-isla': '#14b8a6', 'world-reino': '#eab308',
 }
 
-// Tarjeta de info anclada (DOM). Solo datos reales: progreso únicamente en
-// mundos jugables (worldProgress); nada de métricas falsas en los de estudio.
-function InfoCard({ node, state, progress, hovered, locked }) {
-  return (
-    <div
-      className={`pointer-events-none select-none rounded-2xl px-3 py-2 shadow-lg border transition-transform whitespace-nowrap ${
-        locked ? 'bg-gray-100/90 border-gray-200' : 'bg-surface/95 border-white'
-      } ${hovered && !locked ? 'scale-110' : ''}`}
-    >
-      <div className={`font-display font-bold text-sm leading-tight ${locked ? 'text-gray-500' : 'text-gray-800'}`}>
-        {node.emoji} {node.title}
-      </div>
-      {state === 'coming-soon' && <div className="text-[11px] font-semibold text-gray-400 mt-0.5">🔒 Próximamente</div>}
-      {state === 'locked' && <div className="text-[11px] font-semibold text-gray-400 mt-0.5">🔒 Derrota al jefe anterior</div>}
-      {state === 'completed' && <div className="text-[11px] font-bold text-emerald-600 mt-0.5">✔ Completado</div>}
-      {progress && (
-        <div className="mt-1">
-          <div className="flex items-center justify-between gap-3 text-[11px] font-bold">
-            <span className="text-amber-500">⭐ {progress.stars}/{progress.totalStars}</span>
-            <span className="text-gray-500">{progress.pct}%</span>
-          </div>
-          <div className="mt-1 h-1.5 w-32 rounded-full bg-gray-200 overflow-hidden">
-            <div
-              className="h-full rounded-full bg-gradient-to-r from-emerald-400 to-emerald-500"
-              style={{ width: `${progress.pct}%` }}
-            />
-          </div>
-        </div>
-      )}
-    </div>
-  )
-}
-
-export default function WorldObject({ node, state, progress, spin }) {
+export default function WorldObject({ node, state, spin, number, selected, onPreview }) {
   const navigate = useNavigate()
   const [hovered, setHovered] = useState(false)
   const groupRef = useRef()
@@ -55,7 +22,7 @@ export default function WorldObject({ node, state, progress, spin }) {
   // WorldView explica la puerta y ofrece el portal.
   const proximamente = state === 'coming-soon'
   const locked = proximamente || state === 'locked'
-  useCursor(hovered && !locked)
+  useCursor(hovered && !proximamente)
   const color = THEME_HEX[node.theme] ?? '#6366f1'
 
   useFrame((_, delta) => {
@@ -67,8 +34,12 @@ export default function WorldObject({ node, state, progress, spin }) {
   return (
     <group position={node.position}>
       <group
-        onClick={go}
-        onPointerOver={() => setHovered(true)}
+        onClick={(event) => { event.stopPropagation(); go() }}
+        onPointerOver={(event) => {
+          event.stopPropagation()
+          setHovered(true)
+          onPreview(node.id)
+        }}
         onPointerOut={() => setHovered(false)}
       >
         {/* Isla de terreno low-poly */}
@@ -80,9 +51,25 @@ export default function WorldObject({ node, state, progress, spin }) {
           </group>
         </Float>
       </group>
-      {/* Tarjeta DOM anclada en 3D (no usa <Text> de drei → no baja fuente) */}
+      {/* Marcador compacto. Los detalles viven en un único panel fuera del canvas. */}
       <Html center distanceFactor={10} position={[0, 2.45, 0]} zIndexRange={[40, 0]}>
-        <InfoCard node={node} state={state} progress={progress} hovered={hovered} locked={locked} />
+        <button
+          type="button"
+          aria-label={`Ver ${node.title}`}
+          aria-pressed={selected}
+          title={node.title}
+          onPointerEnter={() => onPreview(node.id)}
+          onFocus={() => onPreview(node.id)}
+          onClick={(event) => { event.stopPropagation(); onPreview(node.id) }}
+          className={`flex items-center gap-1 rounded-full min-h-11 px-3 font-display font-bold shadow-lg border-2 transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ${
+            selected ? 'bg-primary text-white border-white' : 'bg-surface/95 text-gray-700 border-surface'
+          }`}
+        >
+          <span aria-hidden="true">{node.emoji}</span>
+          <span>{number}</span>
+          {locked && <span className="text-xs" aria-hidden="true">🔒</span>}
+          {state === 'completed' && <span className="text-xs" aria-hidden="true">✔</span>}
+        </button>
       </Html>
     </group>
   )

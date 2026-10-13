@@ -57,7 +57,12 @@ function tryParse(raw) {
 }
 
 export function loadSave() {
-  return tryParse(localStorage.getItem(SAVE_KEY)) ?? tryParse(localStorage.getItem(BACKUP_KEY))
+  try {
+    return tryParse(localStorage.getItem(SAVE_KEY)) ?? tryParse(localStorage.getItem(BACKUP_KEY))
+  } catch {
+    // Algunos navegadores también bloquean la lectura: arrancar en memoria.
+    return null
+  }
 }
 
 export function persistSave(data) {
@@ -110,7 +115,12 @@ export function savePreImportSnapshot(data) {
 // marca de tiempo (formato viejo o tocada a mano): sin saber cuándo se tomó no
 // se puede saber si sigue vigente, y el lado seguro es tratarla como caducada.
 export function loadPreImportSnapshot() {
-  const crudo = localStorage.getItem(PRE_IMPORT_KEY)
+  let crudo
+  try {
+    crudo = localStorage.getItem(PRE_IMPORT_KEY)
+  } catch {
+    return null
+  }
   if (!crudo) return null
 
   let sobre = null

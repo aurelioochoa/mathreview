@@ -1,11 +1,17 @@
-import { lazy, Suspense } from 'react'
+import { lazy, Suspense, useState } from 'react'
 import WorldMap2D from '../components/WorldMap2D'
+import WorldMapPreview from '../components/WorldMapPreview'
+import { worldMapNodes } from '../content/worldMap'
+import { useGame } from '../state/gameStore'
 import { useDeviceTier } from '../three/useDeviceTier'
 
 const WorldMapCanvas = lazy(() => import('../three/WorldMapCanvas'))
 
 export default function WorldMap() {
   const { use3D } = useDeviceTier()
+  const { state } = useGame()
+  const [selectedId, setSelectedId] = useState(worldMapNodes[0].id)
+  const selectedNode = worldMapNodes.find(node => node.id === selectedId) ?? worldMapNodes[0]
 
   // Fallback 2D: página normal centrada (equipos sin WebGL / reduced-motion).
   if (!use3D) {
@@ -40,9 +46,9 @@ export default function WorldMap() {
         aria-hidden="true"
       />
 
-      <div className="absolute inset-0" aria-hidden="true">
+      <div className="absolute inset-0">
         <Suspense fallback={<div className="h-full grid place-items-center text-sky-900/60 font-display font-bold">Cargando mundos…</div>}>
-          <WorldMapCanvas />
+          <WorldMapCanvas selectedId={selectedId} onPreview={setSelectedId} />
         </Suspense>
       </div>
 
@@ -56,13 +62,9 @@ export default function WorldMap() {
         </p>
       </div>
 
-      {/* Consejo: tarjeta glass abajo (contenido real existente) */}
-      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 md:left-10 md:translate-x-0 w-[min(92%,22rem)] glass rounded-2xl px-4 py-3 shadow-lg pointer-events-none select-none">
-        <p className="font-display font-bold text-gray-800 text-sm">💡 ¡Sigue explorando!</p>
-        <p className="text-gray-600 text-xs mt-0.5">
-          Estudia un mundo a la vez y juega con los ejemplos interactivos.
-          ¡Las matemáticas se aprenden practicando!
-        </p>
+      {/* Un solo panel de detalles: no tapa los dioramas ni otras tarjetas. */}
+      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 md:left-10 md:translate-x-0 w-[min(92%,22rem)]">
+        <WorldMapPreview node={selectedNode} gameState={state} />
       </div>
 
       {/* Navegación accesible paralela: enfocable por teclado / lectores de pantalla */}

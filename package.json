@@ -8,6 +8,9 @@
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
+    "check:bundle": "node scripts/check-bundle.mjs",
+    "test:browser": "node scripts/browser-check.mjs",
+    "test:courses": "node scripts/course-browser-check.mjs",
     "test": "vitest run",
     "test:watch": "vitest"
   },
@@ -16,7 +19,7 @@
     "@react-three/fiber": "^9.6.1",
     "@react-three/postprocessing": "^3.0.4",
     "jsqr": "^1.4.0",
-    "katex": "^0.16.43",
+    "katex": "^0.18.2",
     "lucide-react": "^1.7.0",
     "mafs": "^0.21.0",
     "motion": "^12.42.2",
@@ -26,6 +29,11 @@
     "react-router-dom": "^7.13.2",
     "recharts": "^3.8.1",
     "three": "~0.185.1"
+  },
+  "overrides": {
+    "mafs": {
+      "katex": "$katex"
+    }
   },
   "devDependencies": {
     "@eslint/js": "^9.39.4",
@@ -40,6 +48,7 @@
     "eslint-plugin-react-refresh": "^0.5.2",
     "globals": "^17.4.0",
     "jsdom": "^29.1.1",
+    "playwright": "^1.63.0",
     "tailwindcss": "^4.2.2",
     "vite": "^8.0.1",
     "vitest": "^4.1.10"

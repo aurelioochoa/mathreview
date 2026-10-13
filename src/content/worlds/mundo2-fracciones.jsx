@@ -206,6 +206,7 @@ export const mundo2 = {
             <p>Entonces: 2/4 + 1/4 = <strong className="text-emerald-700">3/4</strong>.</p>
           </div>
         </> },
+        { type: 'widget', widgetId: 'concept-fractions', title: 'El mismo entero, otros trozos' },
         { type: 'mistakes', items: [
           'Sumar también los denominadores. Solo se suman los numeradores.',
           'Sumar fracciones con denominador distinto sin igualarlas antes.',

@@ -1,3 +1,4 @@
+import { SystemsLab } from '../widgets/ConceptLabs'
 import { useState } from 'react'
 import TopicCard from '../components/TopicCard'
 import InteractiveBox from '../components/InteractiveBox'
@@ -258,6 +259,8 @@ export default function Bloque3() {
         <h1 className="font-display text-3xl md:text-4xl font-extrabold text-gray-800">Sistemas de Ecuaciones 2×2</h1>
         <p className="text-gray-500 mt-2">Método gráfico, reducción y determinantes (Cramer)</p>
       </div>
+
+      <SystemsLab />
 
       <BlockProgress current={1} total={totalTemas} blockName="Bloque 3: Sistemas 2×2" />
 

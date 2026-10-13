@@ -1,18 +1,13 @@
+import { lazy, Suspense } from 'react'
 import { Link, useParams } from 'react-router-dom'
-import Bloque1 from '../pages/Bloque1'
-import Bloque2 from '../pages/Bloque2'
-import Bloque3 from '../pages/Bloque3'
-import Bloque4 from '../pages/Bloque4'
-import Bloque5 from '../pages/Bloque5'
-import Bloque6 from '../pages/Bloque6'
 
 const PAGES = {
-  'volcan-potencias': Bloque1,
-  'castillo-algebra': Bloque2,
-  'laberinto-sistemas': Bloque3,
-  'estacion-funciones': Bloque4,
-  'montanas-geometria': Bloque5,
-  'feria-datos': Bloque6,
+  'volcan-potencias': lazy(() => import('../pages/Bloque1')),
+  'castillo-algebra': lazy(() => import('../pages/Bloque2')),
+  'laberinto-sistemas': lazy(() => import('../pages/Bloque3')),
+  'estacion-funciones': lazy(() => import('../pages/Bloque4')),
+  'montanas-geometria': lazy(() => import('../pages/Bloque5')),
+  'feria-datos': lazy(() => import('../pages/Bloque6')),
 }
 
 export default function StudyView() {
@@ -24,7 +19,9 @@ export default function StudyView() {
       <div className="max-w-3xl mx-auto mb-4">
         <Link to={`/mundo/${slug}`} className="text-primary font-semibold text-sm">← Volver al mundo (modo juego)</Link>
       </div>
-      <Page />
+      <Suspense fallback={<p role="status" className="text-center py-12 text-gray-500">Cargando estudio…</p>}>
+        <Page />
+      </Suspense>
     </div>
   )
 }

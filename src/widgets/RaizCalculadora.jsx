@@ -5,7 +5,9 @@ export default function RaizCalculadora() {
   const [radicando, setRadicando] = useState(27)
   const [indice, setIndice] = useState(3)
 
-  const resultado = Math.pow(radicando, 1 / indice)
+  const resultado = radicando < 0
+    ? (indice % 2 === 1 ? -Math.pow(-radicando, 1 / indice) : NaN)
+    : Math.pow(radicando, 1 / indice)
 
   return (
     <div>
@@ -15,7 +17,7 @@ export default function RaizCalculadora() {
           <input
             type="number"
             value={indice}
-            onChange={(e) => setIndice(Number(e.target.value) || 2)}
+            onChange={(e) => setIndice(Math.max(2, Math.min(10, Math.round(Number(e.target.value)) || 2)))}
             className="border rounded-lg px-3 py-2 w-20 font-mono text-center focus:ring-2 focus:ring-amber-400 outline-none"
             min={2}
             max={10}
@@ -27,7 +29,7 @@ export default function RaizCalculadora() {
           <input
             type="number"
             value={radicando}
-            onChange={(e) => setRadicando(Number(e.target.value))}
+            onChange={(e) => { const value = Number(e.target.value); setRadicando(Number.isFinite(value) ? value : 0) }}
             className="border rounded-lg px-3 py-2 w-28 font-mono text-center focus:ring-2 focus:ring-amber-400 outline-none"
           />
         </div>
@@ -45,6 +47,7 @@ export default function RaizCalculadora() {
       <p className="text-xs text-amber-600 mt-2">
         💡 Ejemplo: Área 144, índice 2 → lado 12 (terreno 12×12 en Minecraft)
       </p>
+      <p className="text-xs text-gray-600 mt-2">Las raíces de índice impar pueden tener radicando negativo: ∛(−8) = −2. Un área o volumen físico no es negativo.</p>
     </div>
   )
 }

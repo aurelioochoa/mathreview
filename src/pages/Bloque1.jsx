@@ -1,3 +1,4 @@
+import { PowersLab } from '../widgets/ConceptLabs'
 import TopicCard from '../components/TopicCard'
 import InteractiveBox from '../components/InteractiveBox'
 import MathTex from '../components/MathTex'
@@ -29,11 +30,11 @@ function AproximacionSection() {
       reminder: "Truncar = cortar los dígitos sobrantes sin modificar el anterior."
     },
     {
-      question: "Tu K/D ratio es 2.447. El juego lo muestra como 2.4. ¿Qué operación hizo?",
+      question: "Tu K/D ratio es 2.467. El juego lo muestra como 2.4. ¿Qué operación hizo?",
       options: ["Redondeó a 1 decimal", "Truncó a 1 decimal", "Redondeó a enteros", "Truncó a enteros"],
       correctAnswer: 1,
-      hint: "Si fuera redondeo sería 2.5, porque 4≥5? No, 4<5",
-      reminder: "Truncar a 1 decimal de 2.447 da 2.4. Redondear daría 2.4 también... aquí ambos coinciden, pero truncar siempre corta."
+      hint: "Al redondear a 1 decimal, el siguiente dígito es 6: daría 2.5. Truncar solo corta.",
+      reminder: "Truncar 2.467 a 1 decimal da 2.4; redondear da 2.5, porque el siguiente dígito es 6."
     }
   ]
 
@@ -101,7 +102,7 @@ function PotenciacionSection() {
     },
     {
       question: "¿Cuál es el resultado de 2⁻³?",
-      options: ["-8", "-6", "1/8", "0.125"],
+      options: ["-8", "-6", "1/8", "8"],
       correctAnswer: 2,
       hint: "Exponente negativo = 1 dividido por la potencia positiva",
       reminder: "a⁻ⁿ = 1/aⁿ. El exponente negativo NO hace negativo el resultado."
@@ -231,7 +232,7 @@ function RadicacionSection() {
       options: ["12", "72", "24", "144"],
       correctAnswer: 0,
       hint: "√144 = ? Busca el número que multiplicado por sí mismo da 144",
-      reminder: "La raíz cuadrada es la inversa del cuadrado: si x² = a, entonces √a = x"
+      reminder: "Para x ≥ 0, si x² = a entonces √a = x. El símbolo √ elige la raíz no negativa."
     },
     {
       question: "Si un cubo tiene volumen de 27 unidades³, ¿cuánto mide su arista?",
@@ -266,13 +267,14 @@ function RadicacionSection() {
       />
 
       <p className="text-sm text-gray-600 mb-4">
-        La <GlossaryTerm term="Radicación" definition="Operación inversa de la potenciación. Si bⁿ = a, entonces ⁿ√a = b">radicación</GlossaryTerm> es la operación inversa de la potenciación.
+        La <GlossaryTerm term="Radicación" definition="Busca el número cuya potencia n es a. Si n es par, el símbolo radical elige la raíz no negativa.">radicación</GlossaryTerm> es la operación inversa de la potenciación.
         Si potenciar es "¿cuánto da 3 elevado a 2?" (respuesta: 9),
         la raíz pregunta "¿qué número elevado a 2 da 9?" (respuesta: 3).
       </p>
 
       <div className="text-center my-4">
         <MathTex expr={"\\sqrt[n]{a} = b \\quad \\Leftrightarrow \\quad b^n = a"} display />
+            <p className="text-xs text-gray-600">n es un entero mayor que 1. Si n es par, a y b deben ser no negativos: √9 = 3, aunque (−3)² también sea 9. Si n es impar, puede haber una raíz negativa.</p>
       </div>
 
       <div className="bg-amber-50 rounded-lg p-4 border border-amber-200">
@@ -280,7 +282,7 @@ function RadicacionSection() {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm">
           <div className="glass rounded-md p-2"><MathTex expr={"\\sqrt[n]{a \\cdot b} = \\sqrt[n]{a} \\cdot \\sqrt[n]{b}"} /></div>
           <div className="glass rounded-md p-2"><MathTex expr={"\\sqrt[n]{\\frac{a}{b}} = \\frac{\\sqrt[n]{a}}{\\sqrt[n]{b}}"} /></div>
-          <div className="glass rounded-md p-2"><MathTex expr={"\\sqrt[n]{a^m} = a^{m/n}"} /></div>
+          <div className="glass rounded-md p-2"><MathTex expr={"\\sqrt[n]{a^m} = a^{m/n}"} /><p className="text-xs text-gray-600 mt-1">En estas propiedades usamos radicandos no negativos, índices enteros mayores que 1 y denominadores distintos de cero.</p></div>
           <div className="glass rounded-md p-2"><MathTex expr={"\\sqrt[m]{\\sqrt[n]{a}} = \\sqrt[m \\cdot n]{a}"} /></div>
         </div>
       </div>
@@ -304,6 +306,8 @@ export default function Bloque1() {
         <h1 className="font-display text-3xl md:text-4xl font-extrabold text-gray-800">Números Reales y Notación Científica</h1>
         <p className="text-gray-500 mt-2">Aproximación, potencias, notación científica y radicales</p>
       </div>
+
+      <PowersLab />
 
       <BlockProgress current={1} total={totalTemas} blockName="Bloque 1: Números Reales" />
 

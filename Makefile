@@ -1,5 +1,5 @@
 PROJECT       := mathreview
-TAGLINE       := math review worksheets, built in Docker
+TAGLINE       := Math Quest, a gamified math review
 HELP_VARS      = CONFIRM=$(CONFIRM)
 HELP_EXAMPLE   = make pdf
 
@@ -94,15 +94,18 @@ pdf: ## Build the PDFs into output/, owned by you and not root
 
 ##@ Gates
 .PHONY: test
-test: ## Not applicable here
-	$(call NA,'There is no test suite in this repo yet.')
+test: ## Run the gameplay and state tests
+	npm test
 
 .PHONY: check
-check: ## Not applicable here
-	$(call NA,'There is nothing to gate yet: no tests, no linter. Use make build.')
+check: ## Run lint, tests, production build, and bundle checks
+	npm run lint
+	npm test
+	npm run build
+	node scripts/check-bundle.mjs
 
 .PHONY: verify
-verify: build ## Full gate: a clean image build is the only check there is
+verify: check ## Full gate: lint, tests, production build, and bundle checks
 
 .PHONY: fmt
 fmt: ## Not applicable here

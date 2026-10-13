@@ -93,7 +93,7 @@ export const mundo4 = {
       reto: { pick: 3, factories: [
         mcdReparto,
         staticQuestion({ question: "¿Cuál es el MCD de 18x³y² y 12x²y⁴?", options: ["6x³y⁴", "6x²y²", "36x²y²", "6xy"], correctAnswer: 1, hint: "MCD de coeficientes: 6. Variables: x² (menor exponente), y² (menor exponente)", reminder: "Para polinomios, toma coeficientes MCD y variables con menor exponente." }),
-        staticQuestion({ question: "Si MCD(a,b) = 12 y a = 36, ¿qué valores puede tener b?", options: ["Cualquier múltiplo de 12", "Solo 24", "24 o 48", "Imposible saber"], correctAnswer: 2, hint: "b debe ser divisible por 12, y 36 también debe ser divisible por el MCD (12). Prueba 24: MCD(36,24)=12 ✓", reminder: "Ambos números deben ser divisibles por el MCD." }),
+        staticQuestion({ question: "Entre estas parejas, ¿en cuál ambos valores de b cumplen MCD(36,b) = 12?", options: ["12 y 36", "24 y 72", "24 y 48", "36 y 48"], correctAnswer: 2, hint: "Comprueba los dos valores de cada pareja: MCD(36,24)=12 y MCD(36,48)=12. En cambio MCD(36,36)=36.", reminder: "Ser múltiplo de 12 es necesario, pero no basta: el divisor común mayor debe ser exactamente 12." }),
       ] },
     },
     {
@@ -153,6 +153,7 @@ export const mundo4 = {
           </p>
           <div className="text-center my-4">
             <MathTex expr={"\\frac{x^2 - 4}{x^2 - 4x + 4} = \\frac{(x-2)(x+2)}{(x-2)^2} = \\frac{x+2}{x-2}"} display />
+            <p className="text-xs text-gray-600">Aquí x ≠ 2: simplificar no permite usar valores que anulaban el denominador original. Por ejemplo, (x²−9)/(x+3) = x−3 solo si x ≠ −3.</p>
           </div>
           <div className="bg-emerald-50 rounded-lg p-4 border border-emerald-200">
             <p className="font-semibold text-emerald-800 mb-2">Para simplificar fracciones algebraicas:</p>
@@ -180,7 +181,7 @@ export const mundo4 = {
               </div>
               <div className="bg-gray-50 rounded p-2">
                 <p className="text-xs text-gray-500">Trinomio de la forma x² + bx + c</p>
-                <MathTex expr={"x^2 + bx + c = (x+p)(x+q)"} />
+                <MathTex expr={"x^2 + bx + c = (x+p)(x+q)"} /><p className="text-xs text-gray-600 mt-1">Cuando p + q = b y p × q = c.</p>
               </div>
             </div>
           </div>
@@ -193,7 +194,7 @@ export const mundo4 = {
       ],
       reto: { pick: 3, factories: [
         staticQuestion({ question: "¿Cuál es la fracción simplificada de (x² - 4)/(x² - 4x + 4)?", options: ["(x+2)/(x-2)", "(x-2)/(x+2)", "(x+2)/(x+2)", "1"], correctAnswer: 0, hint: "x²-4 = (x+2)(x-2). x²-4x+4 = (x-2)². Cancela (x-2)", reminder: "Diferencia de cuadrados: a²-b² = (a+b)(a-b). Trinomio cuadrado: a²-2ab+b² = (a-b)²." }),
-        staticQuestion({ question: "En la fracción (2x+6)/(4x+8), ¿qué puedes factorizar arriba y abajo?", options: ["Nada", "Factor común 2 arriba y 4 abajo", "Factor común 2 en ambos", "2(x+3)/4(x+2)"], correctAnswer: 2, hint: "2x+6 = 2(x+3). 4x+8 = 4(x+2) = 2·2(x+2). El 2 es común.", reminder: "Busca el MCD de los coeficientes como factor común." }),
+        staticQuestion({ question: "En (2x+6)/(4x+8), ¿cuál es el máximo factor numérico que puedes cancelar entre numerador y denominador?", options: ["No hay factor común", "Factor común 4 en ambos", "Factor común 2 en ambos", "Factor común 6 en ambos"], correctAnswer: 2, hint: "2x+6 = 2(x+3). 4x+8 = 4(x+2) = 2·2(x+2). El 2 es común.", reminder: "Busca el MCD de los coeficientes como factor común." }),
         staticQuestion({ question: "¿Cuál es el resultado de (x²-9)/(x+3)?", options: ["x-3", "x+3", "(x-3)/(x+3)", "x²-3"], correctAnswer: 0, hint: "x²-9 = (x+3)(x-3). Divide por (x+3).", reminder: "Diferencia de cuadrados: x²-9 = x²-3² = (x+3)(x-3)." }),
       ] },
     },
@@ -261,6 +262,7 @@ export const mundo4 = {
             </ol>
           </div>
         </> },
+        { type: 'widget', widgetId: 'concept-algebra', title: 'Mantén la igualdad en la balanza' },
         { type: 'mistakes', items: [
           'Cambiar de lado pero olvidar cambiar el signo (lo que suma pasa restando, etc.).',
           'Distribuir mal: 2(x + 3) ≠ 2x + 3, es 2x + 6.',

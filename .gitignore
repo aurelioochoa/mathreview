@@ -26,3 +26,6 @@ output
 
 # Secretos locales
 .env
+
+# Local acceptance and delegation state
+.unlazy/

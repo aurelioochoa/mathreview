@@ -131,6 +131,7 @@ export const mundo7 = {
             </div>
           </div>
         </> },
+        { type: 'widget', widgetId: 'concept-geometry', title: 'Pitágoras suma áreas, no lados' },
         { type: 'mistakes', items: [
           'Confundir catetos con hipotenusa: la hipotenusa es SIEMPRE el lado más largo (frente al ángulo de 90°).',
           'Olvidar elevar al cuadrado: es a² + b² = c², no a + b = c.',

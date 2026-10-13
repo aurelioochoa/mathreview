@@ -18,7 +18,13 @@ function BriefingStep({ step }) {
   if (step.type === 'mistakes') return <CommonMistakes mistakes={step.items} />
   if (step.type === 'widget') {
     const Widget = widgets[step.widgetId]
-    return <InteractiveBox title={step.title}>{Widget ? <Widget /> : <p>Widget no encontrado: {step.widgetId}</p>}</InteractiveBox>
+    return (
+      <InteractiveBox title={step.title}>
+        <Suspense fallback={<p role="status" className="py-6 text-gray-500">Cargando actividad…</p>}>
+          {Widget ? <Widget /> : <p>Widget no encontrado: {step.widgetId}</p>}
+        </Suspense>
+      </InteractiveBox>
+    )
   }
   return <div>{step.body}</div>
 }

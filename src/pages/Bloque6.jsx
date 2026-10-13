@@ -1,3 +1,4 @@
+import { ProbabilityLab } from '../widgets/ConceptLabs'
 import TopicCard from '../components/TopicCard'
 import InteractiveBox from '../components/InteractiveBox'
 import MathTex from '../components/MathTex'
@@ -354,6 +355,8 @@ export default function Bloque6() {
         <h1 className="font-display text-3xl md:text-4xl font-extrabold text-gray-800">Estadística y Probabilidad</h1>
         <p className="text-gray-500 mt-2">Media, mediana, moda, percentiles, permutaciones y combinaciones</p>
       </div>
+
+      <ProbabilityLab />
 
       <BlockProgress current={1} total={totalTemas} blockName="Bloque 6: Estadística" />
       <MediaMedianaModa />

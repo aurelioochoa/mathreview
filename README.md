@@ -4,7 +4,7 @@ Juego de repaso matemático gamificado (en español) para [kidtopiaplay](https:/
 
 ## Stack
 
-Vite + React 19 + React Router + Tailwind CSS 4 + KaTeX (fórmulas) + Mafs (gráficas) + Recharts + three.js / react-three-fiber / drei / motion (mapa de mundos 3D, HUD y transiciones). Vitest para los tests de lógica. Sin backend: el progreso se guarda en `localStorage`.
+Vite + React 19 + React Router + Tailwind CSS 4 + KaTeX (fórmulas) + Mafs (gráficas) + Recharts + three.js / react-three-fiber / drei / motion (mapa de mundos 3D, HUD y transiciones). Vitest para los tests de lógica y Playwright para las comprobaciones en navegador. Sin backend: el progreso se guarda en `localStorage`.
 
 ## Desarrollo
 
@@ -14,9 +14,23 @@ npm run dev      # servidor de desarrollo (http://localhost:5173)
 npm test         # tests de lógica (Vitest)
 npm run build    # build de producción a dist/
 npm run lint     # ESLint
+npm run check:bundle # comprobar presupuesto de JavaScript (después de build)
+make check       # lint + tests + build + presupuesto de bundle
 ```
 
-Los comandos `lint`, `test` y `build` corren automáticamente en GitHub Actions cada vez que haces push a `main` o abres un pull request.
+Los comandos `lint`, `test`, `build` y `check:bundle` corren automáticamente en GitHub Actions cada vez que haces push a `main` o abres un pull request.
+
+Para verificar el juego en Chromium:
+
+```bash
+npx playwright install chromium  # una vez, si no está instalado
+npm run build
+npm run preview -- --port 4174   # dejar abierto en otra terminal
+npm run test:browser             # mapa, móvil, nivel, estudios y almacenamiento bloqueado
+npm run test:courses             # ocho laboratorios e historia, en móvil y ambos temas
+```
+
+`MATHQUEST_URL` permite comprobar otro servidor local. Las capturas se guardan en `/tmp/mathquest-browser` (cambiable con `MATHQUEST_SCREENSHOTS`). La prueba verifica la carga diferida de los estudios y gráficos; no sustituye el escaneo QR con una cámara real.
 
 También hay un flujo con Docker en el `Makefile` (`make dev`, `make up`) y un servicio de generación de PDF (`make pdf`).
 
@@ -48,6 +62,8 @@ Rutas: `/` (mapa) · `/mundo/:slug` · `/mundo/:slug/nivel/:levelId` · `/mundo/
 - **Tema claro / oscuro / automático**, con botón en el HUD. Se guarda en su propia clave de `localStorage`, no dentro de la partida: es preferencia del aparato, y así traspasar la partida no cambia el tema del dispositivo que la recibe. El mapa 3D también tiene su versión de noche.
 - **Mapa 3D con dioramas.** Cada mundo dejó de ser una primitiva glossy girando (icosaedro, toro, cono) y pasó a ser una escena en miniatura construida con cajas y cilindros: el castillo tiene cuatro torres almenadas, aspilleras y estandarte; el cohete, ventanilla con marco y tres aletas; la feria, una noria con ocho cabinas; la pizza, ocho porciones marcadas y pepperoni. Las islas ganaron relieve —el cilindro de la base se deforma por ángulo con una semilla por mundo, así que ninguna repite silueta—, orilla de arena y más vegetación. El giro y el balanceo bajaron mucho (0,35 → 0,09 rad/s): a la velocidad de antes un diorama no se lee, se marea.
 - **Sombras de verdad en el mapa.** Encuadrar la cámara de sombra a mano es obligatorio —el ortográfico por defecto es de ±5 y el mapa va de `x=-6.2` a `x=4.4`, así que las islas de los extremos quedaban fuera—, pero fijar `shadow-camera-*` como props no basta: three lee `projectionMatrix` y esa matriz no se recalcula al cambiar los límites. Sin un `updateProjectionMatrix()` explícito el encuadre queda incoherente y **no se dibuja ni una sombra en todo el mapa**, sin ningún error en consola. Se arregla desde `lighting.jsx` con un ref y un `useLayoutEffect`. El tipo de mapa de sombras es `percentage` (PCF) y no el `soft` de r3f: three 0.185 deprecó `PCFSoftShadowMap` y lo degrada a PCF avisando por consola en cada arranque.
+- **Pulido de octubre:** mapa 3D con marcadores compactos y un único panel de detalles; en pantallas de menos de 768 px se usa el mapa 2D para mantener todos los mundos accesibles. Estudios y widgets se cargan bajo demanda, con un presupuesto en CI de 300 kB gzip para todos los imports estáticos del arranque. El juego también arranca cuando el navegador bloquea `localStorage` (el progreso dura en memoria). La suite tiene 432 tests en 61 archivos; lint, build y auditoría de dependencias pasan.
+- **Aprender visualmente:** ocho laboratorios nuevos en los briefings, también disponibles en los seis modos estudio. El jugador predice, cambia cantidades o reglas, observa un modelo y completa una misión. Los conceptos incluyen grupos iguales, fracciones equivalentes, potencias, igualdad, sistemas, funciones, áreas y probabilidad. Cada laboratorio tiene una nota de historia relacionada, con fuente atribuida a MacTutor; las explicaciones funcionan sin consultar la web. Ver la [auditoría del material](docs/analysis/2026-10-12-course-material.md) para las correcciones matemáticas y el mapa de cobertura.
 - **Siguiente:** sin fase definida todavía. Ver [`TODO.md`](TODO.md) para lo pendiente y las ideas futuras.
 
 ## Despliegue

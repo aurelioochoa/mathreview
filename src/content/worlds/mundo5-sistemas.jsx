@@ -77,6 +77,7 @@ export const mundo5 = {
             </div>
           </div>
         </> },
+        { type: 'widget', widgetId: 'concept-systems', title: 'Encuentra el punto que cumple dos pistas' },
         { type: 'mistakes', items: [
           "Confundir 'no hay solución' con 'la solución es cero' — no, significa que las rectas nunca se cruzan.",
           'Olvidar que el punto de intersección tiene coordenadas (x, y), no solo x.',

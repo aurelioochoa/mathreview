@@ -1,3 +1,4 @@
+import { GeometryLab } from '../widgets/ConceptLabs'
 import TopicCard from '../components/TopicCard'
 import InteractiveBox from '../components/InteractiveBox'
 import MathTex from '../components/MathTex'
@@ -327,6 +328,8 @@ export default function Bloque5() {
         <h1 className="font-display text-3xl md:text-4xl font-extrabold text-gray-800">Geometría y Trigonometría</h1>
         <p className="text-gray-500 mt-2">Pitágoras, seno, coseno, tangente, cilindro y prisma</p>
       </div>
+
+      <GeometryLab />
 
       <BlockProgress current={1} total={totalTemas} blockName="Bloque 5: Geometría" />
 

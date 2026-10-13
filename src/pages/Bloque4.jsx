@@ -1,3 +1,4 @@
+import { FunctionsLab } from '../widgets/ConceptLabs'
 import { useState } from 'react'
 import TopicCard from '../components/TopicCard'
 import InteractiveBox from '../components/InteractiveBox'
@@ -168,7 +169,7 @@ function FuncionLinealSection() {
         <p className="font-semibold mb-2">Dominio y recorrido:</p>
         <ul className="list-disc pl-5 text-sm space-y-1">
           <li><strong>Dominio</strong>: todos los valores que puede tomar x → <MathTex expr={"D = \\mathbb{R} = (-\\infty, +\\infty)"} /></li>
-          <li><strong>Recorrido</strong> (o rango): todos los valores que puede dar f(x) → <MathTex expr={"R = \\mathbb{R} = (-\\infty, +\\infty)"} /></li>
+          <li><strong>Recorrido</strong> (o rango): si m ≠ 0 y x puede ser cualquier real, <MathTex expr={"R = \\mathbb{R}"} />. Si m = 0, la función es constante: <MathTex expr={"R = \\{b\\}"} />.</li>
         </ul>
         <p className="text-xs text-gray-500 mt-1">Piensa en el dominio como "las preguntas que puedes hacer" y el recorrido como "las respuestas posibles".</p>
       </div>
@@ -379,6 +380,8 @@ export default function Bloque4() {
         <h1 className="font-display text-3xl md:text-4xl font-extrabold text-gray-800">Funciones Lineales y Cuadráticas</h1>
         <p className="text-gray-500 mt-2">Rectas, parábolas, dominio, recorrido y problemas de aplicación</p>
       </div>
+
+      <FunctionsLab />
 
       <BlockProgress current={1} total={totalTemas} blockName="Bloque 4: Funciones" />
 
